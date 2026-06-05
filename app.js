@@ -1753,19 +1753,23 @@ function renderDash() {
 }
 
 // ── BARCODE SCANNER ──────────────────────────────────────────────────────────
-// html5-qrcode handles camera + video internally (works on iOS first open).
-// The only fix needed: call scanner.clear() after stop() so the div is
-// clean for the next Html5Qrcode instance.
 let scanner = null;
 let scannerRunning = false;
 let scanLock = false;
+let scanStopTimer = null;
 
 function openScanner() {
+  // Cancel any pending lazy-stop
+  if (scanStopTimer) { clearTimeout(scanStopTimer); scanStopTimer = null; }
+
   document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
   document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
   scanLock = false;
+
+  // Camera already running — just show overlay, no restart needed
   if (scannerRunning) return;
+
   try {
     scanner = new Html5Qrcode('scan-viewport');
     scanner.start(
@@ -1782,17 +1786,19 @@ function openScanner() {
 
 function closeScanner() {
   document.getElementById('scan-overlay').classList.remove('open');
+  scanLock = false;
+  // Lazy stop: give 10s in case user reopens quickly
+  // This avoids the stop/restart race condition on iOS
+  scanStopTimer = setTimeout(_doStopScanner, 10000);
+}
+
+function _doStopScanner() {
+  scanStopTimer = null;
   if (!scanner) return;
   const s = scanner;
   scanner = null;
   scannerRunning = false;
-  if (s.getState && s.getState() === 2) {
-    s.stop()
-      .then(() => { try { s.clear(); } catch(e) {} })
-      .catch(() => { try { s.clear(); } catch(e) {} });
-  } else {
-    try { s.clear(); } catch(e) {}
-  }
+  s.stop().catch(() => {});
 }
 
 function onBarcodeScan(barcode) {
