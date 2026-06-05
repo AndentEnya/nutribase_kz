@@ -1765,8 +1765,17 @@ function openScanner() {
   document.getElementById('scan-result').style.display = 'none';
   scanLock = false;
 
+  const v = document.getElementById('scan-video');
+  // iOS Safari: must set these as JS properties AND call play() synchronously
+  // inside the user gesture handler — async callbacks lose the gesture context
+  v.muted = true;
+  v.playsInline = true;
+  v.play().catch(() => {}); // "prime" the player while we still have the gesture
+
   if (scanStream) {
+    v.srcObject = scanStream; // reattach in case it was detached
     document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+    if (!scanTimer) _scanLoop();
     return;
   }
 
@@ -1775,13 +1784,14 @@ function openScanner() {
   navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } })
     .then(stream => {
       scanStream = stream;
-      const v = document.getElementById('scan-video');
       v.srcObject = stream;
-      v.play().catch(() => {});
+      // play() was already called synchronously — stream attachment triggers rendering
+      v.onloadedmetadata = () => { v.play().catch(() => {}); };
       document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
       _scanLoop();
     })
-    .catch(() => {
+    .catch(err => {
+      console.warn('camera:', err);
       document.getElementById('scan-hint').textContent = 'Нет доступа к камере';
     });
 }

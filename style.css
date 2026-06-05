@@ -515,8 +515,16 @@ td.r{text-align:right;}
 .scan-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--text);}
 .scan-close{background:var(--bg4);border:none;color:var(--text2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .scan-close:hover{background:var(--red);color:#fff;}
-.scan-viewport-wrap{position:relative;background:#000;overflow:hidden;min-height:220px;}
-#scan-video{width:100%;display:block;min-height:220px;object-fit:cover;}
+.scan-viewport-wrap{position:relative;background:#000;overflow:hidden;min-height:240px;}
+#scan-video{width:100%;display:block;min-height:240px;object-fit:cover;}
+/* Corner markers */
+.scan-viewport-wrap::before,.scan-viewport-wrap::after{content:'';position:absolute;width:44px;height:44px;z-index:2;pointer-events:none;}
+.scan-viewport-wrap::before{top:14px;left:14px;border-top:3px solid var(--accent);border-left:3px solid var(--accent);border-radius:4px 0 0 0;}
+.scan-viewport-wrap::after{top:14px;right:14px;border-top:3px solid var(--accent);border-right:3px solid var(--accent);border-radius:0 4px 0 0;}
+.scan-corners-bottom{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:space-between;padding:0 14px;z-index:2;pointer-events:none;}
+.scan-corners-bottom::before,.scan-corners-bottom::after{content:'';width:44px;height:44px;display:block;}
+.scan-corners-bottom::before{border-bottom:3px solid var(--accent);border-left:3px solid var(--accent);border-radius:0 0 0 4px;}
+.scan-corners-bottom::after{border-bottom:3px solid var(--accent);border-right:3px solid var(--accent);border-radius:0 0 4px 0;}
 .scan-line{position:absolute;left:10%;right:10%;height:2px;background:var(--accent);top:50%;transform:translateY(-50%);box-shadow:0 0 8px var(--accent);animation:scanline 2s ease-in-out infinite;}
 @keyframes scanline{0%,100%{top:35%}50%{top:65%}}
 .scan-hint{padding:12px 18px;font-size:13px;color:var(--text2);text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center;}

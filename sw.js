@@ -1,4 +1,4 @@
-const CACHE = 'nutribase-v23';
+const CACHE = 'nutribase-v24';
 const ASSETS = [
   '/nutribase_kz/',
   '/nutribase_kz/index.html',

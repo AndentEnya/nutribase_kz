@@ -794,8 +794,9 @@
       <button class="scan-close" onclick="closeScanner()">✕</button>
     </div>
     <div class="scan-viewport-wrap">
-      <video id="scan-video" playsinline autoplay muted style="width:100%;display:block;"></video>
+      <video id="scan-video" playsinline webkit-playsinline autoplay muted style="width:100%;display:block;"></video>
       <canvas id="scan-canvas" style="display:none;"></canvas>
+      <div class="scan-corners-bottom"></div>
       <div class="scan-line"></div>
     </div>
     <div class="scan-hint" id="scan-hint">Наведи камеру на штрихкод продукта</div>
