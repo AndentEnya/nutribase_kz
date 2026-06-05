@@ -115,6 +115,8 @@ const GOALS_KEY='nb_goals';
 let dashGoals={kcal:2000,prot:150,fat:65,carb:250};
 // Scanner
 let scanner=null,scannerRunning=false,scanLock=false,scanStopTimer=null;
+let _nativeStream=null,_nativeVideo=null,_nativeDetector=null,_nativeRaf=null;
+let _useNative='BarcodeDetector' in window;
 
 function loadDB(){const s=localStorage.getItem('nkz_db');DB=s?JSON.parse(s):JSON.parse(JSON.stringify(SEED));}
 function saveDB(){localStorage.setItem('nkz_db',JSON.stringify(DB));}
@@ -1756,32 +1758,70 @@ function renderDash() {
 
 // ── BARCODE SCANNER ──────────────────────────────────────────────────────────
 function openScanner() {
-  // Cancel any pending lazy-stop
   if (scanStopTimer) { clearTimeout(scanStopTimer); scanStopTimer = null; }
-
   document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
   document.getElementById('scan-hint').textContent = 'Поместите красную линию поперёк штрихкода';
   scanLock = false;
-
-  // Camera already running — just show overlay, no restart needed
   if (scannerRunning) return;
+  if (_useNative) _openNativeScanner(); else _openHtml5Scanner();
+}
 
+async function _openNativeScanner() {
+  try {
+    if (!_nativeStream || _nativeStream.getTracks()[0].readyState === 'ended') {
+      _nativeStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+      });
+    }
+    const vp = document.getElementById('scan-viewport');
+    if (!_nativeVideo || !vp.contains(_nativeVideo)) {
+      _nativeVideo = document.createElement('video');
+      _nativeVideo.setAttribute('playsinline', '');
+      _nativeVideo.muted = true;
+      _nativeVideo.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      vp.innerHTML = '';
+      vp.appendChild(_nativeVideo);
+    }
+    if (_nativeVideo.srcObject !== _nativeStream) _nativeVideo.srcObject = _nativeStream;
+    if (_nativeVideo.paused) await _nativeVideo.play();
+    if (!_nativeDetector) {
+      _nativeDetector = new BarcodeDetector({
+        formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','code_93','itf']
+      });
+    }
+    scannerRunning = true;
+    _nativeScanFrame();
+  } catch(e) {
+    console.warn('BarcodeDetector failed, falling back:', e);
+    _useNative = false;
+    _nativeStream = null;
+    _openHtml5Scanner();
+  }
+}
+
+function _nativeScanFrame() {
+  if (!scannerRunning) return;
+  const v = _nativeVideo;
+  if (!v || v.readyState < 2) { _nativeRaf = requestAnimationFrame(_nativeScanFrame); return; }
+  _nativeDetector.detect(v).then(codes => {
+    if (codes.length > 0 && !scanLock) { onBarcodeScan(codes[0].rawValue); }
+    else if (scannerRunning) { _nativeRaf = requestAnimationFrame(_nativeScanFrame); }
+  }).catch(() => { if (scannerRunning) _nativeRaf = requestAnimationFrame(_nativeScanFrame); });
+}
+
+function _openHtml5Scanner() {
   try {
     scanner = new Html5Qrcode('scan-viewport');
-    const barcodeFormats = [
-      Html5QrcodeSupportedFormats.EAN_13,
-      Html5QrcodeSupportedFormats.EAN_8,
-      Html5QrcodeSupportedFormats.UPC_A,
-      Html5QrcodeSupportedFormats.UPC_E,
-      Html5QrcodeSupportedFormats.CODE_128,
-      Html5QrcodeSupportedFormats.CODE_39,
+    const fmts = [
+      Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.UPC_A,  Html5QrcodeSupportedFormats.UPC_E,
+      Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.CODE_39,
     ];
     scanner.start(
       { facingMode: 'environment' },
-      { fps: 20, qrbox: { width: 300, height: 110 }, aspectRatio: 1.3, formatsToSupport: barcodeFormats },
-      onBarcodeScan,
-      () => {}
+      { fps: 20, qrbox: { width: 300, height: 110 }, aspectRatio: 1.3, formatsToSupport: fmts },
+      onBarcodeScan, () => {}
     ).then(() => { scannerRunning = true; })
      .catch(() => { document.getElementById('scan-hint').textContent = 'Нет доступа к камере'; });
   } catch(e) {
@@ -1792,18 +1832,21 @@ function openScanner() {
 function closeScanner() {
   document.getElementById('scan-overlay').classList.remove('open');
   scanLock = false;
-  // Lazy stop: give 10s in case user reopens quickly
-  // This avoids the stop/restart race condition on iOS
   scanStopTimer = setTimeout(_doStopScanner, 10000);
 }
 
 function _doStopScanner() {
   scanStopTimer = null;
-  if (!scanner) return;
-  const s = scanner;
-  scanner = null;
   scannerRunning = false;
-  s.stop().catch(() => {});
+  if (_useNative) {
+    if (_nativeRaf) { cancelAnimationFrame(_nativeRaf); _nativeRaf = null; }
+    if (_nativeStream) { _nativeStream.getTracks().forEach(t => t.stop()); _nativeStream = null; }
+    if (_nativeVideo) { _nativeVideo.srcObject = null; _nativeVideo.remove(); _nativeVideo = null; }
+  } else {
+    if (!scanner) return;
+    const s = scanner; scanner = null;
+    s.stop().catch(() => {});
+  }
 }
 
 function onBarcodeScan(barcode) {
