@@ -1756,12 +1756,31 @@ function renderDash() {
 let scanner = null;
 let scannerRunning = false;
 
+// Completely tears down current scanner instance, resolves when done
+function destroyScanner() {
+  return new Promise(resolve => {
+    const vp = document.getElementById('scan-viewport');
+    const s = scanner;
+    scanner = null;
+    scannerRunning = false;
+    if (!s) { vp.innerHTML = ''; resolve(); return; }
+    const cleanup = () => {
+      try { s.clear(); } catch(e) {}
+      vp.innerHTML = '';
+      resolve();
+    };
+    // Only call stop() if the instance is actually scanning
+    try {
+      if (s.getState && s.getState() === 2 /* SCANNING */) {
+        s.stop().then(cleanup).catch(cleanup);
+      } else {
+        cleanup();
+      }
+    } catch(e) { cleanup(); }
+  });
+}
+
 function startScannerCamera() {
-  // Always wipe the viewport DOM so html5-qrcode can mount fresh
-  const vp = document.getElementById('scan-viewport');
-  vp.innerHTML = '';
-  scanner = null;
-  scannerRunning = false;
   try {
     scanner = new Html5Qrcode('scan-viewport');
     const cfg = { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 };
@@ -1781,41 +1800,26 @@ function startScannerCamera() {
   }
 }
 
-function openScanner() {
-  const overlay = document.getElementById('scan-overlay');
-  overlay.classList.add('open');
+async function openScanner() {
+  document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
   document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
-  if (scanner && scannerRunning) return;
-  // If scanner exists but not running (e.g. paused), stop first then restart
-  if (scanner) {
-    scanner.stop().catch(() => {}).finally(() => startScannerCamera());
-  } else {
-    startScannerCamera();
-  }
+  await destroyScanner();
+  startScannerCamera();
 }
 
-function closeScanner() {
+async function closeScanner() {
   document.getElementById('scan-overlay').classList.remove('open');
-  const vp = document.getElementById('scan-viewport');
-  if (scanner) {
-    scanner.stop().catch(() => {}).finally(() => {
-      scanner = null;
-      scannerRunning = false;
-      vp.innerHTML = '';
-    });
-  } else {
-    scanner = null;
-    scannerRunning = false;
-    vp.innerHTML = '';
-  }
+  await destroyScanner();
 }
 
 function onBarcodeScan(barcode) {
   if (!scannerRunning) return;
   scannerRunning = false;
-  // Stop camera while showing result
-  if (scanner) scanner.stop().catch(() => {});
+  // Fire-and-forget stop — result UI shows immediately
+  const s = scanner;
+  scanner = null;
+  if (s) { try { if (s.getState && s.getState()===2) s.stop().catch(()=>{}); } catch(e){} }
   document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
   document.getElementById('scan-result').style.display = 'none';
 
@@ -1835,13 +1839,11 @@ function onBarcodeScan(barcode) {
     });
 }
 
-function resumeScanner() {
-  // Full restart is safer than .resume() on mobile browsers
-  if (scanner) {
-    scanner.stop().catch(() => {}).finally(() => startScannerCamera());
-  } else {
-    startScannerCamera();
-  }
+async function resumeScanner() {
+  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+  document.getElementById('scan-result').style.display = 'none';
+  await destroyScanner();
+  startScannerCamera();
 }
 
 function showScanResult(p, barcode) {
