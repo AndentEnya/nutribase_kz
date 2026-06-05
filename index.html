@@ -291,12 +291,47 @@ td.r{text-align:right;}
 .mode-tab.on{background:var(--accent);border-color:var(--accent);color:#1f1f1f;font-weight:600;}
 .mode-panel{display:none;}
 .mode-panel.on{display:block;}
+
+/* ── MOBILE ── */
+.menu-btn{display:none;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r2);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;flex-shrink:0;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:190;}
+
+@media(max-width:640px){
+  .menu-btn{display:flex;}
+  .shell{display:block;}
+  .sidebar{position:fixed;left:-220px;top:0;height:100vh;z-index:200;transition:left .25s ease;width:210px;box-shadow:4px 0 20px rgba(0,0,0,.4);}
+  .sidebar.open{left:0;}
+  .sidebar-overlay.open{display:block;}
+  .topbar{padding:10px 14px;position:sticky;top:0;z-index:20;}
+  .profiles-bar{padding:8px 14px;overflow-x:auto;flex-wrap:nowrap;}
+  .page{padding:14px 12px;}
+  #page-tdee{max-width:100%;}
+  .grid2{grid-template-columns:1fr!important;}
+  .grid4{grid-template-columns:1fr 1fr!important;}
+  .form-grid2{grid-template-columns:1fr!important;}
+  .sched-inputs{grid-template-columns:1fr!important;}
+  .tdee-wrap{grid-template-columns:1fr!important;}
+  .tdee-nums{grid-template-columns:1fr 1fr!important;}
+  .macros-grid{grid-template-columns:1fr 1fr!important;}
+  .cmp-row{grid-template-columns:1fr 1fr!important;}
+  .picker-wrap{grid-template-columns:1fr!important;}
+  .extra-grid{grid-template-columns:1fr!important;}
+  .water-rows{grid-template-columns:1fr 1fr!important;}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:480px;}
+  .filter-row button{font-size:11px;padding:4px 9px;}
+  .modal{padding:18px;width:95vw!important;}
+  #toast{right:10px;left:10px;bottom:14px;text-align:center;}
+  .totals-bar{gap:10px;}
+  .metric-num{font-size:20px;}
+}
 </style>
 </head>
 <body>
 <div class="shell">
 
-<nav class="sidebar">
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<nav class="sidebar" id="sidebar">
   <div class="logo">
     <div class="logo-icon">
       <!-- SVG logo mark: stylized N + leaf/flame -->
@@ -378,8 +413,11 @@ td.r{text-align:right;}
     <button class="btn btn-sm" onclick="saveCurrentProfile()" style="margin-left:auto;font-size:11px;padding:4px 12px;">💾 Сохранить</button>
   </div>
   <div class="topbar">
+    <button class="menu-btn" onclick="toggleSidebar()" aria-label="Меню">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <!-- inline logo for topbar -->
-    <div style="display:flex;align-items:center;gap:8px;margin-right:18px;border-right:1px solid var(--border);padding-right:18px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-right:18px;border-right:1px solid var(--border);padding-right:18px;margin-left:10px;">
       <svg width="22" height="22" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="34" height="34" rx="8" fill="#e8b84b" opacity=".15"/>
         <path d="M8 26V8L18 22V8" stroke="#e8b84b" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1944,6 +1982,19 @@ function runPickerList(kcal, tp, tf, tc) {
 
 loadDB();loadDiary();buildCatFilters();buildCatSelects();renderDB();tdeeCalc();renderDiary();
 buildSchedule();loadProfiles();buildExcludeButtons();
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+// закрывать сайдбар при выборе пункта меню на мобиле
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{if(window.innerWidth<=640)closeSidebar();});
+});
 </script>
 </body>
 </html>
