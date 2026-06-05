@@ -1756,12 +1756,12 @@ function renderDash() {
 let scanner = null;
 let scannerRunning = false;
 
-function openScanner() {
-  const overlay = document.getElementById('scan-overlay');
-  overlay.classList.add('open');
-  document.getElementById('scan-result').style.display = 'none';
-  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
-  if (scannerRunning) return;
+function startScannerCamera() {
+  // Always wipe the viewport DOM so html5-qrcode can mount fresh
+  const vp = document.getElementById('scan-viewport');
+  vp.innerHTML = '';
+  scanner = null;
+  scannerRunning = false;
   try {
     scanner = new Html5Qrcode('scan-viewport');
     const cfg = { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 };
@@ -1781,24 +1781,41 @@ function openScanner() {
   }
 }
 
+function openScanner() {
+  const overlay = document.getElementById('scan-overlay');
+  overlay.classList.add('open');
+  document.getElementById('scan-result').style.display = 'none';
+  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+  if (scanner && scannerRunning) return;
+  // If scanner exists but not running (e.g. paused), stop first then restart
+  if (scanner) {
+    scanner.stop().catch(() => {}).finally(() => startScannerCamera());
+  } else {
+    startScannerCamera();
+  }
+}
+
 function closeScanner() {
   document.getElementById('scan-overlay').classList.remove('open');
-  if (scanner && scannerRunning) {
+  const vp = document.getElementById('scan-viewport');
+  if (scanner) {
     scanner.stop().catch(() => {}).finally(() => {
       scanner = null;
       scannerRunning = false;
+      vp.innerHTML = '';
     });
   } else {
     scanner = null;
     scannerRunning = false;
+    vp.innerHTML = '';
   }
 }
 
 function onBarcodeScan(barcode) {
   if (!scannerRunning) return;
-  // Pause scanner while fetching
   scannerRunning = false;
-  if (scanner) scanner.pause(true);
+  // Stop camera while showing result
+  if (scanner) scanner.stop().catch(() => {});
   document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
   document.getElementById('scan-result').style.display = 'none';
 
@@ -1819,9 +1836,11 @@ function onBarcodeScan(barcode) {
 }
 
 function resumeScanner() {
+  // Full restart is safer than .resume() on mobile browsers
   if (scanner) {
-    scanner.resume();
-    scannerRunning = true;
+    scanner.stop().catch(() => {}).finally(() => startScannerCamera());
+  } else {
+    startScannerCamera();
   }
 }
 
