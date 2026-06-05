@@ -5,11 +5,10 @@ let fbApp = null, fbAuth = null, fbDb = null, fbUser = null;
 let syncTimer = null;
 
 function initFirebase() {
-  if (!window.FIREBASE_CONFIG || !window.CLOUD_SYNC_ENABLED) return;
-  if (FIREBASE_CONFIG.apiKey === 'YOUR_API_KEY') {
-    console.info('NutriBase: Firebase not configured. Edit firebase-config.js to enable sync.');
-    return;
-  }
+  try {
+    if (typeof FIREBASE_CONFIG === 'undefined' || !CLOUD_SYNC_ENABLED) return;
+    if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey === 'YOUR_API_KEY') return;
+  } catch(e) { return; }
   try {
     fbApp  = firebase.initializeApp(FIREBASE_CONFIG);
     fbAuth = firebase.auth();
@@ -75,7 +74,7 @@ document.addEventListener('click', e => {
 
 function signIn() {
   if (!fbAuth) {
-    alert('Firebase не настроен.\nОткройте firebase-config.js и добавьте ваши данные.\nИнструкция внутри файла.');
+    toast('Синхронизация недоступна — Firebase не подключён', 'err');
     return;
   }
   const provider = new firebase.auth.GoogleAuthProvider();
