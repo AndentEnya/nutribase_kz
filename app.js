@@ -128,6 +128,7 @@ function showPage(id,btn){
   document.getElementById('topbar-title').textContent=titles[id]||'';
   // sync bottom nav
   document.querySelectorAll('.bnav-btn[data-page]').forEach(b=>b.classList.toggle('active', b.dataset.page===id));
+  if(id==='dash')renderDash();
   if(id==='db')renderDB();
   if(id==='tdee')tdeeCalc();
   if(id==='plan')renderDiary();
@@ -1614,8 +1615,8 @@ function drawWeightChart(entries, goalKg){
   </svg>`;
 }
 
-loadDB();loadDiary();buildCatFilters();buildCatSelects();renderDB();tdeeCalc();renderDiary();
-buildSchedule();loadProfiles();buildExcludeButtons();loadWeightLog();loadWpSettings();
+loadDB();loadDiary();loadGoals();buildCatFilters();buildCatSelects();renderDB();tdeeCalc();renderDiary();
+buildSchedule();loadProfiles();buildExcludeButtons();loadWeightLog();loadWpSettings();renderDash();
 (()=>{const el=document.getElementById('w-date');if(el)el.value=new Date().toISOString().slice(0,10);})();
 
 function toggleSidebar(){
@@ -1630,6 +1631,126 @@ function closeSidebar(){
 document.querySelectorAll('.nav-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{if(window.innerWidth<=640)closeSidebar();});
 });
+
+// ── DASHBOARD ────────────────────────────────────────────────────────────────
+const GOALS_KEY = 'nb_goals';
+let dashGoals = {kcal:2000, prot:150, fat:65, carb:250};
+
+function loadGoals() {
+  try { const s=localStorage.getItem(GOALS_KEY); if(s) dashGoals=JSON.parse(s); } catch(e){}
+}
+
+function saveGoals() {
+  const k=parseInt(document.getElementById('g-kcal').value)||2000;
+  const p=parseInt(document.getElementById('g-prot').value)||150;
+  const f=parseInt(document.getElementById('g-fat').value)||65;
+  const c=parseInt(document.getElementById('g-carb').value)||250;
+  dashGoals={kcal:k,prot:p,fat:f,carb:c};
+  localStorage.setItem(GOALS_KEY, JSON.stringify(dashGoals));
+  document.getElementById('dash-goals-form').style.display='none';
+  document.getElementById('goals-btn').textContent='⚙ Цели';
+  renderDash();
+  toast('Цели сохранены', 'ok');
+}
+
+function toggleGoalsForm() {
+  const f=document.getElementById('dash-goals-form');
+  const open=f.style.display!=='none'&&f.style.display!=='';
+  if(open){
+    f.style.display='none';
+    document.getElementById('goals-btn').textContent='⚙ Цели';
+  } else {
+    document.getElementById('g-kcal').value=dashGoals.kcal;
+    document.getElementById('g-prot').value=dashGoals.prot;
+    document.getElementById('g-fat').value=dashGoals.fat;
+    document.getElementById('g-carb').value=dashGoals.carb;
+    f.style.display='block';
+    document.getElementById('goals-btn').textContent='✕ Закрыть';
+  }
+}
+
+function applyGoalPreset(type) {
+  const presets={
+    cut:{kcal:1600,prot:160,fat:55,carb:140},
+    keep:{kcal:2000,prot:150,fat:65,carb:220},
+    bulk:{kcal:2600,prot:170,fat:80,carb:320}
+  };
+  const p=presets[type];if(!p)return;
+  document.getElementById('g-kcal').value=p.kcal;
+  document.getElementById('g-prot').value=p.prot;
+  document.getElementById('g-fat').value=p.fat;
+  document.getElementById('g-carb').value=p.carb;
+}
+
+function applyGoalFromTDEE() {
+  const tdeeEl=document.getElementById('tdee-result');
+  const val=tdeeEl?parseInt(tdeeEl.textContent):0;
+  if(!val){toast('Сначала рассчитай TDEE','err');return;}
+  document.getElementById('g-kcal').value=val;
+  document.getElementById('g-prot').value=Math.round(val*0.3/4);
+  document.getElementById('g-fat').value=Math.round(val*0.25/9);
+  document.getElementById('g-carb').value=Math.round(val*0.45/4);
+}
+
+function updateRing(id, val, goal, circ) {
+  const el=document.getElementById(id);if(!el)return;
+  const pct=goal>0?Math.min(val/goal,1):0;
+  el.style.strokeDashoffset=circ*(1-pct);
+}
+
+function renderDash() {
+  // Greeting
+  const h=new Date().getHours();
+  const greet=h<12?'Доброе утро':h<18?'Добрый день':h<22?'Добрый вечер':'Спокойной ночи';
+  const gEl=document.getElementById('dash-greeting');if(gEl)gEl.textContent=greet;
+  const dEl=document.getElementById('dash-date');
+  if(dEl){
+    dEl.textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+  }
+
+  // Today's diary totals
+  const today=new Date().toISOString().slice(0,10);
+  const todayEntries=(diary||[]).filter(e=>(e.ts||'').startsWith(today));
+  const totK=todayEntries.reduce((s,e)=>s+(e.k||0),0);
+  const totP=todayEntries.reduce((s,e)=>s+(e.p||0),0);
+  const totF=todayEntries.reduce((s,e)=>s+(e.f||0),0);
+  const totC=todayEntries.reduce((s,e)=>s+(e.c||0),0);
+
+  // Update main kcal ring (circ = 2π*58 ≈ 364)
+  const kEl=document.getElementById('dash-k-val');if(kEl)kEl.textContent=Math.round(totK);
+  const kgEl=document.getElementById('dash-k-goal');if(kgEl)kgEl.textContent='/ '+dashGoals.kcal;
+  updateRing('rk',totK,dashGoals.kcal,364);
+
+  // Remain
+  const rem=dashGoals.kcal-Math.round(totK);
+  const remEl=document.getElementById('dash-remain');
+  if(remEl) remEl.textContent=rem>0?`Остаток: ${rem} ккал`:(rem<0?`Превышение: ${Math.abs(rem)} ккал`:'Цель выполнена ✓');
+
+  // Macro rings (circ = 2π*32 ≈ 201)
+  const rpEl=document.getElementById('rp-val');if(rpEl)rpEl.textContent=Math.round(totP)+'г';
+  const rfEl=document.getElementById('rf-val');if(rfEl)rfEl.textContent=Math.round(totF)+'г';
+  const rcEl=document.getElementById('rc-val');if(rcEl)rcEl.textContent=Math.round(totC)+'г';
+  updateRing('rp',totP,dashGoals.prot,201);
+  updateRing('rf',totF,dashGoals.fat,201);
+  updateRing('rc',totC,dashGoals.carb,201);
+
+  const rpGEl=document.getElementById('rp-goal');if(rpGEl)rpGEl.textContent='/ '+dashGoals.prot+'г';
+  const rfGEl=document.getElementById('rf-goal');if(rfGEl)rfGEl.textContent='/ '+dashGoals.fat+'г';
+  const rcGEl=document.getElementById('rc-goal');if(rcGEl)rcGEl.textContent='/ '+dashGoals.carb+'г';
+
+  // Meal breakdown — group by 'meal' tag or just show last 4 entries
+  const mealsEl=document.getElementById('dash-meals');
+  if(mealsEl && todayEntries.length>0){
+    const last=todayEntries.slice(-4).reverse();
+    mealsEl.innerHTML=last.map(e=>`
+      <div class="dash-meal-row">
+        <div class="dash-meal-name">${escHtml(e.n||'')} ${e.g?e.g+'г':''}</div>
+        <div class="dash-meal-kcal">${e.k||0} ккал</div>
+      </div>`).join('');
+  } else if(mealsEl){
+    mealsEl.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:10px 0;">Дневник пуст — добавь первый приём пищи</div>';
+  }
+}
 
 // ── BARCODE SCANNER ──────────────────────────────────────────────────────────
 let scanner = null;
