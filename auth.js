@@ -89,19 +89,7 @@ function signIn() {
     return;
   }
   const provider = new firebase.auth.GoogleAuthProvider();
-  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (isIOS) {
-    fbAuth.signInWithRedirect(provider);
-  } else {
-    fbAuth.signInWithPopup(provider).catch(err => {
-      console.error('Sign-in error:', err);
-      if (err.code === 'auth/popup-blocked') {
-        fbAuth.signInWithRedirect(provider);
-      } else if (err.code !== 'auth/popup-closed-by-user') {
-        toast('Ошибка входа: ' + err.code, 'err');
-      }
-    });
-  }
+  fbAuth.signInWithRedirect(provider);
 }
 
 function signOut() {

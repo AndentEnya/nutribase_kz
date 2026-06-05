@@ -102,7 +102,7 @@ td.r{text-align:right;}
 .filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .filter-row button{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
 .filter-row button:hover{border-color:var(--accent);color:var(--accent);}
-.filter-row button.on{background:linear-gradient(135deg,#e8b84b,#c99a36);border-color:transparent;color:#111;font-weight:700;box-shadow:0 2px 8px rgba(232,184,75,0.25);}
+.filter-row button.on{background:var(--accent);border-color:var(--accent);color:#111318;font-weight:700;}
 .mf-p.on{background:rgba(90,171,255,.2);border-color:var(--blue);color:var(--blue);}
 .mf-c.on{background:rgba(232,184,75,.2);border-color:var(--accent);color:var(--accent);}
 .mf-f.on{background:rgba(78,214,138,.2);border-color:var(--green);color:var(--green);}
