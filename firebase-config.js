@@ -14,7 +14,7 @@
 // Then replace the placeholder values below with your real config.
 // ──────────────────────────────────────────────────────────────────────────────
 
-const FIREBASE_CONFIG = {
+var FIREBASE_CONFIG = {
   apiKey:            "AIzaSyCY1tiQ6ScyOySYolVbjvwctxl9MppoMI",
   authDomain:        "nutribase-f6a19.firebaseapp.com",
   projectId:         "nutribase-f6a19",
@@ -24,4 +24,4 @@ const FIREBASE_CONFIG = {
 };
 
 // Set to false to disable cloud sync entirely
-const CLOUD_SYNC_ENABLED = true;
+var CLOUD_SYNC_ENABLED = true;
