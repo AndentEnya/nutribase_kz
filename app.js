@@ -1898,6 +1898,18 @@ function onBarcodeScan(barcode) {
   scanLock = true;
   _scanCaptureEffect(barcode);
 
+  // Сначала смотрим локальную базу (продукты добавленные через сканер)
+  const local = DB.find(d => d.barcode === barcode);
+  if (local) {
+    setTimeout(() => showScanResult({
+      product_name: local.n, brands: '',
+      image_front_small_url: '',
+      nutriments: { 'energy-kcal_100g': local.k, 'proteins_100g': local.p, 'fat_100g': local.f, 'carbohydrates_100g': local.c },
+      categories_tags: [local.cat]
+    }, barcode), 300);
+    return;
+  }
+
   const cached = _bcCacheGet(barcode);
   if (cached) { setTimeout(() => showScanResult(cached, barcode), 300); return; }
 
@@ -1959,8 +1971,9 @@ function scanNfAdd(barcode) {
   const p = +document.getElementById('snf-p').value || 0;
   const f = +document.getElementById('snf-f').value || 0;
   const c = +document.getElementById('snf-c').value || 0;
-  DB.push({ id: nextId(), n: name, cat: 'other', k, p, f, c, note: 'Штрихкод: ' + barcode, custom: true });
+  DB.push({ id: nextId(), n: name, cat: 'other', k, p, f, c, barcode, custom: true });
   saveDB();
+  renderDB();
   toast('Добавлено: ' + name, 'ok');
   resumeScannerUI();
 }
