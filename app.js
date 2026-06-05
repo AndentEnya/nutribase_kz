@@ -1951,21 +1951,14 @@ function resumeScanner() {
 }
 
 function showScanNotFound(barcode) {
-  // Закрываем сканер и переходим на форму добавления с предзаполненными полями
   closeScanner();
-  // Небольшой delay чтобы анимация закрытия успела проиграть
   setTimeout(() => {
-    showPage('db');
-    // Прокручиваем к форме добавления
+    showPage('add');
     const nameEl = document.getElementById('add-name');
     const noteEl = document.getElementById('add-note');
-    if (nameEl) {
-      nameEl.value = '';
-      nameEl.focus();
-      nameEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    if (nameEl) { nameEl.value = ''; nameEl.focus(); }
     if (noteEl) noteEl.value = 'Штрихкод: ' + barcode;
-    toast('Продукт не найден — заполни форму ниже', 'err');
+    toast('Продукт не найден — заполни данные', 'err');
   }, 300);
 }
 
