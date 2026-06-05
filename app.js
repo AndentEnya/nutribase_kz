@@ -1951,43 +1951,22 @@ function resumeScanner() {
 }
 
 function showScanNotFound(barcode) {
-  document.getElementById('scan-hint').textContent = 'Продукт не найден';
-  const result = document.getElementById('scan-result');
-  result.innerHTML = `
-    <div class="scan-nf-header">
-      <div class="scan-nf-icon">🔍</div>
-      <div>
-        <div class="scan-nf-title">Продукт не найден в базе</div>
-        <div class="scan-nf-code">${barcode}</div>
-      </div>
-    </div>
-    <p class="scan-nf-desc">Заполни данные и добавь в свою базу</p>
-    <input class="scan-nf-input" id="snf-name" placeholder="Название продукта" autocomplete="off">
-    <div class="scan-nf-grid">
-      <div class="scan-nf-field"><label>Ккал</label><input class="scan-nf-num" id="snf-k" type="number" placeholder="0" inputmode="decimal"></div>
-      <div class="scan-nf-field"><label>Белки г</label><input class="scan-nf-num" id="snf-p" type="number" placeholder="0" inputmode="decimal"></div>
-      <div class="scan-nf-field"><label>Жиры г</label><input class="scan-nf-num" id="snf-f" type="number" placeholder="0" inputmode="decimal"></div>
-      <div class="scan-nf-field"><label>Углев. г</label><input class="scan-nf-num" id="snf-c" type="number" placeholder="0" inputmode="decimal"></div>
-    </div>
-    <div class="scan-actions" style="margin-top:10px;">
-      <button class="scan-btn-add" onclick="scanNfAdd('${escAttr(barcode)}')">+ Добавить в базу</button>
-      <button class="scan-btn-diary" onclick="resumeScannerUI()">Отмена</button>
-    </div>`;
-  result.style.display = 'block';
-}
-
-function scanNfAdd(barcode) {
-  const name = (document.getElementById('snf-name').value || '').trim();
-  if (!name) { toast('Введи название продукта', 'err'); return; }
-  const k = +document.getElementById('snf-k').value || 0;
-  const p = +document.getElementById('snf-p').value || 0;
-  const f = +document.getElementById('snf-f').value || 0;
-  const c = +document.getElementById('snf-c').value || 0;
-  DB.push({ id: nextId(), n: name, cat: 'other', k, p, f, c, barcode, custom: true });
-  saveDB();
-  renderDB();
-  toast('Добавлено: ' + name, 'ok');
-  resumeScannerUI();
+  // Закрываем сканер и переходим на форму добавления с предзаполненными полями
+  closeScanner();
+  // Небольшой delay чтобы анимация закрытия успела проиграть
+  setTimeout(() => {
+    showPage('db');
+    // Прокручиваем к форме добавления
+    const nameEl = document.getElementById('add-name');
+    const noteEl = document.getElementById('add-note');
+    if (nameEl) {
+      nameEl.value = '';
+      nameEl.focus();
+      nameEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    if (noteEl) noteEl.value = 'Штрихкод: ' + barcode;
+    toast('Продукт не найден — заполни форму ниже', 'err');
+  }, 300);
 }
 
 function showScanResult(p, barcode) {

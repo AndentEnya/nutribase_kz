@@ -563,19 +563,6 @@ td.r{text-align:right;}
 @keyframes captureFlash{0%{opacity:1}60%{opacity:.4}100%{opacity:0}}
 .scan-line.captured{background:linear-gradient(90deg,transparent 0%,#00e676 6%,#00e676 94%,transparent 100%)!important;box-shadow:0 0 12px rgba(0,230,118,.95),0 0 26px rgba(0,230,118,.4)!important;transition:background .1s,box-shadow .1s;}
 .scan-line.captured::after{animation:none!important;left:0!important;width:100%!important;background:linear-gradient(90deg,transparent,rgba(180,255,200,.5) 30%,rgba(255,255,255,.9) 50%,rgba(180,255,200,.5) 70%,transparent)!important;}
-/* Not found form */
-.scan-nf-header{display:flex;gap:12px;align-items:center;margin-bottom:6px;}
-.scan-nf-icon{font-size:26px;flex-shrink:0;}
-.scan-nf-title{font-size:14px;font-weight:700;color:var(--text);}
-.scan-nf-code{font-size:11px;color:var(--text3);font-family:monospace;letter-spacing:.5px;margin-top:2px;}
-.scan-nf-desc{font-size:12px;color:var(--text2);margin:0 0 10px;}
-.scan-nf-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:10px 12px;font-size:16px;color:var(--text);box-sizing:border-box;outline:none;margin-bottom:8px;}
-.scan-nf-input:focus{border-color:var(--accent);}
-.scan-nf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:100%;}
-.scan-nf-field{min-width:0;display:flex;flex-direction:column;gap:4px;}
-.scan-nf-field label{font-size:11px;color:var(--text3);font-weight:500;}
-.scan-nf-num{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:9px 10px;font-size:16px;color:var(--text);box-sizing:border-box;outline:none;}
-.scan-nf-num:focus{border-color:var(--accent);}
 
 /* FAB scan button */
 .scan-fab{display:none;position:fixed;right:16px;bottom:calc(74px + env(safe-area-inset-bottom));width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#e8b84b,#c99a36);border:none;color:#111;cursor:pointer;box-shadow:0 4px 20px rgba(232,184,75,.5);z-index:140;align-items:center;justify-content:center;transition:transform .18s;}
