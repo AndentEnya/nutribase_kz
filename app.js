@@ -1871,13 +1871,35 @@ function _bcCacheSet(code, product) {
   } catch(e) {}
 }
 
+function _scanCaptureEffect(barcode) {
+  // Green flash on viewport
+  const vp = document.querySelector('.scan-viewport-wrap');
+  if (vp) {
+    const fl = document.createElement('div');
+    fl.className = 'scan-capture-flash';
+    vp.appendChild(fl);
+    setTimeout(() => fl.remove(), 650);
+  }
+  // Scan line turns green
+  const line = document.querySelector('.scan-line');
+  if (line) {
+    line.classList.add('captured');
+    setTimeout(() => line.classList.remove('captured'), 650);
+  }
+  // Show code in hint briefly
+  document.getElementById('scan-hint').textContent = '✓ ' + barcode;
+  setTimeout(() => {
+    if (scanLock) document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
+  }, 400);
+}
+
 function onBarcodeScan(barcode) {
   if (scanLock) return;
   scanLock = true;
-  document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
+  _scanCaptureEffect(barcode);
 
   const cached = _bcCacheGet(barcode);
-  if (cached) { showScanResult(cached, barcode); return; }
+  if (cached) { setTimeout(() => showScanResult(cached, barcode), 300); return; }
 
   const ctrl = new AbortController();
   const tid = setTimeout(() => ctrl.abort(), 6000);
@@ -1888,8 +1910,7 @@ function onBarcodeScan(barcode) {
         _bcCacheSet(barcode, data.product);
         showScanResult(data.product, barcode);
       } else {
-        document.getElementById('scan-hint').textContent = '❌ Продукт не найден в базе';
-        scanLock = false;
+        showScanNotFound(barcode);
       }
     })
     .catch(e => {
@@ -1903,6 +1924,45 @@ function resumeScanner() {
   scanLock = false;
   document.getElementById('scan-result').style.display = 'none';
   document.getElementById('scan-hint').textContent = 'Поместите красную линию поперёк штрихкода';
+}
+
+function showScanNotFound(barcode) {
+  document.getElementById('scan-hint').textContent = 'Продукт не найден';
+  const result = document.getElementById('scan-result');
+  result.innerHTML = `
+    <div class="scan-nf-header">
+      <div class="scan-nf-icon">🔍</div>
+      <div>
+        <div class="scan-nf-title">Продукт не найден в базе</div>
+        <div class="scan-nf-code">${barcode}</div>
+      </div>
+    </div>
+    <p class="scan-nf-desc">Заполни данные и добавь в свою базу</p>
+    <input class="scan-nf-input" id="snf-name" placeholder="Название продукта" autocomplete="off">
+    <div class="scan-nf-grid">
+      <div class="scan-nf-field"><label>Ккал</label><input class="scan-nf-num" id="snf-k" type="number" placeholder="0" inputmode="decimal"></div>
+      <div class="scan-nf-field"><label>Белки г</label><input class="scan-nf-num" id="snf-p" type="number" placeholder="0" inputmode="decimal"></div>
+      <div class="scan-nf-field"><label>Жиры г</label><input class="scan-nf-num" id="snf-f" type="number" placeholder="0" inputmode="decimal"></div>
+      <div class="scan-nf-field"><label>Углев. г</label><input class="scan-nf-num" id="snf-c" type="number" placeholder="0" inputmode="decimal"></div>
+    </div>
+    <div class="scan-actions" style="margin-top:10px;">
+      <button class="scan-btn-add" onclick="scanNfAdd('${escAttr(barcode)}')">+ Добавить в базу</button>
+      <button class="scan-btn-diary" onclick="resumeScannerUI()">Отмена</button>
+    </div>`;
+  result.style.display = 'block';
+}
+
+function scanNfAdd(barcode) {
+  const name = (document.getElementById('snf-name').value || '').trim();
+  if (!name) { toast('Введи название продукта', 'err'); return; }
+  const k = +document.getElementById('snf-k').value || 0;
+  const p = +document.getElementById('snf-p').value || 0;
+  const f = +document.getElementById('snf-f').value || 0;
+  const c = +document.getElementById('snf-c').value || 0;
+  DB.push({ id: nextId(), n: name, cat: 'other', k, p, f, c, note: 'Штрихкод: ' + barcode, custom: true });
+  saveDB();
+  toast('Добавлено: ' + name, 'ok');
+  resumeScannerUI();
 }
 
 function showScanResult(p, barcode) {
