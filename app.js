@@ -1849,22 +1849,52 @@ function _doStopScanner() {
   }
 }
 
+const _OFF_FIELDS = 'product_name,product_name_ru,generic_name,brands,nutriments,image_front_small_url,categories_tags';
+const _SCAN_CACHE_KEY = 'nb_barcache';
+
+function _bcCacheGet(code) {
+  try {
+    const c = JSON.parse(localStorage.getItem(_SCAN_CACHE_KEY) || '{}');
+    const e = c[code];
+    if (!e) return null;
+    if (Date.now() - e.ts > 30*24*3600*1000) return null; // 30 дней TTL
+    return e.d;
+  } catch(e) { return null; }
+}
+function _bcCacheSet(code, product) {
+  try {
+    const c = JSON.parse(localStorage.getItem(_SCAN_CACHE_KEY) || '{}');
+    c[code] = { d: product, ts: Date.now() };
+    const keys = Object.keys(c);
+    if (keys.length > 300) keys.sort((a,b)=>c[a].ts-c[b].ts).slice(0,keys.length-300).forEach(k=>delete c[k]);
+    localStorage.setItem(_SCAN_CACHE_KEY, JSON.stringify(c));
+  } catch(e) {}
+}
+
 function onBarcodeScan(barcode) {
   if (scanLock) return;
   scanLock = true;
   document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
-  fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
-    .then(r => r.json())
+
+  const cached = _bcCacheGet(barcode);
+  if (cached) { showScanResult(cached, barcode); return; }
+
+  const ctrl = new AbortController();
+  const tid = setTimeout(() => ctrl.abort(), 6000);
+  fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}?fields=${_OFF_FIELDS}`, { signal: ctrl.signal })
+    .then(r => { clearTimeout(tid); return r.json(); })
     .then(data => {
       if (data.status === 1 && data.product) {
+        _bcCacheSet(barcode, data.product);
         showScanResult(data.product, barcode);
       } else {
-        document.getElementById('scan-hint').textContent = '❌ Продукт не найден — поднеси ещё раз';
+        document.getElementById('scan-hint').textContent = '❌ Продукт не найден в базе';
         scanLock = false;
       }
     })
-    .catch(() => {
-      document.getElementById('scan-hint').textContent = '⚠ Нет сети — попробуй ещё раз';
+    .catch(e => {
+      clearTimeout(tid);
+      document.getElementById('scan-hint').textContent = e.name === 'AbortError' ? '⏱ Тайм-аут — попробуй ещё раз' : '⚠ Нет сети';
       scanLock = false;
     });
 }
