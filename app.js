@@ -1756,36 +1756,37 @@ function renderDash() {
 let scanner = null;
 let scannerRunning = false;
 
-// Completely tears down current scanner instance, resolves when done
-function destroyScanner() {
+function _stopScanner() {
   return new Promise(resolve => {
-    const vp = document.getElementById('scan-viewport');
     const s = scanner;
     scanner = null;
     scannerRunning = false;
-    if (!s) { vp.innerHTML = ''; resolve(); return; }
-    const cleanup = () => {
-      try { s.clear(); } catch(e) {}
-      vp.innerHTML = '';
-      resolve();
-    };
-    // Only call stop() if the instance is actually scanning
+    if (!s) { resolve(); return; }
     try {
-      if (s.getState && s.getState() === 2 /* SCANNING */) {
-        s.stop().then(cleanup).catch(cleanup);
-      } else {
-        cleanup();
-      }
-    } catch(e) { cleanup(); }
+      s.stop().then(resolve).catch(resolve);
+    } catch(e) { resolve(); }
   });
 }
 
-function startScannerCamera() {
+// Recreate the viewport div so html5-qrcode always mounts on a fresh element
+function _resetViewport() {
+  const wrap = document.querySelector('.scan-viewport-wrap');
+  const old = document.getElementById('scan-viewport');
+  if (old) old.remove();
+  const div = document.createElement('div');
+  div.id = 'scan-viewport';
+  // Insert before the scan-line div
+  const line = wrap.querySelector('.scan-line');
+  wrap.insertBefore(div, line || null);
+}
+
+function startScannerCamera(cameraId) {
+  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
   try {
     scanner = new Html5Qrcode('scan-viewport');
     const cfg = { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 };
     scanner.start(
-      { facingMode: 'environment' },
+      cameraId,
       cfg,
       (barcode) => onBarcodeScan(barcode),
       () => {}
@@ -1803,23 +1804,50 @@ function startScannerCamera() {
 async function openScanner() {
   document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
-  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
-  await destroyScanner();
-  startScannerCamera();
+  document.getElementById('scan-hint').textContent = 'Запрос камеры…';
+
+  await _stopScanner();
+  _resetViewport();
+
+  try {
+    // getCameras() triggers fresh getUserMedia — fixes iOS reuse bug
+    const cameras = await Html5Qrcode.getCameras();
+    if (!cameras || cameras.length === 0) {
+      document.getElementById('scan-hint').textContent = 'Камера не найдена';
+      return;
+    }
+    // Prefer back/rear camera
+    const cam = cameras.find(c => /back|rear|environment/i.test(c.label))
+             || cameras[cameras.length - 1];
+    startScannerCamera(cam.id);
+  } catch(e) {
+    console.warn('getCameras error:', e);
+    // Fallback: try with facingMode if getCameras fails
+    try {
+      scanner = new Html5Qrcode('scan-viewport');
+      const cfg = { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 };
+      scanner.start({ facingMode: 'environment' }, cfg,
+        (b) => onBarcodeScan(b), () => {}
+      ).then(() => { scannerRunning = true; document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта'; })
+       .catch(() => { document.getElementById('scan-hint').textContent = 'Нет доступа к камере'; });
+    } catch(e2) {
+      document.getElementById('scan-hint').textContent = 'Нет доступа к камере';
+    }
+  }
 }
 
 async function closeScanner() {
   document.getElementById('scan-overlay').classList.remove('open');
-  await destroyScanner();
+  await _stopScanner();
+  _resetViewport();
 }
 
 function onBarcodeScan(barcode) {
   if (!scannerRunning) return;
   scannerRunning = false;
-  // Fire-and-forget stop — result UI shows immediately
   const s = scanner;
   scanner = null;
-  if (s) { try { if (s.getState && s.getState()===2) s.stop().catch(()=>{}); } catch(e){} }
+  if (s) try { s.stop().catch(() => {}); } catch(e) {}
   document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
   document.getElementById('scan-result').style.display = 'none';
 
@@ -1840,10 +1868,17 @@ function onBarcodeScan(barcode) {
 }
 
 async function resumeScanner() {
-  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
   document.getElementById('scan-result').style.display = 'none';
-  await destroyScanner();
-  startScannerCamera();
+  await _stopScanner();
+  _resetViewport();
+  try {
+    const cameras = await Html5Qrcode.getCameras();
+    const cam = cameras.find(c => /back|rear|environment/i.test(c.label))
+             || cameras[cameras.length - 1];
+    startScannerCamera(cam.id);
+  } catch(e) {
+    startScannerCamera({ facingMode: 'environment' });
+  }
 }
 
 function showScanResult(p, barcode) {
