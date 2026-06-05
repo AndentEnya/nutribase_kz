@@ -15,12 +15,12 @@
 // ──────────────────────────────────────────────────────────────────────────────
 
 const FIREBASE_CONFIG = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey:            "AIzaSyCY1tiQ6ScyOySYolVbjvwctxl9MppoMI",
+  authDomain:        "nutribase-f6a19.firebaseapp.com",
+  projectId:         "nutribase-f6a19",
+  storageBucket:     "nutribase-f6a19.firebasestorage.app",
+  messagingSenderId: "119863247458",
+  appId:             "1:119863247458:web:357b47cfc29d930261873b"
 };
 
 // Set to false to disable cloud sync entirely
