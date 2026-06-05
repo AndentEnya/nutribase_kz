@@ -1755,78 +1755,52 @@ function renderDash() {
 // ── BARCODE SCANNER ──────────────────────────────────────────────────────────
 let scanner = null;
 let scannerRunning = false;
-let lastScannedCode = '';
-let lastScannedTime = 0;
+let scanLock = false; // prevents double-fetch on same barcode
 
-function _resetViewport() {
-  const wrap = document.querySelector('.scan-viewport-wrap');
-  if (!wrap) return;
-  const old = document.getElementById('scan-viewport');
-  if (old) old.remove();
-  const div = document.createElement('div');
-  div.id = 'scan-viewport';
-  wrap.insertBefore(div, wrap.querySelector('.scan-line') || null);
-}
-
-function _destroyScanner() {
-  return new Promise(resolve => {
-    const s = scanner;
-    scanner = null;
-    scannerRunning = false;
-    if (!s) { resolve(); return; }
-    const done = () => { try { s.clear(); } catch(e) {} resolve(); };
-    try { s.stop().then(done).catch(done); } catch(e) { done(); }
-  });
-}
-
-async function openScanner() {
+function openScanner() {
   document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
-  lastScannedCode = '';
+  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+  scanLock = false;
 
-  // Camera already running — just reset UI, don't restart
-  if (scannerRunning) {
-    document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
-    return;
-  }
+  if (scannerRunning) return; // camera already live, nothing to do
 
-  document.getElementById('scan-hint').textContent = 'Запуск камеры…';
-
-  // Clean up any leftover instance before starting fresh
-  await _destroyScanner();
-  _resetViewport();
-  await new Promise(r => setTimeout(r, 250));
+  // Recreate the viewport element fresh every time
+  const wrap = document.querySelector('.scan-viewport-wrap');
+  const old = document.getElementById('scan-viewport');
+  if (old) old.remove();
+  const vp = document.createElement('div');
+  vp.id = 'scan-viewport';
+  wrap.insertBefore(vp, wrap.querySelector('.scan-line') || null);
 
   try {
     scanner = new Html5Qrcode('scan-viewport');
-    const cfg = { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 };
-    scanner.start({ facingMode: 'environment' }, cfg, onBarcodeScan, () => {})
-      .then(() => {
-        scannerRunning = true;
-        document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
-      })
-      .catch(() => {
-        document.getElementById('scan-hint').textContent = 'Нет доступа к камере';
-      });
+    scanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 },
+      onBarcodeScan,
+      () => {}
+    ).then(() => { scannerRunning = true; })
+     .catch(() => { document.getElementById('scan-hint').textContent = 'Нет доступа к камере'; });
   } catch(e) {
     document.getElementById('scan-hint').textContent = 'Камера недоступна';
   }
 }
 
-async function closeScanner() {
+function closeScanner() {
   document.getElementById('scan-overlay').classList.remove('open');
-  await _destroyScanner();
-  _resetViewport();
+  if (scanner) {
+    const s = scanner;
+    scanner = null;
+    scannerRunning = false;
+    s.stop().catch(() => {});
+  }
 }
 
 function onBarcodeScan(barcode) {
-  // Debounce: ignore same code within 4 seconds
-  const now = Date.now();
-  if (barcode === lastScannedCode && now - lastScannedTime < 4000) return;
-  lastScannedCode = barcode;
-  lastScannedTime = now;
+  if (scanLock) return;
+  scanLock = true;
 
-  // Don't stop the camera — just show result overlay on top
   document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
 
   fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
@@ -1846,8 +1820,7 @@ function onBarcodeScan(barcode) {
 }
 
 function resumeScanner() {
-  // Camera is still running — just hide result and reset debounce
-  lastScannedCode = '';
+  scanLock = false;
   document.getElementById('scan-result').style.display = 'none';
   document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
 }
