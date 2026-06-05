@@ -292,6 +292,50 @@ td.r{text-align:right;}
 .mode-panel{display:none;}
 .mode-panel.on{display:block;}
 
+/* ── SWAP MODAL ── */
+.swap-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;align-items:center;justify-content:center;}
+.swap-modal-bg.open{display:flex;}
+.swap-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);width:460px;max-width:96vw;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;}
+.swap-modal-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.swap-modal-title{font-size:13px;font-weight:700;color:var(--text);}
+.swap-search{padding:8px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.swap-search input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);color:var(--text);font-size:12px;padding:6px 10px;outline:none;}
+.swap-search input:focus{border-color:var(--accent);}
+.swap-list{overflow-y:auto;flex:1;}
+.swap-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.swap-item:hover{background:var(--bg3);}
+.swap-item.sel{background:rgba(232,184,75,.08);border-left:3px solid var(--accent);padding-left:11px;}
+.swap-item-name{font-size:13px;color:var(--text);line-height:1.3;}
+.swap-item-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.swap-item-macros{display:flex;gap:6px;font-size:11px;margin-top:3px;}
+.gram-inp{background:var(--bg4);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:12px;width:50px;padding:2px 5px;text-align:right;font-family:var(--font-body);}
+.gram-inp:focus{border-color:var(--accent);outline:none;}
+.pin-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-left:5px;opacity:0;vertical-align:middle;}
+.pin-dot.on{opacity:1;}
+
+/* ── PROGRESS / WEIGHT ── */
+.w-layout{display:grid;grid-template-columns:260px 1fr;gap:14px;margin-bottom:14px;}
+@media(max-width:860px){.w-layout{grid-template-columns:1fr;}}
+.w-form-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.w-form-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+.w-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.w-stat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;}
+.w-stat-val{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);line-height:1.1;}
+.w-stat-lbl{font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.04em;}
+.w-chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:14px;}
+.w-chart-svg{width:100%;display:block;}
+.w-history{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.w-hist-head{padding:9px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;}
+.w-hist-row{display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--border);font-size:13px;}
+.w-hist-row:last-child{border-bottom:none;}
+.w-hist-row:hover{background:var(--bg3);}
+.w-hist-date{color:var(--text2);width:90px;font-size:12px;}
+.w-hist-val{font-weight:700;color:var(--text);flex:1;}
+.w-hist-delta{font-size:12px;width:56px;text-align:right;}
+.w-hist-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0 2px;transition:color .15s;line-height:1;}
+.w-hist-del:hover{color:var(--red);}
+.w-empty{padding:32px;text-align:center;color:var(--text3);font-size:13px;line-height:1.6;}
+
 /* ── MOBILE ── */
 .menu-btn{display:none;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r2);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;flex-shrink:0;}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:190;}
@@ -324,6 +368,9 @@ td.r{text-align:right;}
   #toast{right:10px;left:10px;bottom:14px;text-align:center;}
   .totals-bar{gap:10px;}
   .metric-num{font-size:20px;}
+  .w-layout{grid-template-columns:1fr!important;}
+  .w-stats{grid-template-columns:1fr 1fr!important;}
+  .swap-modal{width:95vw!important;}
 }
 </style>
 </head>
@@ -386,6 +433,10 @@ td.r{text-align:right;}
     <button class="nav-btn" onclick="showPage('picker',this)">
       <svg viewBox="0 0 24 24"><path d="M3 3h18v4H3z"/><path d="M3 10h12v4H3z"/><path d="M3 17h8v4H3z"/><circle cx="19" cy="19" r="3"/><line x1="19" y1="16" x2="19" y2="22"/><line x1="16" y1="19" x2="22" y2="19"/></svg>
       Подбор рациона
+    </button>
+    <button class="nav-btn" onclick="showPage('progress',this)">
+      <svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+      Прогресс веса
     </button>
   </div>
   <hr class="nav-divider">
@@ -779,8 +830,64 @@ td.r{text-align:right;}
     </div>
   </div>
 
+  <!-- PROGRESS PAGE -->
+  <div id="page-progress" class="page">
+    <div class="page-title">Прогресс веса</div>
+    <div class="page-sub">Записывай вес каждый день — график покажет динамику и тренд к цели.</div>
+    <div class="w-layout">
+      <div>
+        <div class="w-form-card" style="margin-bottom:12px;">
+          <div class="w-form-title">Добавить запись</div>
+          <div class="form-row"><label>Дата</label><input type="date" id="w-date"></div>
+          <div class="form-row"><label>Вес (кг)</label><input type="number" id="w-kg" min="20" max="300" step="0.1" placeholder="75.5"></div>
+          <button class="btn btn-accent" style="width:100%;margin-top:10px;" onclick="addWeight()">+ Записать</button>
+        </div>
+        <div class="w-form-card">
+          <div class="w-form-title">Цель</div>
+          <div class="form-row"><label>Целевой вес (кг)</label><input type="number" id="w-goal" min="20" max="300" step="0.1" placeholder="70.0" onchange="renderWeightPage()"></div>
+          <div id="w-goal-hint" style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.5;"></div>
+        </div>
+      </div>
+      <div>
+        <div class="w-stats" style="margin-bottom:12px;">
+          <div class="w-stat"><div class="w-stat-val" id="w-stat-current">—</div><div class="w-stat-lbl">Текущий вес</div></div>
+          <div class="w-stat"><div class="w-stat-val" id="w-stat-start">—</div><div class="w-stat-lbl">Начальный</div></div>
+          <div class="w-stat"><div class="w-stat-val" id="w-stat-delta">—</div><div class="w-stat-lbl">Изменение</div></div>
+          <div class="w-stat"><div class="w-stat-val" id="w-stat-goal">—</div><div class="w-stat-lbl">До цели</div></div>
+        </div>
+        <div class="w-chart-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;">График веса</div>
+            <div style="display:flex;gap:12px;font-size:10px;color:var(--text3);">
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--accent);display:inline-block;border-radius:2px;"></span>Вес</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--blue);display:inline-block;border-radius:2px;opacity:.7;"></span>Тренд</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--green);display:inline-block;border-radius:2px;opacity:.7;border-top:1px dashed var(--green);"></span>Цель</span>
+            </div>
+          </div>
+          <div id="w-chart-area"></div>
+        </div>
+      </div>
+    </div>
+    <div class="w-history">
+      <div class="w-hist-head">История записей</div>
+      <div id="w-history-body"><div class="w-empty">Добавьте первую запись веса</div></div>
+    </div>
+  </div>
+
 </div><!-- main -->
 </div><!-- shell -->
+
+<!-- SWAP MODAL -->
+<div class="swap-modal-bg" id="swap-modal-bg" onclick="if(event.target===this)closeSwapModal()">
+  <div class="swap-modal">
+    <div class="swap-modal-head">
+      <span class="swap-modal-title" id="swap-modal-title">Выбрать продукт</span>
+      <button class="btn btn-sm" onclick="closeSwapModal()">✕</button>
+    </div>
+    <div class="swap-search"><input type="text" id="swap-search-inp" placeholder="Поиск..." oninput="filterSwapList()"></div>
+    <div class="swap-list" id="swap-list"></div>
+  </div>
+</div>
 
 <!-- EDIT MODAL -->
 <div class="modal-bg" id="edit-modal">
@@ -914,6 +1021,8 @@ let tdSex='m',activeFtab='mifflin';
 let diary=[],diarySel=null;
 let profiles={},activeProfile=null;
 let pickerMode='day',pickerSeed=Math.random(),excludedCats=new Set(),slotSeeds={},slotClicks={};
+let pinnedSlots={}; // "mealKey_rowIdx" -> {foodId, customG}
+let swapCtx=null, swapPool=[];
 
 function loadDB(){const s=localStorage.getItem('nkz_db');DB=s?JSON.parse(s):JSON.parse(JSON.stringify(SEED));}
 function saveDB(){localStorage.setItem('nkz_db',JSON.stringify(DB));}
@@ -928,11 +1037,12 @@ function showPage(id,btn){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');
-  const titles={db:'База продуктов',add:'Добавить продукт',search:'Поиск USDA API',tdee:'Калькулятор TDEE',plan:'Дневник питания',picker:'Подбор рациона'};
+  const titles={db:'База продуктов',add:'Добавить продукт',search:'Поиск USDA API',tdee:'Калькулятор TDEE',plan:'Дневник питания',picker:'Подбор рациона',progress:'Прогресс веса'};
   document.getElementById('topbar-title').textContent=titles[id]||'';
   if(id==='db')renderDB();
   if(id==='tdee')tdeeCalc();
   if(id==='plan')renderDiary();
+  if(id==='progress')renderWeightPage();
 }
 
 function buildCatFilters(){
@@ -1543,7 +1653,12 @@ function toggleExclude(cat, btn) {
   runPicker();
 }
 
-function shufflePicker() { pickerSeed = Math.random(); slotSeeds = {}; slotClicks = {}; runPicker(); }
+function shufflePicker() {
+  pickerSeed = Math.random(); slotSeeds = {}; slotClicks = {};
+  // Clear only unpinned slots
+  Object.keys(pinnedSlots).forEach(k=>{ if(!pinnedSlots[k].foodId && !pinnedSlots[k].customG) delete pinnedSlots[k]; });
+  runPicker();
+}
 
 // Seeded random using pickerSeed for reproducible shuffles
 function seededRand(seed) { let x=Math.sin(seed)*10000; return x-Math.floor(x); }
@@ -1755,70 +1870,49 @@ function buildMealBlock(mealKey, mealDef, tp, tf, tc, mealIdx) {
   const mF = Math.round(tf * mealDef.fPct);
   const mC = Math.round(tc * mealDef.cPct);
   const baseSeed = pickerSeed + mealIdx * 17;
-  const slotSeed = (slot) => slotSeeds[mealKey + '_' + slot] || (baseSeed + slot * 3);
+  const slotSeed = (slot) => slotSeeds[mealKey+'_'+slot] || (baseSeed + slot * 3);
 
   const rows = [];
   const usedIds = new Set();
 
-  // 1. Protein source
-  const protFood = pickFromRule(mealDef, 'prot', mP, slotSeed(0), mealKey, 0);
-  if (protFood && !usedIds.has(protFood.id)) {
-    usedIds.add(protFood.id);
-    const g = gramsForMacro(protFood, mP, 'p');
+  function pickRow(role, slotIdx, targetG, macroKey, fixedG) {
+    const slotKey = mealKey+'_'+slotIdx;
+    const pin = pinnedSlots[slotKey];
+    let food = pin && pin.foodId ? DB.find(d=>d.id===pin.foodId)||null : null;
+    if (!food) food = pickFromRule(mealDef, role, targetG, slotSeed(slotIdx), mealKey, slotIdx);
+    if (!food || usedIds.has(food.id)) return;
+    usedIds.add(food.id);
+    let g = pin && pin.customG ? pin.customG : (fixedG || gramsForMacro(food, targetG, macroKey));
     const m = g/100;
-    rows.push({food:protFood, g, role:'prot', p:protFood.p*m, fat:protFood.f*m, c:protFood.c*m, k:protFood.k*m});
+    rows.push({food, g, role, si:slotIdx, p:food.p*m, fat:food.f*m, c:food.c*m, k:food.k*m, pinned:!!(pin&&pin.foodId)});
   }
 
-  // 2. Carb source (only if there are carbs for this meal)
-  if (mC > 10 && mealDef.carbCats && mealDef.carbCats.length > 0) {
-    const carbFood = pickFromRule(mealDef, 'carb', mC, slotSeed(1), mealKey, 1);
-    if (carbFood && !usedIds.has(carbFood.id)) {
-      usedIds.add(carbFood.id);
-      const g = gramsForMacro(carbFood, mC, 'c');
-      const m = g/100;
-      rows.push({food:carbFood, g, role:'carb', p:carbFood.p*m, fat:carbFood.f*m, c:carbFood.c*m, k:carbFood.k*m});
+  pickRow('prot', 0, mP, 'p', 0);
+  if (mC>10 && mealDef.carbCats && mealDef.carbCats.length) pickRow('carb', 1, mC, 'c', 0);
+  if (mealDef.vegs&&mealDef.vegs.length||mealDef.vegFilter) {
+    pickRow('veg', 2, 0, null, 150);
+    if (mealKey==='lunch'||mealKey==='dinner') pickRow('veg', 3, 0, null, 100);
+  }
+  if (mF>5 && mealDef.fatIds && mealDef.fatIds.length) {
+    const slotKey=mealKey+'_4'; const pin=pinnedSlots[slotKey];
+    let ff=pin&&pin.foodId?DB.find(d=>d.id===pin.foodId)||null:null;
+    if(!ff)ff=pickFromRule(mealDef,'fat',mF,slotSeed(4),mealKey,4);
+    if(ff&&!usedIds.has(ff.id)){
+      usedIds.add(ff.id);
+      const g=pin&&pin.customG?pin.customG:(ff.cat==='fat'?15:25);
+      const m=g/100;
+      rows.push({food:ff,g,role:'fat',si:4,p:ff.p*m,fat:ff.f*m,c:ff.c*m,k:ff.k*m,pinned:!!(pin&&pin.foodId)});
     }
   }
 
-  // 3. Vegetables (if this meal has vegs)
-  if (mealDef.vegs && mealDef.vegs.length > 0 || mealDef.vegFilter) {
-    const vegFood = pickFromRule(mealDef, 'veg', 0, slotSeed(2), mealKey, 2);
-    if (vegFood && !usedIds.has(vegFood.id)) {
-      usedIds.add(vegFood.id);
-      const g = 150; // fixed portion for veg
-      const m = g/100;
-      rows.push({food:vegFood, g, role:'veg', p:vegFood.p*m, fat:vegFood.f*m, c:vegFood.c*m, k:vegFood.k*m});
-    }
-    // Second veg for lunch/dinner
-    if (mealKey==='lunch'||mealKey==='dinner') {
-      const vegFood2 = pickFromRule(mealDef, 'veg', 0, slotSeed(3), mealKey, 3);
-      if (vegFood2 && !usedIds.has(vegFood2.id)) {
-        usedIds.add(vegFood2.id);
-        const g = 100; const m = g/100;
-        rows.push({food:vegFood2, g, role:'veg', p:vegFood2.p*m, fat:vegFood2.f*m, c:vegFood2.c*m, k:vegFood2.k*m});
-      }
-    }
-  }
-
-  // 4. Fat source (small addition)
-  if (mF > 5 && mealDef.fatIds && mealDef.fatIds.length > 0) {
-    const fatFood = pickFromRule(mealDef, 'fat', mF, slotSeed(4), mealKey, 4);
-    if (fatFood && !usedIds.has(fatFood.id)) {
-      usedIds.add(fatFood.id);
-      // fat is always small portion — 10-15g for oils, 20-30g for nuts
-      const g = fatFood.cat==='fat' ? 15 : 25;
-      const m = g/100;
-      rows.push({food:fatFood, g, role:'fat', p:fatFood.p*m, fat:fatFood.f*m, c:fatFood.c*m, k:fatFood.k*m});
-    }
-  }
-
-  const sumK  = rows.reduce((s,r)=>s+r.k,0);
-  const sumP  = rows.reduce((s,r)=>s+r.p,0);
-  const sumF2 = rows.reduce((s,r)=>s+r.fat,0);
-  const sumC  = rows.reduce((s,r)=>s+r.c,0);
+  const sumK=rows.reduce((s,r)=>s+r.k,0);
+  const sumP=rows.reduce((s,r)=>s+r.p,0);
+  const sumF2=rows.reduce((s,r)=>s+r.fat,0);
+  const sumC=rows.reduce((s,r)=>s+r.c,0);
+  const roleLabel={prot:'Б',carb:'У',fat:'Ж',veg:'О'};
 
   return {
-    html: `<div class="meal-block">
+    html:`<div class="meal-block">
       <div class="mb-head">
         <span class="mb-title">${mealDef.icon} ${mealDef.label}</span>
         <span style="display:flex;gap:10px;font-size:11px;align-items:center;">
@@ -1828,18 +1922,23 @@ function buildMealBlock(mealKey, mealDef, tp, tf, tc, mealIdx) {
           <span class="mb-kcal">${Math.round(sumK)} ккал</span>
         </span>
       </div>
-      <div style="padding:6px 14px 4px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border);">${mealDef.note}</div>
-      ${rows.map((r,ri)=>`<div class="food-row">
+      <div style="padding:5px 14px 4px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border);">${mealDef.note}</div>
+      ${rows.map(r=>`<div class="food-row">
         <div class="food-cat-dot" style="background:${catColors[r.food.cat]||'#888'};"></div>
-        <span class="food-name">${r.food.n}</span>
-        <span class="food-g">${Math.round(r.g)} г</span>
+        <span class="food-name" style="cursor:pointer;" onclick="openSwapModal('${mealKey}',${r.si},${mealIdx},'${r.role}')" title="Нажми чтобы сменить продукт">
+          ${r.food.n}<span class="pin-dot${r.pinned?' on':''}"></span>
+        </span>
+        <input class="gram-inp" type="number" value="${Math.round(r.g)}" min="10" max="2000"
+          onchange="updateGram('${mealKey}',${r.si},this.value)"
+          title="Граммовка (редактируй)">
+        <span style="font-size:10px;color:var(--text3);">г</span>
         <span class="food-macros">
           <span class="macro-p">${Math.round(r.p)}г</span>
           <span class="macro-f">${Math.round(r.fat)}г</span>
           <span class="macro-c">${Math.round(r.c)}г</span>
           <span class="macro-k">${Math.round(r.k)}</span>
         </span>
-        <button class="food-repl" onclick="replaceSlot('${mealKey}',${ri},${mealIdx})">↻</button>
+        <button class="food-repl" onclick="replaceSlot('${mealKey}',${r.si},${mealIdx})" title="Случайная замена">↻</button>
       </div>`).join('')}
     </div>`,
     sumK, sumP, sumF2, sumC
@@ -1848,9 +1947,10 @@ function buildMealBlock(mealKey, mealDef, tp, tf, tc, mealIdx) {
 
 function replaceSlot(mealKey, rowIdx, mealIdx) {
   const slotKey = mealKey + '_' + rowIdx;
+  // Clear food pin but keep gram override
+  if (pinnedSlots[slotKey]) { pinnedSlots[slotKey].foodId = null; }
   slotClicks[slotKey] = (slotClicks[slotKey] || 0) + 1;
-  // Also shift seed so sin() lands on different value
-  slotSeeds[slotKey] = pickerSeed + mealIdx * 17 + slotClicks[slotKey] * 137.508; // golden angle step
+  slotSeeds[slotKey] = pickerSeed + mealIdx * 17 + slotClicks[slotKey] * 137.508;
   runPickerDayKeepState();
 }
 
@@ -1980,8 +2080,235 @@ function runPickerList(kcal, tp, tf, tc) {
 // replaceFood replaced by replaceSlot above
 
 
+// ── SWAP MODAL ────────────────────────────────────────────────────────────────
+function openSwapModal(mealKey, rowIdx, mealIdx, role) {
+  const rule = MEAL_RULES[mealKey];
+  if (!rule) return;
+  let pool = [];
+  if (role==='prot') {
+    if (rule.protFilter) pool=DB.filter(d=>rule.protFilter(d));
+    else if (rule.protCats) pool=DB.filter(d=>rule.protCats.includes(d.cat));
+    if (!pool.length&&rule.protIds) pool=DB.filter(d=>rule.protIds.includes(d.id));
+  } else if (role==='carb') {
+    if (rule.carbFilter) pool=DB.filter(d=>rule.carbFilter(d));
+    else if (rule.carbCats&&rule.carbCats.length) pool=DB.filter(d=>rule.carbCats.includes(d.cat));
+    if (!pool.length&&rule.carbIds&&rule.carbIds.length) pool=DB.filter(d=>rule.carbIds.includes(d.id));
+    if (!pool.length) pool=DB.filter(d=>['grain','legume','fruit'].includes(d.cat));
+  } else if (role==='fat') {
+    if (rule.fatFilter) pool=DB.filter(d=>rule.fatFilter(d));
+    if (!pool.length) pool=DB.filter(d=>d.cat==='nut'||d.cat==='fat');
+  } else if (role==='veg') {
+    pool=DB.filter(d=>d.cat==='veg');
+  }
+  if (!pool.length) { toast('Нет продуктов для этой роли','err'); return; }
+
+  swapCtx={mealKey,rowIdx,mealIdx,role};
+  swapPool=pool;
+  const pin=pinnedSlots[mealKey+'_'+rowIdx];
+  const pinnedId=pin?pin.foodId:null;
+  const roleNames={prot:'Белок',carb:'Углеводы',fat:'Жиры',veg:'Овощи'};
+  document.getElementById('swap-modal-title').textContent=`Сменить продукт — ${roleNames[role]||role}`;
+  document.getElementById('swap-search-inp').value='';
+  renderSwapList(pool, pinnedId);
+  document.getElementById('swap-modal-bg').classList.add('open');
+}
+
+function renderSwapList(pool, pinnedId) {
+  document.getElementById('swap-list').innerHTML = pool.map(food=>`
+    <div class="swap-item${food.id===pinnedId?' sel':''}" onclick="confirmSwap(${food.id})">
+      <div class="food-cat-dot" style="background:${catColors[food.cat]||'#888'};flex-shrink:0;margin-top:3px;"></div>
+      <div style="flex:1;min-width:0;">
+        <div class="swap-item-name">${food.n}</div>
+        <div class="swap-item-macros">
+          <span class="macro-p">${food.p}г Б</span>
+          <span class="macro-f">${food.f}г Ж</span>
+          <span class="macro-c">${food.c}г У</span>
+          <span class="macro-k" style="color:var(--text3)">${food.k}кк/100г</span>
+        </div>
+        ${food.note?`<div class="swap-item-sub">${food.note}</div>`:''}
+      </div>
+      ${food.id===pinnedId?'<span style="color:var(--accent);font-size:12px;">✓</span>':''}
+    </div>`).join('');
+}
+
+function filterSwapList() {
+  const q=document.getElementById('swap-search-inp').value.toLowerCase();
+  const filtered=q?swapPool.filter(f=>f.n.toLowerCase().includes(q)||(f.note||'').toLowerCase().includes(q)):swapPool;
+  const pin=swapCtx?pinnedSlots[swapCtx.mealKey+'_'+swapCtx.rowIdx]:null;
+  renderSwapList(filtered, pin?pin.foodId:null);
+}
+
+function confirmSwap(foodId) {
+  if (!swapCtx) return;
+  const {mealKey, rowIdx} = swapCtx;
+  const slotKey=mealKey+'_'+rowIdx;
+  const existing=pinnedSlots[slotKey]||{};
+  pinnedSlots[slotKey]={foodId, customG:existing.customG||null};
+  closeSwapModal();
+  runPickerDayKeepState();
+}
+
+function closeSwapModal() {
+  document.getElementById('swap-modal-bg').classList.remove('open');
+  swapCtx=null; swapPool=[];
+}
+
+function updateGram(mealKey, rowIdx, newG) {
+  const g=Math.round(parseFloat(newG));
+  if (!g||g<5||g>2000) return;
+  const k=mealKey+'_'+rowIdx;
+  pinnedSlots[k]={...(pinnedSlots[k]||{}), customG:g};
+  runPickerDayKeepState();
+}
+
+// ── WEIGHT TRACKER ────────────────────────────────────────────────────────────
+let weightLog=[];
+
+function loadWeightLog(){try{weightLog=JSON.parse(localStorage.getItem('nb_weight')||'[]');}catch(e){weightLog=[];}}
+function saveWeightLog(){localStorage.setItem('nb_weight',JSON.stringify(weightLog));}
+
+function addWeight(){
+  const d=document.getElementById('w-date').value;
+  const kg=parseFloat(document.getElementById('w-kg').value);
+  if(!d||!kg||kg<20||kg>400){toast('Введите корректные данные','err');return;}
+  const i=weightLog.findIndex(e=>e.date===d);
+  if(i!==-1)weightLog.splice(i,1);
+  weightLog.push({date:d,kg});
+  weightLog.sort((a,b)=>a.date.localeCompare(b.date));
+  saveWeightLog();
+  document.getElementById('w-kg').value='';
+  renderWeightPage();
+  toast('Вес записан');
+}
+
+function deleteWeight(idx){
+  weightLog.splice(idx,1);
+  saveWeightLog();
+  renderWeightPage();
+}
+
+function renderWeightPage(){
+  const goalEl=document.getElementById('w-goal');
+  const goalKg=goalEl?parseFloat(goalEl.value)||0:0;
+  const s=[...weightLog].sort((a,b)=>a.date.localeCompare(b.date));
+  const n=s.length;
+
+  // Stats
+  const setS=(id,txt,color)=>{const el=document.getElementById(id);if(el){el.textContent=txt;if(color)el.style.color=color;}};
+  setS('w-stat-current',n?s[n-1].kg.toFixed(1)+' кг':'—');
+  setS('w-stat-start',n?s[0].kg.toFixed(1)+' кг':'—');
+  if(n>=2){const d=s[n-1].kg-s[0].kg;setS('w-stat-delta',(d>=0?'+':'')+d.toFixed(1)+' кг',d<0?'var(--green)':d>0?'var(--red)':'var(--text)');}
+  else setS('w-stat-delta','—');
+  if(goalKg&&n){const d=s[n-1].kg-goalKg;setS('w-stat-goal',(d>=0?'−':'+')+(Math.abs(d)).toFixed(1)+' кг',Math.abs(d)<0.5?'var(--green)':'var(--text)');}
+  else setS('w-stat-goal',goalKg?goalKg+' кг':'—');
+
+  // Goal hint — estimate date based on last 7-day rate
+  const hintEl=document.getElementById('w-goal-hint');
+  if(hintEl&&goalKg&&n>=3){
+    const recent=s.slice(-Math.min(7,n));
+    const rateKgPerDay=(recent[recent.length-1].kg-recent[0].kg)/Math.max(1,(new Date(recent[recent.length-1].date)-new Date(recent[0].date))/86400000);
+    const diff=s[n-1].kg-goalKg;
+    if(Math.abs(rateKgPerDay)>0.01&&Math.sign(diff)!==Math.sign(rateKgPerDay)*-1){
+      const days=Math.abs(diff/rateKgPerDay);
+      const eta=new Date(Date.now()+days*86400000);
+      hintEl.textContent=`Темп: ${rateKgPerDay>0?'+':''}${rateKgPerDay.toFixed(2)} кг/день. Ориентировочная дата цели: ${eta.toLocaleDateString('ru-RU')}`;
+    } else { hintEl.textContent=rateKgPerDay===0?'Вес стабилен':'Тренд в нужном направлении'; }
+  } else if(hintEl) hintEl.textContent='';
+
+  // Chart
+  document.getElementById('w-chart-area').innerHTML=drawWeightChart(s,goalKg);
+
+  // History
+  const hist=document.getElementById('w-history-body');
+  if(!n){hist.innerHTML='<div class="w-empty">Добавьте первую запись веса</div>';return;}
+  hist.innerHTML=[...s].reverse().map((e,ri)=>{
+    const realIdx=s.length-1-ri;
+    const prev=realIdx>0?s[realIdx-1].kg:null;
+    const delta=prev!==null?e.kg-prev:null;
+    const ds=delta===null?'':(delta>=0?'+':'')+delta.toFixed(1);
+    const dc=delta===null?'':delta<0?'var(--green)':delta>0?'var(--red)':'var(--text2)';
+    return `<div class="w-hist-row">
+      <span class="w-hist-date">${e.date}</span>
+      <span class="w-hist-val">${e.kg.toFixed(1)} кг</span>
+      <span class="w-hist-delta" style="color:${dc}">${ds}</span>
+      <button class="w-hist-del" onclick="deleteWeight(${realIdx})" title="Удалить">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function drawWeightChart(entries, goalKg){
+  if(entries.length<2)return`<div style="padding:32px;text-align:center;color:var(--text3);font-size:13px;">Добавьте минимум 2 записи для графика</div>`;
+  const W=600,H=220,pL=48,pR=24,pT=14,pB=32;
+  const cW=W-pL-pR, cH=H-pT-pB;
+  const kgs=entries.map(e=>e.kg);
+  const allVals=[...kgs,goalKg||Infinity].filter(v=>isFinite(v));
+  let minK=Math.floor(Math.min(...allVals)-1), maxK=Math.ceil(Math.max(...allVals)+1);
+  if(maxK-minK<3){minK-=1;maxK+=1;}
+  const kRange=maxK-minK||1;
+  const xS=i=>pL+(i/(entries.length-1))*cW;
+  const yS=kg=>pT+(1-(kg-minK)/kRange)*cH;
+
+  // Grid & ticks
+  const ticks=5;
+  let grid='',yLabels='';
+  for(let i=0;i<ticks;i++){
+    const kg=minK+(kRange*i/(ticks-1));
+    const y=yS(kg).toFixed(1);
+    grid+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="#2e2e2e" stroke-width="1"/>`;
+    yLabels+=`<text x="${pL-5}" y="${(parseFloat(y)+4).toFixed(1)}" text-anchor="end" fill="#555" font-size="10">${kg.toFixed(1)}</text>`;
+  }
+
+  // X labels
+  const xIdxs=[0];
+  if(entries.length>4)xIdxs.push(Math.floor(entries.length/2));
+  xIdxs.push(entries.length-1);
+  let xLabels='';
+  [...new Set(xIdxs)].forEach(i=>{
+    xLabels+=`<text x="${xS(i).toFixed(1)}" y="${H-4}" text-anchor="middle" fill="#555" font-size="10">${entries[i].date.slice(5).replace('-','/')}</text>`;
+  });
+
+  // Main line + area
+  const pts=entries.map((e,i)=>`${xS(i).toFixed(1)},${yS(e.kg).toFixed(1)}`);
+  const line='M'+pts.join('L');
+  const area=`M${xS(0).toFixed(1)},${(pT+cH).toFixed(1)}L${pts.join('L')}L${xS(entries.length-1).toFixed(1)},${(pT+cH).toFixed(1)}Z`;
+
+  // Trend (EMA smoothing)
+  let ema=entries[0].kg, alpha=0.4;
+  const trend=entries.map((e,i)=>{ema=i===0?e.kg:alpha*e.kg+(1-alpha)*ema;return ema;});
+  const trendPts=trend.map((kg,i)=>`${xS(i).toFixed(1)},${yS(kg).toFixed(1)}`);
+  const trendLine='M'+trendPts.join('L');
+
+  // Dots
+  const dots=entries.map((e,i)=>{
+    const r=i===entries.length-1?5:3.5;
+    const fill=i===entries.length-1?'#e8b84b':'#c99a36';
+    return `<circle cx="${xS(i).toFixed(1)}" cy="${yS(e.kg).toFixed(1)}" r="${r}" fill="${fill}" stroke="#1a1a1a" stroke-width="${i===entries.length-1?2:1.5}"/>`;
+  }).join('');
+
+  // Goal line
+  const goalSvg=goalKg?`<line x1="${pL}" y1="${yS(goalKg).toFixed(1)}" x2="${W-pR}" y2="${yS(goalKg).toFixed(1)}" stroke="#4ed68a" stroke-width="1.5" stroke-dasharray="5,4" opacity=".75"/>
+    <text x="${W-pR-4}" y="${(yS(goalKg)-5).toFixed(1)}" text-anchor="end" fill="#4ed68a" font-size="10">цель ${goalKg}кг</text>`:'';
+
+  return`<svg viewBox="0 0 ${W} ${H}" class="w-chart-svg" style="overflow:visible">
+    <defs>
+      <linearGradient id="wgrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e8b84b" stop-opacity=".22"/>
+        <stop offset="100%" stop-color="#e8b84b" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${grid}${yLabels}${xLabels}
+    ${goalSvg}
+    <path d="${area}" fill="url(#wgrad)"/>
+    <path d="${line}" fill="none" stroke="#e8b84b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${trendLine}" fill="none" stroke="#5aabff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".65"/>
+    ${dots}
+  </svg>`;
+}
+
 loadDB();loadDiary();buildCatFilters();buildCatSelects();renderDB();tdeeCalc();renderDiary();
-buildSchedule();loadProfiles();buildExcludeButtons();
+buildSchedule();loadProfiles();buildExcludeButtons();loadWeightLog();
+// Set today as default date for weight input
+(()=>{const el=document.getElementById('w-date');if(el)el.value=new Date().toISOString().slice(0,10);})();
 
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
