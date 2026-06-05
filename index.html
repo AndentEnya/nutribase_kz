@@ -314,16 +314,31 @@ td.r{text-align:right;}
 .pin-dot.on{opacity:1;}
 
 /* ── PROGRESS / WEIGHT ── */
-.w-layout{display:grid;grid-template-columns:260px 1fr;gap:14px;margin-bottom:14px;}
-@media(max-width:860px){.w-layout{grid-template-columns:1fr;}}
-.w-form-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
-.w-form-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
-.w-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.w-stat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;}
-.w-stat-val{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);line-height:1.1;}
-.w-stat-lbl{font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.04em;}
+.wp-grid{display:grid;grid-template-columns:300px 1fr;gap:14px;margin-bottom:14px;align-items:start;}
+@media(max-width:900px){.wp-grid{grid-template-columns:1fr;}}
+/* Hero card */
+.wp-hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.wp-hero-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.wp-weight-big{font-family:var(--font-head);font-size:52px;font-weight:900;color:var(--text);line-height:1;}
+.wp-unit{font-size:18px;color:var(--text2);margin-left:4px;font-weight:400;vertical-align:middle;}
+.wp-bmi-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-top:8px;}
+.wp-delta-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.wp-delta-val{font-family:var(--font-head);font-size:24px;font-weight:900;color:var(--text);line-height:1.1;}
+.wp-delta-lbl{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.3;}
+/* Right side cards */
+.wp-right{display:flex;flex-direction:column;gap:10px;}
+.wp-stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.wp-sc-head{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px;letter-spacing:.01em;}
+.wp-sc-body{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.wp-sc-val{font-family:var(--font-head);font-size:26px;font-weight:900;color:var(--text);line-height:1;}
+.wp-sc-sub{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.4;}
+/* Add form inside hero */
+.wp-form-sep{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.wp-form-lbl{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+/* Chart card */
 .w-chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:14px;}
 .w-chart-svg{width:100%;display:block;}
+/* History */
 .w-history{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
 .w-hist-head{padding:9px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;}
 .w-hist-row{display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--border);font-size:13px;}
@@ -368,8 +383,8 @@ td.r{text-align:right;}
   #toast{right:10px;left:10px;bottom:14px;text-align:center;}
   .totals-bar{gap:10px;}
   .metric-num{font-size:20px;}
-  .w-layout{grid-template-columns:1fr!important;}
-  .w-stats{grid-template-columns:1fr 1fr!important;}
+  .wp-grid{grid-template-columns:1fr!important;}
+  .wp-weight-big{font-size:38px!important;}
   .swap-modal{width:95vw!important;}
 }
 </style>
@@ -832,42 +847,108 @@ td.r{text-align:right;}
 
   <!-- PROGRESS PAGE -->
   <div id="page-progress" class="page">
-    <div class="page-title">Прогресс веса</div>
-    <div class="page-sub">Записывай вес каждый день — график покажет динамику и тренд к цели.</div>
-    <div class="w-layout">
-      <div>
-        <div class="w-form-card" style="margin-bottom:12px;">
-          <div class="w-form-title">Добавить запись</div>
-          <div class="form-row"><label>Дата</label><input type="date" id="w-date"></div>
-          <div class="form-row"><label>Вес (кг)</label><input type="number" id="w-kg" min="20" max="300" step="0.1" placeholder="75.5"></div>
-          <button class="btn btn-accent" style="width:100%;margin-top:10px;" onclick="addWeight()">+ Записать</button>
+    <div class="page-title">Прогресс тела</div>
+    <div class="page-sub">Следи за весом, ИМТ и прогрессом к цели.</div>
+
+    <div class="wp-grid">
+      <!-- LEFT: Hero card -->
+      <div class="wp-hero">
+        <div class="wp-hero-top">
+          <div>
+            <div><span class="wp-weight-big" id="wp-curr-big">—</span><span class="wp-unit">кг</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="wp-last-date">нет данных</div>
+          </div>
+          <div id="wp-bmi-badge" style="display:none;" class="wp-bmi-badge"></div>
         </div>
-        <div class="w-form-card">
-          <div class="w-form-title">Цель</div>
-          <div class="form-row"><label>Целевой вес (кг)</label><input type="number" id="w-goal" min="20" max="300" step="0.1" placeholder="70.0" onchange="renderWeightPage()"></div>
-          <div id="w-goal-hint" style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.5;"></div>
+        <!-- BMI bar -->
+        <div id="wp-bmi-bar" style="margin-bottom:14px;"></div>
+        <!-- Delta stats -->
+        <div class="wp-delta-row">
+          <div>
+            <div class="wp-delta-val" id="wp-delta-last" style="color:var(--green);">—</div>
+            <div class="wp-delta-lbl">Чем в прошлый раз</div>
+          </div>
+          <div style="text-align:right">
+            <div class="wp-delta-val" id="wp-best30">—</div>
+            <div class="wp-delta-lbl">Лучшее за 30 дней</div>
+          </div>
+        </div>
+        <!-- Form -->
+        <hr class="wp-form-sep">
+        <div class="wp-form-lbl">Новая запись</div>
+        <div class="form-grid2">
+          <div class="form-row"><label>Дата</label><input type="date" id="w-date"></div>
+          <div class="form-row"><label>Вес (кг)</label><input type="number" id="w-kg" step="0.1" placeholder="75.5" min="20" max="400"></div>
+        </div>
+        <div class="form-row"><label>Обхват талии (см) <span style="color:var(--text3);font-weight:400">— необязательно</span></label><input type="number" id="w-waist" step="0.5" placeholder="90"></div>
+        <button class="btn btn-accent" style="width:100%;margin-top:8px;" onclick="addWeight()">+ Записать</button>
+        <!-- Settings -->
+        <hr class="wp-form-sep">
+        <div class="wp-form-lbl">Настройки</div>
+        <div class="form-grid2">
+          <div class="form-row"><label>Рост (см) <span style="color:var(--text3);font-weight:400">— для ИМТ</span></label><input type="number" id="w-height" placeholder="175" min="100" max="250" onchange="saveWpSettings()"></div>
+          <div class="form-row"><label>Цель (кг)</label><input type="number" id="w-goal" step="0.1" placeholder="70.0" onchange="saveWpSettings()"></div>
         </div>
       </div>
-      <div>
-        <div class="w-stats" style="margin-bottom:12px;">
-          <div class="w-stat"><div class="w-stat-val" id="w-stat-current">—</div><div class="w-stat-lbl">Текущий вес</div></div>
-          <div class="w-stat"><div class="w-stat-val" id="w-stat-start">—</div><div class="w-stat-lbl">Начальный</div></div>
-          <div class="w-stat"><div class="w-stat-val" id="w-stat-delta">—</div><div class="w-stat-lbl">Изменение</div></div>
-          <div class="w-stat"><div class="w-stat-val" id="w-stat-goal">—</div><div class="w-stat-lbl">До цели</div></div>
+
+      <!-- RIGHT: stat cards -->
+      <div class="wp-right">
+        <!-- Trend card -->
+        <div class="wp-stat-card">
+          <div class="wp-sc-head">📈 Тенденция веса</div>
+          <div class="wp-sc-body">
+            <div>
+              <div class="wp-sc-val" id="wp-trend-val" style="color:var(--green);">—</div>
+              <div class="wp-sc-sub" id="wp-trend-sub">Последние изменения</div>
+            </div>
+            <div id="wp-sparkline"></div>
+          </div>
         </div>
-        <div class="w-chart-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;">График веса</div>
-            <div style="display:flex;gap:12px;font-size:10px;color:var(--text3);">
-              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--accent);display:inline-block;border-radius:2px;"></span>Вес</span>
-              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--blue);display:inline-block;border-radius:2px;opacity:.7;"></span>Тренд</span>
-              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--green);display:inline-block;border-radius:2px;opacity:.7;border-top:1px dashed var(--green);"></span>Цель</span>
+        <!-- Goal arc card -->
+        <div class="wp-stat-card">
+          <div class="wp-sc-head">🎯 Цель</div>
+          <div class="wp-sc-body">
+            <div>
+              <div class="wp-sc-val" id="wp-goal-delta">—</div>
+              <div class="wp-sc-sub" id="wp-goal-sub">Изменения со временем</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px;" id="wp-goal-eta"></div>
+            </div>
+            <div id="wp-goal-arc"></div>
+          </div>
+        </div>
+        <!-- BMI / waist card -->
+        <div class="wp-stat-card">
+          <div class="wp-sc-head">📊 ИМТ</div>
+          <div class="wp-sc-body" style="flex-direction:column;align-items:flex-start;gap:10px;">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:baseline;">
+              <div class="wp-sc-val" id="wp-bmi-num">—</div>
+              <div id="wp-bmi-cat" style="font-size:12px;color:var(--text2);">Введите рост</div>
+            </div>
+            <div id="wp-waist-row" style="display:none;width:100%;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;">
+                <span style="color:var(--text3);">Талия</span>
+                <span style="font-weight:700;color:var(--text);" id="wp-waist-val">—</span>
+              </div>
             </div>
           </div>
-          <div id="w-chart-area"></div>
         </div>
       </div>
     </div>
+
+    <!-- Chart -->
+    <div class="w-chart-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;">График веса</div>
+        <div style="display:flex;gap:12px;font-size:10px;color:var(--text3);">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--accent);display:inline-block;border-radius:2px;"></span>Вес</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--blue);display:inline-block;border-radius:2px;opacity:.7;"></span>EMA-тренд</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:2px;background:var(--green);display:inline-block;border-radius:2px;opacity:.7;"></span>Цель</span>
+        </div>
+      </div>
+      <div id="w-chart-area"></div>
+    </div>
+
+    <!-- History -->
     <div class="w-history">
       <div class="w-hist-head">История записей</div>
       <div id="w-history-body"><div class="w-empty">Добавьте первую запись веса</div></div>
@@ -2167,16 +2248,32 @@ let weightLog=[];
 function loadWeightLog(){try{weightLog=JSON.parse(localStorage.getItem('nb_weight')||'[]');}catch(e){weightLog=[];}}
 function saveWeightLog(){localStorage.setItem('nb_weight',JSON.stringify(weightLog));}
 
+function loadWpSettings(){
+  try{
+    const s=JSON.parse(localStorage.getItem('nb_wp')||'{}');
+    if(s.height){const el=document.getElementById('w-height');if(el)el.value=s.height;}
+    if(s.goal){const el=document.getElementById('w-goal');if(el)el.value=s.goal;}
+  }catch(e){}
+}
+function saveWpSettings(){
+  const h=document.getElementById('w-height').value;
+  const g=document.getElementById('w-goal').value;
+  localStorage.setItem('nb_wp',JSON.stringify({height:h,goal:g}));
+  renderWeightPage();
+}
+
 function addWeight(){
   const d=document.getElementById('w-date').value;
   const kg=parseFloat(document.getElementById('w-kg').value);
+  const waist=parseFloat(document.getElementById('w-waist').value)||null;
   if(!d||!kg||kg<20||kg>400){toast('Введите корректные данные','err');return;}
   const i=weightLog.findIndex(e=>e.date===d);
   if(i!==-1)weightLog.splice(i,1);
-  weightLog.push({date:d,kg});
+  weightLog.push({date:d,kg,...(waist?{waist}:{})});
   weightLog.sort((a,b)=>a.date.localeCompare(b.date));
   saveWeightLog();
   document.getElementById('w-kg').value='';
+  document.getElementById('w-waist').value='';
   renderWeightPage();
   toast('Вес записан');
 }
@@ -2187,33 +2284,154 @@ function deleteWeight(idx){
   renderWeightPage();
 }
 
+// BMI helpers
+function calcBMI(kg,hCm){if(!kg||!hCm)return null;return kg/((hCm/100)**2);}
+function bmiCat(bmi){
+  if(bmi<16)return{label:'Истощение',c:'#5aabff',bg:'rgba(90,171,255,.18)'};
+  if(bmi<18.5)return{label:'Дефицит',c:'#7dd3fc',bg:'rgba(125,211,252,.18)'};
+  if(bmi<25)return{label:'Норма',c:'#4ed68a',bg:'rgba(78,214,138,.18)'};
+  if(bmi<30)return{label:'Избыт. вес',c:'#e8b84b',bg:'rgba(232,184,75,.18)'};
+  if(bmi<35)return{label:'Ожирение I',c:'#ff8c42',bg:'rgba(255,140,66,.18)'};
+  return{label:'Ожирение II',c:'#ff6b6b',bg:'rgba(255,107,107,.18)'};
+}
+
+function drawBmiBar(bmi){
+  if(!bmi)return'<div style="height:10px;background:var(--bg4);border-radius:5px;"></div>';
+  const W=260,H=22,minB=14,maxB=40;
+  const zones=[
+    {from:14,to:16,c:'#5aabff'},{from:16,to:18.5,c:'#7dd3fc'},
+    {from:18.5,to:25,c:'#4ed68a'},{from:25,to:30,c:'#e8b84b'},
+    {from:30,to:35,c:'#ff8c42'},{from:35,to:40,c:'#ff6b6b'}
+  ];
+  const xS=v=>Math.min(W,Math.max(0,(v-minB)/(maxB-minB)*W));
+  const bars=zones.map(z=>`<rect x="${xS(z.from).toFixed(1)}" y="7" width="${Math.max(0,xS(z.to)-xS(z.from)).toFixed(1)}" height="8" fill="${z.c}" opacity=".75"/>`).join('');
+  const mx=Math.min(W-2,Math.max(2,xS(Math.max(minB,Math.min(maxB,bmi)))));
+  return`<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block;overflow:visible">
+    <rect x="0" y="7" width="${W}" height="8" rx="4" fill="var(--bg4)"/>
+    <clipPath id="bmiclip"><rect x="0" y="7" width="${W}" height="8" rx="4"/></clipPath>
+    <g clip-path="url(#bmiclip)">${bars}</g>
+    <polygon points="${mx},2 ${mx-5},${H} ${mx+5},${H}" fill="white" opacity=".95"/>
+    <line x1="${mx}" y1="0" x2="${mx}" y2="${H}" stroke="white" stroke-width="1.5" opacity=".6"/>
+  </svg>`;
+}
+
+function drawGoalArc(pct){
+  const r=44,cx=58,cy=58,sw=9,pl=Math.PI*r;
+  const filled=Math.min(1,Math.max(0,pct))*pl;
+  const pathD=`M${cx-r},${cy} A${r},${r} 0 0,1 ${cx+r},${cy}`;
+  const color=pct>=1?'var(--green)':pct>=0.5?'var(--accent)':'var(--blue)';
+  return`<svg width="116" height="66" viewBox="0 0 116 66">
+    <path d="${pathD}" fill="none" stroke="var(--bg4)" stroke-width="${sw}" stroke-linecap="round"/>
+    <path d="${pathD}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"
+      stroke-dasharray="${filled.toFixed(1)} ${pl.toFixed(1)}"/>
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="var(--text)" font-size="17" font-weight="900" font-family="Arial Black,Impact,sans-serif">${Math.round(pct*100)}%</text>
+  </svg>`;
+}
+
+function drawSparkline(entries){
+  if(entries.length<2)return`<div style="width:90px;height:42px;background:var(--bg3);border-radius:6px;"></div>`;
+  const W=90,H=42,p=5;
+  const kgs=entries.map(e=>e.kg);
+  const mn=Math.min(...kgs)-0.3,mx=Math.max(...kgs)+0.3;
+  const xS=i=>p+(i/(entries.length-1))*(W-p*2);
+  const yS=kg=>p+(1-(kg-mn)/(mx-mn))*(H-p*2);
+  const pts=entries.map((e,i)=>`${xS(i).toFixed(1)},${yS(e.kg).toFixed(1)}`);
+  const isDown=entries[entries.length-1].kg<=entries[0].kg;
+  const col=isDown?'#4ed68a':'#ff6b6b';
+  const area=`M${xS(0).toFixed(1)},${H}L${pts.join('L')}L${xS(entries.length-1).toFixed(1)},${H}Z`;
+  return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${col}" stop-opacity=".3"/>
+      <stop offset="100%" stop-color="${col}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#sg)"/>
+    <path d="M${pts.join('L')}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${xS(entries.length-1).toFixed(1)}" cy="${yS(entries[entries.length-1].kg).toFixed(1)}" r="3.5" fill="${col}" stroke="var(--bg2)" stroke-width="1.5"/>
+  </svg>`;
+}
+
 function renderWeightPage(){
-  const goalEl=document.getElementById('w-goal');
-  const goalKg=goalEl?parseFloat(goalEl.value)||0:0;
+  const goalKg=parseFloat(document.getElementById('w-goal')?.value)||0;
+  const heightCm=parseFloat(document.getElementById('w-height')?.value)||0;
   const s=[...weightLog].sort((a,b)=>a.date.localeCompare(b.date));
   const n=s.length;
+  const set=(id,txt)=>{const el=document.getElementById(id);if(el)el.textContent=txt;};
+  const setC=(id,c)=>{const el=document.getElementById(id);if(el)el.style.color=c;};
 
-  // Stats
-  const setS=(id,txt,color)=>{const el=document.getElementById(id);if(el){el.textContent=txt;if(color)el.style.color=color;}};
-  setS('w-stat-current',n?s[n-1].kg.toFixed(1)+' кг':'—');
-  setS('w-stat-start',n?s[0].kg.toFixed(1)+' кг':'—');
-  if(n>=2){const d=s[n-1].kg-s[0].kg;setS('w-stat-delta',(d>=0?'+':'')+d.toFixed(1)+' кг',d<0?'var(--green)':d>0?'var(--red)':'var(--text)');}
-  else setS('w-stat-delta','—');
-  if(goalKg&&n){const d=s[n-1].kg-goalKg;setS('w-stat-goal',(d>=0?'−':'+')+(Math.abs(d)).toFixed(1)+' кг',Math.abs(d)<0.5?'var(--green)':'var(--text)');}
-  else setS('w-stat-goal',goalKg?goalKg+' кг':'—');
+  // Hero: current weight
+  const curr=n?s[n-1]:null;
+  set('wp-curr-big',curr?curr.kg.toFixed(1):'—');
+  set('wp-last-date',curr?curr.date:'нет данных');
 
-  // Goal hint — estimate date based on last 7-day rate
-  const hintEl=document.getElementById('w-goal-hint');
-  if(hintEl&&goalKg&&n>=3){
-    const recent=s.slice(-Math.min(7,n));
-    const rateKgPerDay=(recent[recent.length-1].kg-recent[0].kg)/Math.max(1,(new Date(recent[recent.length-1].date)-new Date(recent[0].date))/86400000);
-    const diff=s[n-1].kg-goalKg;
-    if(Math.abs(rateKgPerDay)>0.01&&Math.sign(diff)!==Math.sign(rateKgPerDay)*-1){
-      const days=Math.abs(diff/rateKgPerDay);
-      const eta=new Date(Date.now()+days*86400000);
-      hintEl.textContent=`Темп: ${rateKgPerDay>0?'+':''}${rateKgPerDay.toFixed(2)} кг/день. Ориентировочная дата цели: ${eta.toLocaleDateString('ru-RU')}`;
-    } else { hintEl.textContent=rateKgPerDay===0?'Вес стабилен':'Тренд в нужном направлении'; }
-  } else if(hintEl) hintEl.textContent='';
+  // BMI
+  const bmi=curr?calcBMI(curr.kg,heightCm):null;
+  const bmiEl=document.getElementById('wp-bmi-badge');
+  if(bmi&&bmiEl){
+    const cat=bmiCat(bmi);
+    bmiEl.textContent=cat.label;
+    bmiEl.style.cssText=`display:inline-block;background:${cat.bg};color:${cat.c};`;
+  } else if(bmiEl) bmiEl.style.display='none';
+  document.getElementById('wp-bmi-bar').innerHTML=drawBmiBar(bmi);
+  set('wp-bmi-num',bmi?bmi.toFixed(1):'—');
+  set('wp-bmi-cat',bmi?bmiCat(bmi).label:'Введите рост');
+  if(bmi)document.getElementById('wp-bmi-cat').style.color=bmiCat(bmi).c;
+
+  // Delta from last
+  if(n>=2){
+    const d=s[n-1].kg-s[n-2].kg;
+    set('wp-delta-last',(d>=0?'+':'')+d.toFixed(2)+' кг');
+    setC('wp-delta-last',d<0?'var(--green)':d>0?'var(--red)':'var(--text2)');
+  } else set('wp-delta-last','—');
+
+  // Best in 30 days
+  const d30=new Date(Date.now()-30*86400000).toISOString().slice(0,10);
+  const last30=s.filter(e=>e.date>=d30);
+  const best30=last30.length?Math.min(...last30.map(e=>e.kg)):null;
+  set('wp-best30',best30?best30.toFixed(1)+' кг':'—');
+
+  // Waist
+  const lastWaist=[...s].reverse().find(e=>e.waist);
+  const waistRow=document.getElementById('wp-waist-row');
+  if(waistRow){waistRow.style.display=lastWaist?'block':'none';}
+  set('wp-waist-val',lastWaist?lastWaist.waist+' см':'—');
+
+  // Trend (last 7 days)
+  const last7=s.slice(-Math.min(7,n));
+  document.getElementById('wp-sparkline').innerHTML=drawSparkline(last7);
+  if(last7.length>=2){
+    const td=last7[last7.length-1].kg-last7[0].kg;
+    set('wp-trend-val',(td>=0?'+':'')+td.toFixed(2)+' кг');
+    setC('wp-trend-val',td<0?'var(--green)':td>0?'var(--red)':'var(--text2)');
+    const days=Math.max(1,(new Date(last7[last7.length-1].date)-new Date(last7[0].date))/86400000);
+    set('wp-trend-sub',`${last7[0].date.slice(5)} — ${last7[last7.length-1].date.slice(5)}`);
+  } else { set('wp-trend-val','—'); set('wp-trend-sub','Меньше 2 записей'); }
+
+  // Goal arc
+  const goalArcEl=document.getElementById('wp-goal-arc');
+  if(goalKg&&n&&s[0].kg!==goalKg){
+    const startKg=s[0].kg;
+    const totalDiff=startKg-goalKg;
+    const doneDiff=startKg-curr.kg;
+    const pct=totalDiff!==0?Math.max(0,doneDiff/totalDiff):0;
+    if(goalArcEl)goalArcEl.innerHTML=drawGoalArc(pct);
+    const remain=curr.kg-goalKg;
+    set('wp-goal-delta',(remain>=0?'−':'+')+(Math.abs(remain)).toFixed(1)+' кг');
+    setC('wp-goal-delta',Math.abs(remain)<1?'var(--green)':'var(--text)');
+    set('wp-goal-sub',`до цели ${goalKg} кг`);
+    // ETA
+    if(n>=3){
+      const rec=s.slice(-Math.min(7,n));
+      const rate=(rec[rec.length-1].kg-rec[0].kg)/Math.max(1,(new Date(rec[rec.length-1].date)-new Date(rec[0].date))/86400000);
+      if(Math.abs(rate)>0.01){
+        const daysLeft=Math.abs(remain/rate);
+        const eta=new Date(Date.now()+daysLeft*86400000);
+        set('wp-goal-eta','Ориентировочно: '+eta.toLocaleDateString('ru-RU'));
+      }
+    }
+  } else {
+    if(goalArcEl)goalArcEl.innerHTML=drawGoalArc(0);
+    set('wp-goal-delta','—'); set('wp-goal-sub','Цель не задана'); set('wp-goal-eta','');
+  }
 
   // Chart
   document.getElementById('w-chart-area').innerHTML=drawWeightChart(s,goalKg);
@@ -2227,9 +2445,10 @@ function renderWeightPage(){
     const delta=prev!==null?e.kg-prev:null;
     const ds=delta===null?'':(delta>=0?'+':'')+delta.toFixed(1);
     const dc=delta===null?'':delta<0?'var(--green)':delta>0?'var(--red)':'var(--text2)';
-    return `<div class="w-hist-row">
+    const waistStr=e.waist?`<span style="font-size:11px;color:var(--text3);margin-left:6px;">👤${e.waist}см</span>`:'';
+    return`<div class="w-hist-row">
       <span class="w-hist-date">${e.date}</span>
-      <span class="w-hist-val">${e.kg.toFixed(1)} кг</span>
+      <span class="w-hist-val">${e.kg.toFixed(1)} кг${waistStr}</span>
       <span class="w-hist-delta" style="color:${dc}">${ds}</span>
       <button class="w-hist-del" onclick="deleteWeight(${realIdx})" title="Удалить">✕</button>
     </div>`;
@@ -2306,8 +2525,7 @@ function drawWeightChart(entries, goalKg){
 }
 
 loadDB();loadDiary();buildCatFilters();buildCatSelects();renderDB();tdeeCalc();renderDiary();
-buildSchedule();loadProfiles();buildExcludeButtons();loadWeightLog();
-// Set today as default date for weight input
+buildSchedule();loadProfiles();buildExcludeButtons();loadWeightLog();loadWpSettings();
 (()=>{const el=document.getElementById('w-date');if(el)el.value=new Date().toISOString().slice(0,10);})();
 
 function toggleSidebar(){
