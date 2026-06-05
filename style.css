@@ -515,10 +515,8 @@ td.r{text-align:right;}
 .scan-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--text);}
 .scan-close{background:var(--bg4);border:none;color:var(--text2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .scan-close:hover{background:var(--red);color:#fff;}
-.scan-viewport-wrap{position:relative;background:#000;overflow:hidden;}
-#scan-viewport{width:100%;}
-#scan-viewport video{width:100%!important;height:auto!important;}
-#scan-viewport img{display:none!important;}
+.scan-viewport-wrap{position:relative;background:#000;overflow:hidden;min-height:220px;}
+#scan-video{width:100%;display:block;min-height:220px;object-fit:cover;}
 .scan-line{position:absolute;left:10%;right:10%;height:2px;background:var(--accent);top:50%;transform:translateY(-50%);box-shadow:0 0 8px var(--accent);animation:scanline 2s ease-in-out infinite;}
 @keyframes scanline{0%,100%{top:35%}50%{top:65%}}
 .scan-hint{padding:12px 18px;font-size:13px;color:var(--text2);text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center;}

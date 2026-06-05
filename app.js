@@ -1753,54 +1753,74 @@ function renderDash() {
 }
 
 // ── BARCODE SCANNER ──────────────────────────────────────────────────────────
-let scanner = null;
-let scannerRunning = false;
-let scanLock = false; // prevents double-fetch on same barcode
+// We manage the camera ourselves via getUserMedia + <video> element.
+// Html5Qrcode is used ONLY as a static image decoder (scanFile).
+// This avoids all iOS html5-qrcode stream-management issues.
+let scanStream = null;
+let scanTimer  = null;
+let scanLock   = false;
 
 function openScanner() {
   document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
-  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
   scanLock = false;
 
-  if (scannerRunning) return; // camera already live, nothing to do
-
-  // Recreate the viewport element fresh every time
-  const wrap = document.querySelector('.scan-viewport-wrap');
-  const old = document.getElementById('scan-viewport');
-  if (old) old.remove();
-  const vp = document.createElement('div');
-  vp.id = 'scan-viewport';
-  wrap.insertBefore(vp, wrap.querySelector('.scan-line') || null);
-
-  try {
-    scanner = new Html5Qrcode('scan-viewport');
-    scanner.start(
-      { facingMode: 'environment' },
-      { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 },
-      onBarcodeScan,
-      () => {}
-    ).then(() => { scannerRunning = true; })
-     .catch(() => { document.getElementById('scan-hint').textContent = 'Нет доступа к камере'; });
-  } catch(e) {
-    document.getElementById('scan-hint').textContent = 'Камера недоступна';
+  if (scanStream) {
+    document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+    return;
   }
+
+  document.getElementById('scan-hint').textContent = 'Запуск камеры…';
+
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } })
+    .then(stream => {
+      scanStream = stream;
+      const v = document.getElementById('scan-video');
+      v.srcObject = stream;
+      v.play().catch(() => {});
+      document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+      _scanLoop();
+    })
+    .catch(() => {
+      document.getElementById('scan-hint').textContent = 'Нет доступа к камере';
+    });
 }
 
 function closeScanner() {
   document.getElementById('scan-overlay').classList.remove('open');
-  if (scanner) {
-    const s = scanner;
-    scanner = null;
-    scannerRunning = false;
-    s.stop().catch(() => {});
+  if (scanTimer) { clearTimeout(scanTimer); scanTimer = null; }
+  if (scanStream) {
+    scanStream.getTracks().forEach(t => t.stop());
+    scanStream = null;
+    const v = document.getElementById('scan-video');
+    if (v) v.srcObject = null;
   }
+}
+
+function _scanLoop() {
+  if (!scanStream) return;
+  if (scanLock) { scanTimer = setTimeout(_scanLoop, 300); return; }
+
+  const video  = document.getElementById('scan-video');
+  const canvas = document.getElementById('scan-canvas');
+  if (!video || !video.videoWidth) { scanTimer = setTimeout(_scanLoop, 300); return; }
+
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+
+  canvas.toBlob(blob => {
+    if (!blob || !scanStream) return;
+    Html5Qrcode.scanFile(new File([blob], 'f.jpg', { type: 'image/jpeg' }), false)
+      .then(code => { if (scanStream && !scanLock) onBarcodeScan(code); })
+      .catch(() => {})
+      .finally(() => { if (scanStream) scanTimer = setTimeout(_scanLoop, 350); });
+  }, 'image/jpeg', 0.75);
 }
 
 function onBarcodeScan(barcode) {
   if (scanLock) return;
   scanLock = true;
-
   document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
 
   fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
@@ -1810,12 +1830,12 @@ function onBarcodeScan(barcode) {
         showScanResult(data.product, barcode);
       } else {
         document.getElementById('scan-hint').textContent = '❌ Продукт не найден — поднеси ещё раз';
-        lastScannedCode = '';
+        scanLock = false;
       }
     })
     .catch(() => {
       document.getElementById('scan-hint').textContent = '⚠ Нет сети — попробуй ещё раз';
-      lastScannedCode = '';
+      scanLock = false;
     });
 }
 
