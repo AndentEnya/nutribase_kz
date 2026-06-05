@@ -861,7 +861,10 @@ if ('serviceWorker' in navigator) {
   const _hadSW = !!navigator.serviceWorker.controller;
 
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/nutribase_kz/sw.js', { scope: '/nutribase_kz/' });
+    navigator.serviceWorker.register('/nutribase_kz/sw.js', { scope: '/nutribase_kz/' })
+      .then(reg => {
+        reg.update(); // check for new SW on every page load
+      });
   });
 
   // Auto-reload when a new SW takes control (= new version deployed)
