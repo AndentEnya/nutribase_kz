@@ -14,10 +14,14 @@ function initFirebase() {
     fbAuth = firebase.auth();
     fbDb   = firebase.firestore();
 
-    fbAuth.getRedirectResult().catch(err => {
+    fbAuth.getRedirectResult().then(result => {
+      if (result && result.user) {
+        toast('Вход выполнен ✓', 'ok');
+      }
+    }).catch(err => {
+      console.error('Redirect result error:', err);
       if (err.code && err.code !== 'auth/no-auth-event') {
-        console.error('Redirect sign-in error:', err);
-        toast('Ошибка входа: ' + err.message, 'err');
+        toast('Ошибка входа: ' + err.code, 'err');
       }
     });
 
@@ -85,13 +89,17 @@ function signIn() {
     return;
   }
   const provider = new firebase.auth.GoogleAuthProvider();
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  if (isMobile) {
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isIOS) {
     fbAuth.signInWithRedirect(provider);
   } else {
     fbAuth.signInWithPopup(provider).catch(err => {
       console.error('Sign-in error:', err);
-      if (err.code !== 'auth/popup-closed-by-user') toast('Ошибка входа: ' + err.message, 'err');
+      if (err.code === 'auth/popup-blocked') {
+        fbAuth.signInWithRedirect(provider);
+      } else if (err.code !== 'auth/popup-closed-by-user') {
+        toast('Ошибка входа: ' + err.code, 'err');
+      }
     });
   }
 }
