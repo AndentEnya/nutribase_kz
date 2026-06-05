@@ -1771,7 +1771,7 @@ async function _openNativeScanner() {
   try {
     if (!_nativeStream || _nativeStream.getTracks()[0].readyState === 'ended') {
       _nativeStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
       });
     }
     const vp = document.getElementById('scan-viewport');
@@ -1786,9 +1786,15 @@ async function _openNativeScanner() {
     if (_nativeVideo.srcObject !== _nativeStream) _nativeVideo.srcObject = _nativeStream;
     if (_nativeVideo.paused) await _nativeVideo.play();
     if (!_nativeDetector) {
-      _nativeDetector = new BarcodeDetector({
-        formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','code_93','itf']
-      });
+      // Проверяем какие форматы поддерживает браузер (Safari не поддерживает upc_a)
+      const want = ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','code_93','itf'];
+      let formats = want;
+      try {
+        const ok = await BarcodeDetector.getSupportedFormats();
+        formats = want.filter(f => ok.includes(f));
+        if (!formats.length) formats = ['ean_13','ean_8','code_128'];
+      } catch(e) {}
+      _nativeDetector = new BarcodeDetector({ formats });
     }
     scannerRunning = true;
     _nativeScanFrame();
@@ -1803,11 +1809,17 @@ async function _openNativeScanner() {
 function _nativeScanFrame() {
   if (!scannerRunning) return;
   const v = _nativeVideo;
-  if (!v || v.readyState < 2) { _nativeRaf = requestAnimationFrame(_nativeScanFrame); return; }
+  if (!v || v.readyState < 3 || !v.videoWidth) { _nativeRaf = requestAnimationFrame(_nativeScanFrame); return; }
   _nativeDetector.detect(v).then(codes => {
     if (codes.length > 0 && !scanLock) { onBarcodeScan(codes[0].rawValue); }
     else if (scannerRunning) { _nativeRaf = requestAnimationFrame(_nativeScanFrame); }
-  }).catch(() => { if (scannerRunning) _nativeRaf = requestAnimationFrame(_nativeScanFrame); });
+  }).catch(err => {
+    // Если детектор упал — откатываемся
+    if (err.name !== 'AbortError' && scannerRunning) {
+      _useNative = false; _nativeDetector = null;
+      _doStopScanner(); _openHtml5Scanner();
+    }
+  });
 }
 
 function _openHtml5Scanner() {
