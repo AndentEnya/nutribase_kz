@@ -123,13 +123,17 @@ function showPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
-  const titles={db:'База продуктов',add:'Добавить продукт',search:'Поиск USDA API',tdee:'Калькулятор TDEE',plan:'Дневник питания',picker:'Подбор рациона',progress:'Прогресс веса'};
+  if(btn) btn.classList.add('active');
+  const titles={db:'База продуктов',add:'Добавить продукт',search:'Поиск продуктов',tdee:'Калькулятор TDEE',plan:'Дневник питания',picker:'Подбор рациона',progress:'Прогресс веса'};
   document.getElementById('topbar-title').textContent=titles[id]||'';
+  // sync bottom nav
+  document.querySelectorAll('.bnav-btn[data-page]').forEach(b=>b.classList.toggle('active', b.dataset.page===id));
   if(id==='db')renderDB();
   if(id==='tdee')tdeeCalc();
   if(id==='plan')renderDiary();
   if(id==='progress')renderWeightPage();
+  // close sidebar on mobile after nav
+  if(window.innerWidth<=640) closeSidebar();
 }
 
 function buildCatFilters(){
