@@ -14,6 +14,13 @@ function initFirebase() {
     fbAuth = firebase.auth();
     fbDb   = firebase.firestore();
 
+    fbAuth.getRedirectResult().catch(err => {
+      if (err.code && err.code !== 'auth/no-auth-event') {
+        console.error('Redirect sign-in error:', err);
+        toast('Ошибка входа: ' + err.message, 'err');
+      }
+    });
+
     fbAuth.onAuthStateChanged(user => {
       fbUser = user;
       updateAuthUI(user);
@@ -78,10 +85,15 @@ function signIn() {
     return;
   }
   const provider = new firebase.auth.GoogleAuthProvider();
-  fbAuth.signInWithPopup(provider).catch(err => {
-    console.error('Sign-in error:', err);
-    if (err.code !== 'auth/popup-closed-by-user') toast('Ошибка входа: ' + err.message, 'err');
-  });
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    fbAuth.signInWithRedirect(provider);
+  } else {
+    fbAuth.signInWithPopup(provider).catch(err => {
+      console.error('Sign-in error:', err);
+      if (err.code !== 'auth/popup-closed-by-user') toast('Ошибка входа: ' + err.message, 'err');
+    });
+  }
 }
 
 function signOut() {

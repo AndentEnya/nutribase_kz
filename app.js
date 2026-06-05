@@ -184,7 +184,7 @@ function renderDB(){
         <button class="btn btn-sm" onclick="openEdit(${d.id})" style="padding:3px 8px;margin-right:3px;">✎</button>
         <button class="btn btn-sm btn-danger" onclick="delProduct(${d.id})" style="padding:3px 8px;">✕</button>
       </td>
-      <td class="db-card-cell" style="display:none">
+      <td class="db-card-cell">
         <div class="dbc-top">
           <div class="dbc-name">${d.n}${d.custom?'<span class="dbc-dot">●</span>':''}</div>
           <div style="display:flex;gap:6px;">
