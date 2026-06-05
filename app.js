@@ -1857,37 +1857,29 @@ function showScanResult(p, barcode) {
     ? `<img class="scan-img" src="${img}" alt="" onerror="this.style.display='none'">`
     : `<div class="scan-img" style="display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:22px;">🏷</div>`;
 
-  const macroHtml = `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
-    <span style="font-size:12px;color:var(--text2)">🔥 <b style="color:var(--accent)">${k}</b> ккал</span>
-    <span style="font-size:12px;color:var(--text2)">Б <b>${pr}г</b></span>
-    <span style="font-size:12px;color:var(--text2)">Ж <b>${f}г</b></span>
-    <span style="font-size:12px;color:var(--text2)">У <b>${c}г</b></span>
-    <span style="font-size:11px;color:var(--text3)">на 100г</span>
+  const macroHtml = `<div class="scan-macros">
+    <span>🔥 <b class="scan-kcal">${k}</b> ккал</span>
+    <span>Б <b>${pr}г</b></span>
+    <span>Ж <b>${f}г</b></span>
+    <span>У <b>${c}г</b></span>
+    <span class="scan-per">на 100г</span>
   </div>`;
 
   const result = document.getElementById('scan-result');
   result.innerHTML = `
     <div class="scan-product">
       ${imgHtml}
-      <div style="flex:1;min-width:0;">
+      <div class="scan-pinfo">
         <div class="scan-pname">${escHtml(name)}</div>
         ${brand ? `<div class="scan-brand">${escHtml(brand)}</div>` : ''}
         ${macroHtml}
       </div>
     </div>
     <div class="scan-actions">
-      <button class="btn-primary" style="flex:1;padding:9px 6px;font-size:13px;"
-        onclick="scanAddToDB('${escAttr(name)}','${cat}',${k},${pr},${f},${c})">
-        + В базу
-      </button>
-      <button class="btn-outline" style="flex:1;padding:9px 6px;font-size:13px;"
-        onclick="scanAddToDiary('${escAttr(name)}',${k},${pr},${f},${c})">
-        + В дневник
-      </button>
+      <button class="scan-btn-add" onclick="scanAddToDB('${escAttr(name)}','${cat}',${k},${pr},${f},${c})">+ В базу</button>
+      <button class="scan-btn-diary" onclick="scanAddToDiary('${escAttr(name)}',${k},${pr},${f},${c})">+ В дневник</button>
     </div>
-    <div style="text-align:center;margin-top:8px;">
-      <button onclick="resumeScannerUI()" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;">Сканировать ещё</button>
-    </div>`;
+    <button class="scan-rescan" onclick="resumeScannerUI()">Сканировать ещё</button>`;
   result.style.display = 'block';
   document.getElementById('scan-hint').textContent = '✓ Продукт найден';
 }
