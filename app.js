@@ -243,6 +243,67 @@ function importDB(input){
 }
 
 /* USDA */
+/* Search tabs */
+function switchSearchTab(tab){
+  document.getElementById('search-tab-off').style.display = tab==='off' ? '' : 'none';
+  document.getElementById('search-tab-usda').style.display = tab==='usda' ? '' : 'none';
+  document.getElementById('stab-off').className  = tab==='off'  ? 'on' : '';
+  document.getElementById('stab-usda').className = tab==='usda' ? 'on' : '';
+}
+
+/* Open Food Facts */
+async function offSearch(){
+  const q = document.getElementById('off-q').value.trim(); if(!q) return;
+  const st = document.getElementById('off-status');
+  const wrap = document.getElementById('off-wrap');
+  const empty = document.getElementById('off-empty');
+  st.innerHTML = '<span class="spin"></span> Поиск...';
+  wrap.style.display = 'none'; empty.style.display = 'none';
+  try {
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&json=1&action=process&page_size=24&fields=product_name,brands,nutriments,categories_tags`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const products = (data.products || []).filter(p => p.product_name && p.nutriments && p.nutriments['energy-kcal_100g'] != null);
+    st.innerHTML = products.length ? `Найдено: <strong style="color:var(--text)">${products.length}</strong> результатов` : '';
+    if(!products.length){ empty.style.display = 'block'; return; }
+    wrap.style.display = 'block';
+    document.getElementById('off-res').innerHTML = products.map(p => {
+      const kcal = Math.round(p.nutriments['energy-kcal_100g'] || 0);
+      const prot = Math.round((p.nutriments['proteins_100g'] || 0) * 10) / 10;
+      const fat  = Math.round((p.nutriments['fat_100g'] || 0) * 10) / 10;
+      const carb = Math.round((p.nutriments['carbohydrates_100g'] || 0) * 10) / 10;
+      const brand = p.brands ? `<span style="color:var(--text3)">${p.brands.split(',')[0]}</span>` : '';
+      const safeName = (p.product_name || '').replace(/'/g, "\\'");
+      const cats = (p.categories_tags || []).join(',');
+      return `<div class="ext-result">
+        <div>
+          <div class="ext-name">${p.product_name}</div>
+          <div class="ext-brand">${brand}</div>
+          <div class="ext-macros"><span class="macro-k">${kcal} ккал</span><span class="macro-p">Б: ${prot}г</span><span class="macro-f">Ж: ${fat}г</span><span class="macro-c">У: ${carb}г</span></div>
+        </div>
+        <button class="btn btn-sm btn-accent" onclick="offAdd('${safeName}','${cats}',${kcal},${prot},${fat},${carb})">+ В базу</button>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    st.innerHTML = '<span style="color:var(--red)">Ошибка запроса. Нужен интернет.</span>';
+  }
+}
+
+const offCatMap = {
+  'en:meats':'meat','en:poultry':'meat','en:beef':'meat','en:fish':'fish','en:seafood':'fish',
+  'en:dairy':'dairy','en:milk':'dairy','en:cheeses':'dairy','en:yogurts':'dairy',
+  'en:eggs':'egg','en:cereals':'grain','en:breads':'grain','en:pastas':'grain','en:rice':'grain',
+  'en:legumes':'legume','en:vegetables':'veg','en:fruits':'fruit','en:nuts':'nut',
+  'en:oils':'fat','en:sweets':'sweet','en:beverages':'drink','en:snacks':'snack'
+};
+function offAdd(name, cats, k, p, f, c){
+  let cat = 'other';
+  if(cats){ const tag = cats.split(',').find(t => offCatMap[t.trim()]); if(tag) cat = offCatMap[tag.trim()]; }
+  const n = prompt('Название в базе (можно переименовать):', name); if(!n) return;
+  DB.push({id:nextId(), n, cat, k, p, f, c, note:'Open Food Facts', custom:true});
+  saveDB(); toast(`"${n}" добавлен`);
+}
+
 async function usdaSearch(){
   const q=document.getElementById('usda-q').value.trim();if(!q)return;
   const type=document.getElementById('usda-type').value;

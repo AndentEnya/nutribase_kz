@@ -55,7 +55,7 @@
     </button>
     <button class="nav-btn" onclick="showPage('search',this)">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Поиск USDA API
+      Поиск продуктов
     </button>
   </div>
   <hr class="nav-divider">
@@ -187,24 +187,44 @@
     </div>
   </div>
 
-  <!-- USDA PAGE -->
+  <!-- SEARCH PAGE -->
   <div id="page-search" class="page">
-    <div class="page-title">Поиск USDA FoodData Central</div>
-    <div class="page-sub">700k+ продуктов из американской базы. Ищи на английском, добавляй в свою базу одним кликом. Нужен интернет.</div>
-    <div class="info-box"><strong>Совет:</strong> Используй SR Legacy для сырых продуктов (chicken breast, oats, salmon). Foundation — для базовых. Branded — для товаров конкретных марок.</div>
-    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
-      <input type="text" id="usda-q" placeholder="Поиск: chicken breast, oats, tuna..." style="flex:1;max-width:380px;" onkeydown="if(event.key==='Enter')usdaSearch()">
-      <select id="usda-type" style="width:200px;">
-        <option value="SR Legacy" selected>SR Legacy (сырые)</option>
-        <option value="Foundation">Foundation (базовые)</option>
-        <option value="Survey (FNDDS)">FNDDS (готовые блюда)</option>
-        <option value="Branded">Branded (бренды)</option>
-      </select>
-      <button class="btn btn-accent" onclick="usdaSearch()">Найти</button>
+    <div class="page-title">Поиск продуктов</div>
+    <div class="page-sub">Найди продукт в международных базах и добавь в свою базу одним кликом.</div>
+    <div class="seg" style="margin-bottom:16px;max-width:360px;">
+      <button class="on" id="stab-off" onclick="switchSearchTab('off')">Open Food Facts</button>
+      <button id="stab-usda" onclick="switchSearchTab('usda')">USDA FoodData</button>
     </div>
-    <div id="usda-status" style="font-size:13px;color:var(--text3);margin-bottom:10px;min-height:20px;display:flex;align-items:center;gap:8px;"></div>
-    <div class="tbl-wrap" id="usda-wrap" style="display:none;"><div id="usda-res"></div></div>
-    <div id="usda-empty" style="display:none;padding:40px;text-align:center;color:var(--text3);font-size:14px;">Ничего не найдено. Попробуй другой запрос.</div>
+
+    <!-- Open Food Facts tab -->
+    <div id="search-tab-off">
+      <div class="info-box"><strong>Open Food Facts</strong> — открытая мировая база, 3 млн+ продуктов. Ищи на русском или латинице. Без ограничений.</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <input type="text" id="off-q" placeholder="Поиск: гречка, творог, chicken..." style="flex:1;max-width:420px;" onkeydown="if(event.key==='Enter')offSearch()">
+        <button class="btn btn-accent" onclick="offSearch()">Найти</button>
+      </div>
+      <div id="off-status" style="font-size:13px;color:var(--text3);margin-bottom:10px;min-height:20px;display:flex;align-items:center;gap:8px;"></div>
+      <div class="tbl-wrap" id="off-wrap" style="display:none;"><div id="off-res"></div></div>
+      <div id="off-empty" style="display:none;padding:40px;text-align:center;color:var(--text3);font-size:14px;">Ничего не найдено. Попробуй другой запрос или на английском.</div>
+    </div>
+
+    <!-- USDA tab -->
+    <div id="search-tab-usda" style="display:none;">
+      <div class="info-box"><strong>Совет:</strong> Используй SR Legacy для сырых продуктов (chicken breast, oats, salmon). Foundation — для базовых. Branded — для товаров конкретных марок.</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <input type="text" id="usda-q" placeholder="Поиск: chicken breast, oats, tuna..." style="flex:1;max-width:380px;" onkeydown="if(event.key==='Enter')usdaSearch()">
+        <select id="usda-type" style="width:200px;">
+          <option value="SR Legacy" selected>SR Legacy (сырые)</option>
+          <option value="Foundation">Foundation (базовые)</option>
+          <option value="Survey (FNDDS)">FNDDS (готовые блюда)</option>
+          <option value="Branded">Branded (бренды)</option>
+        </select>
+        <button class="btn btn-accent" onclick="usdaSearch()">Найти</button>
+      </div>
+      <div id="usda-status" style="font-size:13px;color:var(--text3);margin-bottom:10px;min-height:20px;display:flex;align-items:center;gap:8px;"></div>
+      <div class="tbl-wrap" id="usda-wrap" style="display:none;"><div id="usda-res"></div></div>
+      <div id="usda-empty" style="display:none;padding:40px;text-align:center;color:var(--text3);font-size:14px;">Ничего не найдено. Попробуй другой запрос.</div>
+    </div>
   </div>
 
   <!-- TDEE PAGE -->
