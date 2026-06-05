@@ -110,6 +110,11 @@ let profiles={},activeProfile=null;
 let pickerMode='day',pickerSeed=Math.random(),excludedCats=new Set(),slotSeeds={},slotClicks={};
 let pinnedSlots={}; // "mealKey_rowIdx" -> {foodId, customG}
 let swapCtx=null, swapPool=[];
+// Dashboard
+const GOALS_KEY='nb_goals';
+let dashGoals={kcal:2000,prot:150,fat:65,carb:250};
+// Scanner
+let scanner=null,scannerRunning=false,scanLock=false,scanStopTimer=null;
 
 function loadDB(){const s=localStorage.getItem('nkz_db');DB=s?JSON.parse(s):JSON.parse(JSON.stringify(SEED));}
 function saveDB(){localStorage.setItem('nkz_db',JSON.stringify(DB));}
@@ -1633,9 +1638,6 @@ document.querySelectorAll('.nav-btn').forEach(btn=>{
 });
 
 // ── DASHBOARD ────────────────────────────────────────────────────────────────
-const GOALS_KEY = 'nb_goals';
-let dashGoals = {kcal:2000, prot:150, fat:65, carb:250};
-
 function loadGoals() {
   try { const s=localStorage.getItem(GOALS_KEY); if(s) dashGoals=JSON.parse(s); } catch(e){}
 }
@@ -1753,11 +1755,6 @@ function renderDash() {
 }
 
 // ── BARCODE SCANNER ──────────────────────────────────────────────────────────
-let scanner = null;
-let scannerRunning = false;
-let scanLock = false;
-let scanStopTimer = null;
-
 function openScanner() {
   // Cancel any pending lazy-stop
   if (scanStopTimer) { clearTimeout(scanStopTimer); scanStopTimer = null; }
