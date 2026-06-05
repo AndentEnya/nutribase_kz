@@ -516,8 +516,8 @@ td.r{text-align:right;}
 .scan-close{background:var(--bg4);border:none;color:var(--text2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .scan-close:hover{background:var(--red);color:#fff;}
 .scan-viewport-wrap{position:relative;background:#000;min-height:240px;}
-#scan-video{width:100%;display:block;min-height:240px;object-fit:cover;
-  -webkit-transform:translateZ(0);transform:translateZ(0);}
+#scan-viewport{width:100%;}
+#scan-viewport video{width:100%!important;height:auto!important;display:block!important;}
 /* Corner markers */
 .scan-viewport-wrap::before,.scan-viewport-wrap::after{content:'';position:absolute;width:44px;height:44px;z-index:2;pointer-events:none;}
 .scan-viewport-wrap::before{top:14px;left:14px;border-top:3px solid var(--accent);border-left:3px solid var(--accent);border-radius:4px 0 0 0;}

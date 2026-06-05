@@ -793,21 +793,10 @@
       </div>
       <button class="scan-close" onclick="closeScanner()">✕</button>
     </div>
-    <div class="scan-viewport-wrap" id="scan-video-wrap">
-      <video id="scan-video" playsinline webkit-playsinline autoplay muted style="width:100%;display:block;"></video>
-      <canvas id="scan-canvas" style="display:none;"></canvas>
+    <div class="scan-viewport-wrap">
+      <div id="scan-viewport"></div>
       <div class="scan-corners-bottom"></div>
       <div class="scan-line"></div>
-    </div>
-    <!-- iOS fallback: native camera via file input -->
-    <div id="scan-ios-area" style="display:none;padding:24px 18px;text-align:center;">
-      <input type="file" id="scan-file-input" accept="image/*" capture="environment"
-             style="display:none;" onchange="handleScanFile(this)">
-      <button class="btn-accent" style="width:100%;padding:14px;font-size:15px;border-radius:10px;"
-              onclick="document.getElementById('scan-file-input').click()">
-        📷 Открыть камеру
-      </button>
-      <div style="font-size:12px;color:var(--text3);margin-top:10px;">Сфотографируй штрихкод продукта</div>
     </div>
     <div class="scan-hint" id="scan-hint">Наведи камеру на штрихкод продукта</div>
     <div class="scan-result" id="scan-result" style="display:none"></div>

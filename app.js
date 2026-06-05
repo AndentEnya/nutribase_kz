@@ -1753,107 +1753,52 @@ function renderDash() {
 }
 
 // ── BARCODE SCANNER ──────────────────────────────────────────────────────────
-// We manage the camera ourselves via getUserMedia + <video> element.
-// Html5Qrcode is used ONLY as a static image decoder (scanFile).
-// This avoids all iOS html5-qrcode stream-management issues.
-let scanStream = null;
-let scanTimer  = null;
-let scanLock   = false;
-
-const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window.MSStream);
+// html5-qrcode handles camera + video internally (works on iOS first open).
+// The only fix needed: call scanner.clear() after stop() so the div is
+// clean for the next Html5Qrcode instance.
+let scanner = null;
+let scannerRunning = false;
+let scanLock = false;
 
 function openScanner() {
   document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
+  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
   scanLock = false;
-
-  if (_isIOS) {
-    // iOS Safari can't reliably do live getUserMedia in a modal — use native camera photo
-    document.getElementById('scan-video-wrap').style.display = 'none';
-    document.getElementById('scan-ios-area').style.display = 'block';
-    document.getElementById('scan-hint').textContent = 'Сфотографируй штрихкод продукта';
-    return;
+  if (scannerRunning) return;
+  try {
+    scanner = new Html5Qrcode('scan-viewport');
+    scanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 },
+      onBarcodeScan,
+      () => {}
+    ).then(() => { scannerRunning = true; })
+     .catch(() => { document.getElementById('scan-hint').textContent = 'Нет доступа к камере'; });
+  } catch(e) {
+    document.getElementById('scan-hint').textContent = 'Камера недоступна';
   }
-
-  document.getElementById('scan-video-wrap').style.display = 'block';
-  document.getElementById('scan-ios-area').style.display = 'none';
-
-  if (scanStream) {
-    document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
-    if (!scanTimer) _scanLoop();
-    return;
-  }
-
-  document.getElementById('scan-hint').textContent = 'Запуск камеры…';
-
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } })
-    .then(stream => {
-      scanStream = stream;
-      const v = document.getElementById('scan-video');
-      v.muted = true;
-      v.srcObject = stream;
-      v.onloadedmetadata = () => {
-        v.play().catch(() => {});
-        document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
-        _scanLoop();
-      };
-    })
-    .catch(err => {
-      console.warn('camera:', err);
-      document.getElementById('scan-hint').textContent = 'Нет доступа к камере';
-    });
-}
-
-function handleScanFile(input) {
-  if (!input.files || !input.files[0]) return;
-  scanLock = true;
-  document.getElementById('scan-hint').textContent = '🔍 Распознаю штрихкод…';
-  Html5Qrcode.scanFile(input.files[0], false)
-    .then(code => onBarcodeScan(code))
-    .catch(() => {
-      document.getElementById('scan-hint').textContent = '❌ Штрихкод не найден — попробуй ещё раз';
-      scanLock = false;
-    });
-  input.value = '';
 }
 
 function closeScanner() {
   document.getElementById('scan-overlay').classList.remove('open');
-  if (scanTimer) { clearTimeout(scanTimer); scanTimer = null; }
-  if (scanStream) {
-    scanStream.getTracks().forEach(t => t.stop());
-    scanStream = null;
-    const v = document.getElementById('scan-video');
-    if (v) v.srcObject = null;
+  if (!scanner) return;
+  const s = scanner;
+  scanner = null;
+  scannerRunning = false;
+  if (s.getState && s.getState() === 2) {
+    s.stop()
+      .then(() => { try { s.clear(); } catch(e) {} })
+      .catch(() => { try { s.clear(); } catch(e) {} });
+  } else {
+    try { s.clear(); } catch(e) {}
   }
-}
-
-function _scanLoop() {
-  if (!scanStream) return;
-  if (scanLock) { scanTimer = setTimeout(_scanLoop, 300); return; }
-
-  const video  = document.getElementById('scan-video');
-  const canvas = document.getElementById('scan-canvas');
-  if (!video || !video.videoWidth) { scanTimer = setTimeout(_scanLoop, 300); return; }
-
-  canvas.width  = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-
-  canvas.toBlob(blob => {
-    if (!blob || !scanStream) return;
-    Html5Qrcode.scanFile(new File([blob], 'f.jpg', { type: 'image/jpeg' }), false)
-      .then(code => { if (scanStream && !scanLock) onBarcodeScan(code); })
-      .catch(() => {})
-      .finally(() => { if (scanStream) scanTimer = setTimeout(_scanLoop, 350); });
-  }, 'image/jpeg', 0.75);
 }
 
 function onBarcodeScan(barcode) {
   if (scanLock) return;
   scanLock = true;
   document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
-
   fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
     .then(r => r.json())
     .then(data => {
