@@ -83,13 +83,43 @@ document.addEventListener('click', e => {
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
 
+function isInAppBrowser() {
+  const ua = navigator.userAgent;
+  return ua.includes('Telegram') ||
+         ua.includes('FBAN') || ua.includes('FBAV') || // Facebook
+         ua.includes('Instagram') ||
+         ua.includes('VKApp') ||
+         (/iPhone|iPad|iPod/.test(ua) && !/Safari\//.test(ua) && !/CriOS/.test(ua)) ||
+         (/Android/.test(ua) && /wv/.test(ua));
+}
+
 function signIn() {
   if (!fbAuth) {
     toast('Синхронизация недоступна — Firebase не подключён', 'err');
     return;
   }
+  if (isInAppBrowser()) {
+    showOpenInBrowserBanner();
+    return;
+  }
   const provider = new firebase.auth.GoogleAuthProvider();
   fbAuth.signInWithRedirect(provider);
+}
+
+function showOpenInBrowserBanner() {
+  if (document.getElementById('open-browser-banner')) return;
+  const d = document.createElement('div');
+  d.id = 'open-browser-banner';
+  const url = window.location.href;
+  d.innerHTML = `
+    <div style="font-size:13px;color:var(--text);margin-bottom:10px;">Google вход не работает в этом браузере. Открой сайт в Safari или Chrome.</div>
+    <a href="${url}" target="_blank" rel="noopener"
+       style="display:block;text-align:center;background:var(--accent);border-radius:8px;padding:10px;font-weight:700;font-size:13px;color:#111;text-decoration:none;">
+      Открыть в браузере
+    </a>
+    <button onclick="this.parentElement.parentElement.remove()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;">✕</button>`;
+  d.style.cssText = 'position:fixed;bottom:80px;left:14px;right:14px;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:16px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.6);position:fixed;';
+  document.body.appendChild(d);
 }
 
 function signOut() {
