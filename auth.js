@@ -135,17 +135,28 @@ function scheduleSync() {
   syncTimer = setTimeout(syncToCloud, 3000); // debounce 3s
 }
 
+// Read data directly from localStorage — avoids window.DB/window.DIARY (let-scoped, not on window)
+function _lsGet(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback; } catch(e) { return fallback; }
+}
+function _lsSet(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
 async function syncToCloud() {
   if (!fbUser || !fbDb) return;
   setSyncStatus('syncing');
   try {
-    const customProducts = (window.DB || []).filter(d => d.custom);
+    const allDB    = _lsGet('nkz_db', []);
+    const diary    = _lsGet('nkz_diary', []);
+    const profiles = _lsGet('nkz_profiles', {});
     const data = {
-      weightLog:   window.weightLog   || [],
-      diary:       (window.DIARY      || []).slice(-365), // last 365 days
-      customDB:    customProducts,
-      wpSettings:  JSON.parse(localStorage.getItem('nb_wp')  || '{}'),
-      updatedAt:   firebase.firestore.FieldValue.serverTimestamp()
+      weightLog:  _lsGet('nb_weight', []),
+      diary:      diary.slice(-365),
+      customDB:   allDB.filter(d => d.custom),
+      profiles:   profiles,
+      wpSettings: _lsGet('nb_wp', {}),
+      goals:         _lsGet('nb_goals', {}),
+      activeProfile: localStorage.getItem('nkz_active_profile') || null,
+      updatedAt:     firebase.firestore.FieldValue.serverTimestamp()
     };
     await fbDb.collection('users').doc(fbUser.uid).set(data, { merge: true });
     setSyncStatus('ok');
@@ -161,61 +172,72 @@ async function loadFromCloud() {
   try {
     const snap = await fbDb.collection('users').doc(fbUser.uid).get();
     if (!snap.exists) {
-      // First login — push local data to cloud
       await syncToCloud();
       toast('Данные загружены в облако');
       return;
     }
-    const data = snap.data();
+    const cloud = snap.data();
 
-    // Merge weight log (take union by date)
-    if (data.weightLog && data.weightLog.length > 0) {
-      const local = window.weightLog || [];
+    // Weight log — merge by date
+    if (cloud.weightLog && cloud.weightLog.length > 0) {
+      const local = _lsGet('nb_weight', []);
+      const byDate = {};
+      [...local, ...cloud.weightLog].forEach(e => { byDate[e.date] = e; });
+      const merged = Object.values(byDate).sort((a,b) => a.date.localeCompare(b.date));
+      _lsSet('nb_weight', merged);
+      if (typeof loadWeightLog === 'function') loadWeightLog();
+    }
+
+    // Custom products — merge by id
+    if (cloud.customDB && cloud.customDB.length > 0) {
+      const local = _lsGet('nkz_db', []);
+      const existIds = new Set(local.map(d => d.id));
       const merged = [...local];
-      data.weightLog.forEach(e => {
-        if (!merged.find(l => l.date === e.date)) merged.push(e);
-      });
-      merged.sort((a,b) => a.date.localeCompare(b.date));
-      window.weightLog = merged;
-      localStorage.setItem('nb_weight', JSON.stringify(merged));
+      cloud.customDB.forEach(p => { if (!existIds.has(p.id)) { p.custom=true; merged.push(p); } });
+      _lsSet('nkz_db', merged);
+      if (typeof loadDB === 'function') loadDB();
     }
 
-    // Merge custom products
-    if (data.customDB && data.customDB.length > 0) {
-      const existing = (window.DB || []).filter(d => d.custom).map(d => d.id);
-      data.customDB.forEach(p => {
-        if (!existing.includes(p.id)) {
-          p.custom = true;
-          window.DB.push(p);
-        }
-      });
-      localStorage.setItem('nb_db', JSON.stringify(window.DB));
+    // Diary — merge by id
+    if (cloud.diary && cloud.diary.length > 0) {
+      const local = _lsGet('nkz_diary', []);
+      const existIds = new Set(local.map(e => e.id));
+      const merged = [...local];
+      cloud.diary.forEach(e => { if (!existIds.has(e.id)) merged.push(e); });
+      _lsSet('nkz_diary', merged);
+      if (typeof loadDiary === 'function') loadDiary();
     }
 
-    // Merge diary
-    if (data.diary && data.diary.length > 0) {
-      const localDiary = window.DIARY || [];
-      const mergedDiary = [...localDiary];
-      data.diary.forEach(e => {
-        if (!mergedDiary.find(l => l.id === e.id)) mergedDiary.push(e);
-      });
-      window.DIARY = mergedDiary;
-      localStorage.setItem('nb_diary', JSON.stringify(mergedDiary));
+    // Profiles — merge keys, local takes priority for conflicts
+    if (cloud.profiles && Object.keys(cloud.profiles).length > 0) {
+      const local = _lsGet('nkz_profiles', {});
+      const merged = { ...cloud.profiles, ...local };
+      _lsSet('nkz_profiles', merged);
+      // Restore active profile if not set locally
+      if (!localStorage.getItem('nkz_active_profile') && cloud.activeProfile) {
+        localStorage.setItem('nkz_active_profile', cloud.activeProfile);
+      }
+      if (typeof loadProfiles === 'function') loadProfiles();
     }
 
-    // WP settings
-    if (data.wpSettings) {
-      const local = JSON.parse(localStorage.getItem('nb_wp') || '{}');
-      const merged = { ...data.wpSettings, ...local };
-      localStorage.setItem('nb_wp', JSON.stringify(merged));
+    // Goals — cloud wins if local is default/empty
+    if (cloud.goals && Object.keys(cloud.goals).length > 0) {
+      const local = _lsGet('nb_goals', null);
+      if (!local) _lsSet('nb_goals', cloud.goals);
+    }
+
+    // WP settings — local takes priority
+    if (cloud.wpSettings) {
+      const local = _lsGet('nb_wp', {});
+      _lsSet('nb_wp', { ...cloud.wpSettings, ...local });
+      if (typeof loadWpSettings === 'function') loadWpSettings();
     }
 
     setSyncStatus('ok');
     toast('Данные синхронизированы ☁');
 
-    // Re-render current page
     if (typeof renderDB === 'function') renderDB();
-    if (typeof renderWeightPage === 'function') loadWpSettings();
+    if (typeof renderDash === 'function') renderDash();
 
   } catch(e) {
     console.error('Load from cloud error:', e);
@@ -230,28 +252,13 @@ async function syncNow() {
 }
 
 // ── PATCH app.js functions to trigger sync ───────────────────────────────────
-
-// Wrap data-mutating functions to auto-sync after each change
 (function patchForSync() {
-  const patched = ['saveDB', 'saveDiary'];
-  patched.forEach(fn => {
+  ['saveDB', 'saveDiary', 'saveProfiles', 'saveWeightLog', 'saveWpSettings'].forEach(fn => {
     const orig = window[fn];
     if (typeof orig === 'function') {
-      window[fn] = function(...args) {
-        orig.apply(this, args);
-        scheduleSync();
-      };
+      window[fn] = function(...args) { orig.apply(this, args); scheduleSync(); };
     }
   });
-
-  // Also hook localStorage saves from weight tracker
-  const origSaveWeightLog = window.saveWeightLog;
-  if (typeof origSaveWeightLog === 'function') {
-    window.saveWeightLog = function() {
-      origSaveWeightLog();
-      scheduleSync();
-    };
-  }
 })();
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
