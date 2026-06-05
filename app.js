@@ -184,6 +184,25 @@ function renderDB(){
         <button class="btn btn-sm" onclick="openEdit(${d.id})" style="padding:3px 8px;margin-right:3px;">✎</button>
         <button class="btn btn-sm btn-danger" onclick="delProduct(${d.id})" style="padding:3px 8px;">✕</button>
       </td>
+      <td class="db-card-cell" style="display:none">
+        <div class="dbc-top">
+          <div class="dbc-name">${d.n}${d.custom?'<span class="dbc-dot">●</span>':''}</div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-sm" onclick="openEdit(${d.id})" style="padding:3px 8px;">✎</button>
+            <button class="btn btn-sm btn-danger" onclick="delProduct(${d.id})" style="padding:3px 8px;">✕</button>
+          </div>
+        </div>
+        <div class="dbc-sub">
+          <span class="chip chip-cat" style="font-size:10px;">${CATS[d.cat]||d.cat}</span>
+          ${d.note?`<span class="dbc-note">${d.note}</span>`:''}
+        </div>
+        <div class="dbc-macros">
+          <span class="dbc-macro macro-k">${d.k}<small>ккал</small></span>
+          <span class="dbc-macro macro-p">${d.p}г<small>Б</small></span>
+          <span class="dbc-macro macro-f">${d.f}г<small>Ж</small></span>
+          <span class="dbc-macro macro-c">${d.c}г<small>У</small></span>
+        </div>
+      </td>
     </tr>`).join('');
 }
 function dbSort(col){if(dbSortCol===col)dbSortDir*=-1;else{dbSortCol=col;dbSortDir=-1;}renderDB();}
