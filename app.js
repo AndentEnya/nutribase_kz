@@ -1701,7 +1701,7 @@ function updateRing(id, val, goal, circ) {
 function renderDash() {
   // Greeting
   const h=new Date().getHours();
-  const greet=h<12?'Доброе утро':h<18?'Добрый день':h<22?'Добрый вечер':'Спокойной ночи';
+  const greet=h>=5&&h<12?'Доброе утро':h>=12&&h<18?'Добрый день':h>=18&&h<23?'Добрый вечер':'Доброй ночи';
   const gEl=document.getElementById('dash-greeting');if(gEl)gEl.textContent=greet;
   const dEl=document.getElementById('dash-date');
   if(dEl){
@@ -1762,41 +1762,30 @@ function _stopScanner() {
     scanner = null;
     scannerRunning = false;
     if (!s) { resolve(); return; }
-    try {
-      s.stop().then(resolve).catch(resolve);
-    } catch(e) { resolve(); }
+    try { s.stop().then(resolve).catch(resolve); } catch(e) { resolve(); }
   });
 }
 
-// Recreate the viewport div so html5-qrcode always mounts on a fresh element
 function _resetViewport() {
   const wrap = document.querySelector('.scan-viewport-wrap');
   const old = document.getElementById('scan-viewport');
   if (old) old.remove();
   const div = document.createElement('div');
   div.id = 'scan-viewport';
-  // Insert before the scan-line div
   const line = wrap.querySelector('.scan-line');
   wrap.insertBefore(div, line || null);
 }
 
-function startScannerCamera(cameraId) {
+function _startCamera() {
   document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
   try {
     scanner = new Html5Qrcode('scan-viewport');
     const cfg = { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 };
-    scanner.start(
-      cameraId,
-      cfg,
-      (barcode) => onBarcodeScan(barcode),
-      () => {}
+    scanner.start({ facingMode: 'environment' }, cfg,
+      (b) => onBarcodeScan(b), () => {}
     ).then(() => { scannerRunning = true; })
-     .catch(err => {
-       console.warn('Scanner start err:', err);
-       document.getElementById('scan-hint').textContent = 'Нет доступа к камере';
-     });
+     .catch(() => { document.getElementById('scan-hint').textContent = 'Нет доступа к камере'; });
   } catch(e) {
-    console.error('Html5Qrcode init error:', e);
     document.getElementById('scan-hint').textContent = 'Камера недоступна';
   }
 }
@@ -1804,36 +1793,12 @@ function startScannerCamera(cameraId) {
 async function openScanner() {
   document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
-  document.getElementById('scan-hint').textContent = 'Запрос камеры…';
-
+  document.getElementById('scan-hint').textContent = 'Инициализация…';
   await _stopScanner();
   _resetViewport();
-
-  try {
-    // getCameras() triggers fresh getUserMedia — fixes iOS reuse bug
-    const cameras = await Html5Qrcode.getCameras();
-    if (!cameras || cameras.length === 0) {
-      document.getElementById('scan-hint').textContent = 'Камера не найдена';
-      return;
-    }
-    // Prefer back/rear camera
-    const cam = cameras.find(c => /back|rear|environment/i.test(c.label))
-             || cameras[cameras.length - 1];
-    startScannerCamera(cam.id);
-  } catch(e) {
-    console.warn('getCameras error:', e);
-    // Fallback: try with facingMode if getCameras fails
-    try {
-      scanner = new Html5Qrcode('scan-viewport');
-      const cfg = { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 };
-      scanner.start({ facingMode: 'environment' }, cfg,
-        (b) => onBarcodeScan(b), () => {}
-      ).then(() => { scannerRunning = true; document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта'; })
-       .catch(() => { document.getElementById('scan-hint').textContent = 'Нет доступа к камере'; });
-    } catch(e2) {
-      document.getElementById('scan-hint').textContent = 'Нет доступа к камере';
-    }
-  }
+  // Give the browser 300ms to actually release the camera hardware
+  await new Promise(r => setTimeout(r, 300));
+  _startCamera();
 }
 
 async function closeScanner() {
@@ -1871,14 +1836,8 @@ async function resumeScanner() {
   document.getElementById('scan-result').style.display = 'none';
   await _stopScanner();
   _resetViewport();
-  try {
-    const cameras = await Html5Qrcode.getCameras();
-    const cam = cameras.find(c => /back|rear|environment/i.test(c.label))
-             || cameras[cameras.length - 1];
-    startScannerCamera(cam.id);
-  } catch(e) {
-    startScannerCamera({ facingMode: 'environment' });
-  }
+  await new Promise(r => setTimeout(r, 300));
+  _startCamera();
 }
 
 function showScanResult(p, barcode) {
