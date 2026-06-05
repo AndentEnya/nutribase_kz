@@ -1761,7 +1761,7 @@ function openScanner() {
 
   document.getElementById('scan-overlay').classList.add('open');
   document.getElementById('scan-result').style.display = 'none';
-  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+  document.getElementById('scan-hint').textContent = 'Поместите красную линию поперёк штрихкода';
   scanLock = false;
 
   // Camera already running — just show overlay, no restart needed
@@ -1829,7 +1829,7 @@ function onBarcodeScan(barcode) {
 function resumeScanner() {
   scanLock = false;
   document.getElementById('scan-result').style.display = 'none';
-  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+  document.getElementById('scan-hint').textContent = 'Поместите красную линию поперёк штрихкода';
 }
 
 function showScanResult(p, barcode) {
@@ -1901,8 +1901,22 @@ function escAttr(s) {
 
 function resumeScannerUI() {
   document.getElementById('scan-result').style.display = 'none';
-  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+  document.getElementById('scan-hint').textContent = 'Поместите красную линию поперёк штрихкода';
   resumeScanner();
+}
+
+function showManualBarcode() {
+  document.getElementById('scan-manual').style.display = 'flex';
+  setTimeout(() => document.getElementById('scan-manual-input').focus(), 60);
+}
+function cancelManualBarcode() {
+  document.getElementById('scan-manual').style.display = 'none';
+  document.getElementById('scan-manual-input').value = '';
+}
+function submitManualBarcode() {
+  const val = document.getElementById('scan-manual-input').value.trim();
+  cancelManualBarcode();
+  if (val) onBarcodeScan(val);
 }
 
 function scanAddToDB(name, cat, k, p, f, c) {
