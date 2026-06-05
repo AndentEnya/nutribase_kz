@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriBase — Kazakhstan Edition</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23262626'/><path d='M7 25V7L17 21V7' stroke='%23e8b84b' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/><path d='M17 7V25' stroke='%23e8b84b' stroke-width='2.8' stroke-linecap='round'/><path d='M22 8C22 8 27 9 26 15C24.5 12 22 12 22 8Z' fill='%23e8b84b'/></svg>">
+
+<style>
+
+:root {
+  --bg:    #1a1a1a;
+  --bg2:   #1f1f1f;
+  --bg3:   #262626;
+  --bg4:   #2e2e2e;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text:  #ededed;
+  --text2: #909090;
+  --text3: #555555;
+  --accent: #e8b84b;
+  --accent2:#c99a36;
+  --blue:  #5aabff;
+  --green: #4ed68a;
+  --red:   #ff6b6b;
+  --font-head:'Arial Black','Impact','Franklin Gothic Heavy','Trebuchet MS',sans-serif;
+  --font-body:-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  --r:10px; --r2:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+.shell{display:flex;min-height:100vh;}
+.sidebar{width:210px;min-width:210px;background:var(--bg2);border-right:1px solid var(--border);padding:22px 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+
+.logo{padding:0 18px 24px;}
+.logo-mark{font-family:var(--font-head);font-size:11px;font-weight:900;color:var(--accent);letter-spacing:.15em;}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:.04em;}
+.logo-icon{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.logo-text-wrap{display:flex;flex-direction:column;}
+
+.nav-section{padding:0 10px;margin-bottom:4px;}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:0 8px;margin-bottom:3px;}
+.nav-btn{display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:var(--r2);background:none;border:none;color:var(--text2);font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .15s;text-align:left;}
+.nav-btn:hover{background:var(--bg3);color:var(--text);}
+.nav-btn.active{background:rgba(232,184,75,.13);color:var(--accent);}
+.nav-btn svg{width:15px;height:15px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.nav-divider{border:none;border-top:1px solid var(--border);margin:8px 18px;}
+
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20;}
+.topbar-title{font-size:13px;font-weight:600;color:var(--text);}
+.topbar-count{font-size:11px;color:var(--text3);margin-left:auto;}
+
+.page{display:none;padding:24px 28px;flex:1;} #page-tdee{max-width:1100px;}
+.page.active{display:block;}
+.page-title{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.02em;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5;}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:900px){.grid4{grid-template-columns:1fr 1fr;}.grid2{grid-template-columns:1fr;}}
+
+input[type=text],input[type=number],select,textarea{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);
+  color:var(--text);font-family:var(--font-body);font-size:13px;padding:8px 12px;
+  outline:none;transition:border .15s;width:100%;
+}
+input:focus,select:focus{border-color:var(--accent);}
+select option{background:var(--bg3);}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--bg4);border-radius:2px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--accent);cursor:pointer;}
+label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;}
+
+.btn{padding:8px 16px;border-radius:var(--r2);border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .15s;}
+.btn:hover{background:var(--bg3);color:var(--text);}
+.btn-accent{background:var(--accent);border-color:var(--accent);color:#111318;font-weight:600;}
+.btn-accent:hover{background:var(--accent2);border-color:var(--accent2);}
+.btn-sm{padding:4px 10px;font-size:12px;}
+.btn-danger{border-color:rgba(255,107,107,.3);color:var(--red);}
+.btn-danger:hover{background:rgba(255,107,107,.1);}
+
+.chip{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap;}
+.chip-cat{background:var(--bg4);color:var(--text2);}
+
+.macro-p{color:var(--blue);font-weight:600;}
+.macro-c{color:var(--accent);font-weight:600;}
+.macro-f{color:var(--green);font-weight:600;}
+.macro-k{color:var(--text2);}
+
+.tbl-wrap{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--bg2);}
+table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;}
+thead th{background:var(--bg3);font-weight:600;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;user-select:none;white-space:nowrap;}
+thead th:hover{color:var(--text);}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text);}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:var(--bg3);}
+td.r{text-align:right;}
+
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.filter-row button{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
+.filter-row button:hover{border-color:var(--accent);color:var(--accent);}
+.filter-row button.on{background:var(--accent);border-color:var(--accent);color:#111318;font-weight:600;}
+.mf-p.on{background:rgba(90,171,255,.2);border-color:var(--blue);color:var(--blue);}
+.mf-c.on{background:rgba(232,184,75,.2);border-color:var(--accent);color:var(--accent);}
+.mf-f.on{background:rgba(78,214,138,.2);border-color:var(--green);color:var(--green);}
+
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.metric-num{font-family:var(--font-head);font-size:26px;font-weight:700;color:var(--text);}
+.metric-lbl{font-size:12px;color:var(--text2);margin-top:4px;}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+
+.seg{display:flex;border:1px solid var(--border2);border-radius:var(--r2);overflow:hidden;}
+.seg button{flex:1;padding:8px 6px;border:none;background:transparent;color:var(--text2);font-family:var(--font-body);font-size:12px;cursor:pointer;transition:all .15s;}
+.seg button.on{background:var(--accent);color:#111318;font-weight:600;}
+
+.bar-wrap{margin-bottom:12px;}
+.bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px;}
+.bar-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width .4s;}
+
+.info-box{background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 var(--r2) var(--r2) 0;padding:11px 14px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px;}
+.info-box strong{color:var(--text);font-weight:600;}
+
+.formula-box{font-family:monospace;font-size:13px;color:var(--text2);line-height:2;background:var(--bg3);padding:14px 16px;border-radius:var(--r2);margin-top:8px;}
+.formula-box .hl{color:var(--accent);font-weight:700;}
+
+.form-row{margin-bottom:12px;}
+.form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:26px;width:460px;max-width:95vw;}
+.modal-title{font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+
+#toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:11px 16px;font-size:13px;color:var(--text);transform:translateY(60px);opacity:0;transition:all .3s;z-index:999;}
+#toast.show{transform:translateY(0);opacity:1;}
+#toast.ok{border-color:var(--green);}
+#toast.err{border-color:var(--red);}
+
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.ext-result{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);transition:background .15s;}
+.ext-result:last-child{border-bottom:none;}
+.ext-result:hover{background:var(--bg3);}
+.ext-name{font-size:13px;font-weight:500;color:var(--text);}
+.ext-brand{font-size:11px;color:var(--text3);margin-top:1px;}
+.ext-macros{display:flex;gap:12px;font-size:12px;margin-top:4px;}
+
+.ftabs{display:flex;gap:6px;margin-bottom:12px;}
+.ftab{padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--font-body);font-size:12px;cursor:pointer;transition:all .15s;}
+.ftab:hover{color:var(--text);}
+.ftab.on{background:var(--accent);border-color:var(--accent);color:#1f1f1f;font-weight:600;}
+.tdee-wrap{display:grid;grid-template-columns:240px 1fr;gap:12px;margin-bottom:12px;max-width:1100px;}
+@media(max-width:860px){.tdee-wrap{grid-template-columns:1fr;}}
+.formula-panel{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+/* extra panels */
+.extra-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px;max-width:1100px;}
+@media(max-width:860px){.extra-grid{grid-template-columns:1fr;}}
+.ep{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.ep-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;}
+/* water */
+.water-main{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+.water-val{font-family:var(--font-head);font-size:26px;font-weight:700;color:var(--blue);}
+.water-unit{font-size:14px;color:var(--text2);}
+.water-rows{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.wr{background:var(--bg4);border-radius:var(--r2);padding:8px 10px;}
+.wr-lbl{font-size:10px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;}
+.wr-val{font-size:13px;font-weight:600;color:var(--text);}
+/* schedule */
+.meal-sched{display:flex;flex-direction:column;gap:6px;}
+.ms-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg4);border-radius:var(--r2);border-left:3px solid transparent;}
+.ms-item.ms-main{border-left-color:var(--accent);}
+.ms-item.ms-snack{border-left-color:var(--text3);}
+.ms-time{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);min-width:44px;}
+.ms-snack .ms-time{color:var(--text2);}
+.ms-name{font-size:13px;color:var(--text);font-weight:500;}
+.ms-kcal{font-size:11px;color:var(--text3);margin-left:auto;}
+.sched-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+/* hr zones */
+.hr-zones{display:flex;flex-direction:column;gap:6px;}
+.hrz{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r2);border:1px solid var(--border);}
+.hrz-color{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.hrz-name{font-size:12px;font-weight:600;color:var(--text);min-width:100px;}
+.hrz-range{font-family:var(--font-head);font-size:13px;font-weight:700;min-width:90px;}
+.hrz-desc{font-size:11px;color:var(--text2);}
+.hrz-bar-wrap{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.hrz-bar{height:100%;border-radius:3px;}
+.tdee-params{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.tdee-right{display:flex;flex-direction:column;gap:10px;}
+.tdee-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;} .tdee-right{min-width:0;}
+.tnc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;position:relative;}
+.tnc.hl{border-color:rgba(232,184,75,.4);background:rgba(232,184,75,.04);}
+.tnc-dot{position:absolute;top:10px;right:12px;width:6px;height:6px;border-radius:50%;}
+.tnc-val{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text);line-height:1.1;}
+.tnc.hl .tnc-val{color:var(--accent);}
+.tnc-lbl{font-size:10px;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:.05em;}
+.tnc-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.macros-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.mc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;}
+.mc-name{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.mc-g{font-family:var(--font-head);font-size:17px;font-weight:700;line-height:1;}
+.mc-info{font-size:11px;color:var(--text2);margin-top:3px;}
+.mc-bar{height:3px;border-radius:2px;margin-top:8px;background:var(--bg4);overflow:hidden;}
+.mc-bar-fill{height:100%;border-radius:2px;transition:width .4s;}
+
+.cmp-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.cmp{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r2);padding:10px 12px;cursor:pointer;transition:all .15s;}
+.cmp:hover{border-color:var(--border2);}
+.cmp.active{border-color:rgba(232,184,75,.5);background:rgba(232,184,75,.06);}
+.cmp-name{font-size:10px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.cmp-bmr{font-family:var(--font-head);font-size:17px;font-weight:700;color:var(--text);}
+.cmp.active .cmp-bmr{color:var(--accent);}
+.cmp-tdee{font-size:11px;color:var(--text2);margin-top:2px;}
+.sl-row{margin-bottom:10px;}
+.sl-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.sl-top span{font-size:12px;color:var(--text2);}
+.sl-top strong{font-size:13px;color:var(--text);font-weight:600;}
+/* extra panels */
+.extra-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px;max-width:1100px;}
+@media(max-width:860px){.extra-grid{grid-template-columns:1fr;}}
+.ep{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.ep-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;}
+.water-main{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+.water-val{font-family:var(--font-head);font-size:26px;font-weight:700;color:var(--blue);}
+.water-unit{font-size:14px;color:var(--text2);}
+.water-rows{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.wr{background:var(--bg4);border-radius:var(--r2);padding:8px 10px;}
+.wr-lbl{font-size:10px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;}
+.wr-val{font-size:13px;font-weight:600;color:var(--text);}
+.meal-sched{display:flex;flex-direction:column;gap:5px;}
+.ms-item{display:flex;align-items:center;gap:10px;padding:7px 10px;background:var(--bg4);border-radius:var(--r2);border-left:3px solid transparent;}
+.ms-item.ms-main{border-left-color:var(--accent);}
+.ms-item.ms-snack{border-left-color:var(--text3);}
+.ms-time{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);min-width:42px;}
+.ms-snack .ms-time{color:var(--text2);}
+.ms-name{font-size:12px;color:var(--text);font-weight:500;}
+.ms-kcal{font-size:11px;color:var(--text3);margin-left:auto;}
+.ms-tip{font-size:10px;color:var(--text3);margin-top:1px;}
+.sched-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.hr-zones{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;min-width:0;}
+@media(max-width:700px){.hr-zones{grid-template-columns:1fr 1fr;}}
+.hrz{padding:11px 12px;border-radius:var(--r);border:1px solid var(--border);min-width:0;overflow:hidden;}
+.hrz-dot{width:10px;height:10px;border-radius:50%;margin-bottom:8px;}
+.hrz-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hrz-range{font-size:13px;font-weight:800;margin-bottom:2px;letter-spacing:-.02em;}
+.hrz-pct{font-size:10px;color:var(--text3);margin-bottom:6px;}
+.hrz-desc{font-size:10px;color:var(--text2);line-height:1.4;}
+.hrz-bar-wrap{height:3px;background:var(--bg4);border-radius:2px;margin-top:8px;overflow:hidden;}
+.hrz-bar{height:100%;border-radius:2px;}
+
+/* ── ПРОФИЛИ ── */
+.profiles-bar{background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.profile-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:var(--font-body);font-size:12px;cursor:pointer;transition:all .15s;}
+.profile-chip:hover{border-color:var(--accent);color:var(--accent);}
+.profile-chip.active{background:var(--accent);border-color:var(--accent);color:#1f1f1f;font-weight:600;}
+.profile-chip .pc-del{margin-left:4px;opacity:.5;font-size:14px;line-height:1;}
+.profile-chip .pc-del:hover{opacity:1;color:var(--red);}
+.pb-add{padding:5px 12px;border-radius:20px;border:1px dashed var(--border2);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:var(--font-body);transition:all .15s;}
+.pb-add:hover{border-color:var(--accent);color:var(--accent);}
+/* ── ПОДБОР РАЦИОНА ── */
+.picker-wrap{display:grid;grid-template-columns:280px 1fr;gap:14px;max-width:1100px;}
+@media(max-width:860px){.picker-wrap{grid-template-columns:1fr;}}
+.picker-params{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.picker-result{display:flex;flex-direction:column;gap:10px;}
+.meal-block{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.mb-head{padding:10px 14px;background:var(--bg4);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.mb-title{font-size:12px;font-weight:700;color:var(--text);}
+.mb-kcal{font-size:11px;color:var(--text3);}
+.food-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);}
+.food-row:last-child{border-bottom:none;}
+.food-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.food-name{font-size:13px;color:var(--text);flex:1;}
+.food-g{font-size:12px;color:var(--text2);min-width:44px;text-align:right;}
+.food-macros{display:flex;gap:8px;font-size:11px;min-width:160px;justify-content:flex-end;}
+.food-repl{padding:3px 8px;border-radius:var(--r2);border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;transition:all .15s;margin-left:6px;}
+.food-repl:hover{border-color:var(--accent);color:var(--accent);}
+.totals-bar{background:var(--bg3);border:1px solid var(--accent);border-radius:var(--r);padding:12px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+.tb-item{text-align:center;}
+.tb-val{font-size:16px;font-weight:800;font-family:var(--font-head);}
+.tb-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+.progress-ring{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.pring{width:36px;height:36px;}
+.pring circle{fill:none;stroke-width:3;stroke-linecap:round;}
+.mode-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.mode-tab{padding:6px 16px;border-radius:var(--r2);border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font-body);transition:all .15s;}
+.mode-tab.on{background:var(--accent);border-color:var(--accent);color:#1f1f1f;font-weight:600;}
+.mode-panel{display:none;}
+.mode-panel.on{display:block;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">
+      <!-- SVG logo mark: stylized N + leaf/flame -->
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="34" height="34" rx="8" fill="#e8b84b" opacity=".12"/>
+        <rect width="34" height="34" rx="8" fill="url(#lg1)"/>
+        <!-- N letterform -->
+        <path d="M8 26V8L18 22V8" stroke="#e8b84b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18 8V26" stroke="#e8b84b" stroke-width="2.6" stroke-linecap="round"/>
+        <!-- small leaf accent top-right -->
+        <path d="M23 9 C23 9 28 10 27 16 C25.5 13 23 13 23 9Z" fill="#e8b84b" opacity=".8"/>
+        <circle cx="25" cy="17" r="1.5" fill="#e8b84b" opacity=".5"/>
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#e8b84b" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#e8b84b" stop-opacity="0.03"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="logo-text-wrap">
+        <div class="logo-mark">NUTRIBASE</div>
+        <div class="logo-sub">Kazakhstan Edition</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">База</div>
+    <button class="nav-btn active" onclick="showPage('db',this)">
+      <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+      База продуктов
+    </button>
+    <button class="nav-btn" onclick="showPage('add',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Добавить продукт
+    </button>
+    <button class="nav-btn" onclick="showPage('search',this)">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Поиск USDA API
+    </button>
+  </div>
+  <hr class="nav-divider">
+  <div class="nav-section">
+    <div class="nav-label">Инструменты</div>
+    <button class="nav-btn" onclick="showPage('tdee',this)">
+      <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      Калькулятор TDEE
+    </button>
+    <button class="nav-btn" onclick="showPage('plan',this)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+      Дневник питания
+    </button>
+    <button class="nav-btn" onclick="showPage('picker',this)">
+      <svg viewBox="0 0 24 24"><path d="M3 3h18v4H3z"/><path d="M3 10h12v4H3z"/><path d="M3 17h8v4H3z"/><circle cx="19" cy="19" r="3"/><line x1="19" y1="16" x2="19" y2="22"/><line x1="16" y1="19" x2="22" y2="19"/></svg>
+      Подбор рациона
+    </button>
+  </div>
+  <hr class="nav-divider">
+  <div class="nav-section">
+    <div class="nav-label">Данные</div>
+    <button class="nav-btn" onclick="exportDB()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Экспорт JSON
+    </button>
+    <button class="nav-btn" onclick="document.getElementById('imp').click()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Импорт JSON
+    </button>
+    <input type="file" id="imp" accept=".json" style="display:none" onchange="importDB(this)">
+  </div>
+  <div style="margin-top:auto;padding:18px 18px 0;font-size:10px;color:var(--text3);line-height:1.6;">Данные хранятся<br>локально в браузере</div>
+</nav>
+
+<div class="main">
+  <!-- PROFILES BAR -->
+  <div class="profiles-bar" id="profiles-bar">
+    <span style="font-size:10px;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-right:4px;">Профиль:</span>
+    <div id="profile-chips"></div>
+    <button class="pb-add" onclick="createProfile()">+ Новый профиль</button>
+    <button class="btn btn-sm" onclick="saveCurrentProfile()" style="margin-left:auto;font-size:11px;padding:4px 12px;">💾 Сохранить</button>
+  </div>
+  <div class="topbar">
+    <!-- inline logo for topbar -->
+    <div style="display:flex;align-items:center;gap:8px;margin-right:18px;border-right:1px solid var(--border);padding-right:18px;">
+      <svg width="22" height="22" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="34" height="34" rx="8" fill="#e8b84b" opacity=".15"/>
+        <path d="M8 26V8L18 22V8" stroke="#e8b84b" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18 8V26" stroke="#e8b84b" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M23 9 C23 9 28 10 27 16 C25.5 13 23 13 23 9Z" fill="#e8b84b" opacity=".9"/>
+      </svg>
+      <span style="font-size:11px;font-weight:900;color:var(--accent);letter-spacing:.12em;font-family:var(--font-head);">NUTRIBASE</span>
+    </div>
+    <span style="font-size:12px;color:var(--text2);" id="topbar-title">База продуктов</span>
+    <span class="topbar-count" id="topbar-count"></span>
+  </div>
+
+  <!-- DB PAGE -->
+  <div id="page-db" class="page active">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+      <input type="text" id="db-search" placeholder="Поиск по названию..." style="max-width:280px;" oninput="renderDB()">
+      <div class="filter-row" id="mf" style="margin:0;">
+        <button class="on" onclick="setMF('all',this)">Все</button>
+        <button class="mf-p" onclick="setMF('p',this)">Топ белок</button>
+        <button class="mf-c" onclick="setMF('c',this)">Топ углеводы</button>
+        <button class="mf-f" onclick="setMF('f',this)">Топ жиры</button>
+      </div>
+    </div>
+    <div class="filter-row" id="cf"></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:8px;" id="db-count"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:24%;" onclick="dbSort('n')">Продукт ↕</th>
+          <th style="width:13%;">Категория</th>
+          <th style="width:7%;text-align:right;" onclick="dbSort('k')">Ккал ↕</th>
+          <th style="width:7%;text-align:right;" onclick="dbSort('p')">Б ↕</th>
+          <th style="width:7%;text-align:right;" onclick="dbSort('f')">Ж ↕</th>
+          <th style="width:7%;text-align:right;" onclick="dbSort('c')">У ↕</th>
+          <th style="width:28%;">Заметка</th>
+          <th style="width:7%;text-align:center;"></th>
+        </tr></thead>
+        <tbody id="dbt"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ADD PAGE -->
+  <div id="page-add" class="page">
+    <div class="page-title">Добавить продукт</div>
+    <div class="page-sub">КБЖУ указывается на 100г. Добавленные продукты помечаются точкой и сохраняются в браузере.</div>
+    <div style="max-width:520px;">
+      <div class="card">
+        <div class="form-row"><label>Название *</label><input type="text" id="add-name" placeholder="например: Ежевика свежая"></div>
+        <div class="form-row"><label>Категория *</label><select id="add-cat"></select></div>
+        <div class="form-grid2">
+          <div><label>Калории (ккал)</label><input type="number" id="add-k" placeholder="0" min="0"></div>
+          <div><label>Белки (г)</label><input type="number" id="add-p" placeholder="0" min="0" step="0.1"></div>
+          <div><label>Жиры (г)</label><input type="number" id="add-f" placeholder="0" min="0" step="0.1"></div>
+          <div><label>Углеводы (г)</label><input type="number" id="add-c" placeholder="0" min="0" step="0.1"></div>
+        </div>
+        <div class="form-row"><label>Заметка</label><input type="text" id="add-note" placeholder="★ Базар, сезонный..."></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-accent" onclick="addProduct()">Добавить в базу</button>
+          <button class="btn" onclick="clearAdd()">Очистить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USDA PAGE -->
+  <div id="page-search" class="page">
+    <div class="page-title">Поиск USDA FoodData Central</div>
+    <div class="page-sub">700k+ продуктов из американской базы. Ищи на английском, добавляй в свою базу одним кликом. Нужен интернет.</div>
+    <div class="info-box"><strong>Совет:</strong> Используй SR Legacy для сырых продуктов (chicken breast, oats, salmon). Foundation — для базовых. Branded — для товаров конкретных марок.</div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <input type="text" id="usda-q" placeholder="Поиск: chicken breast, oats, tuna..." style="flex:1;max-width:380px;" onkeydown="if(event.key==='Enter')usdaSearch()">
+      <select id="usda-type" style="width:200px;">
+        <option value="SR Legacy" selected>SR Legacy (сырые)</option>
+        <option value="Foundation">Foundation (базовые)</option>
+        <option value="Survey (FNDDS)">FNDDS (готовые блюда)</option>
+        <option value="Branded">Branded (бренды)</option>
+      </select>
+      <button class="btn btn-accent" onclick="usdaSearch()">Найти</button>
+    </div>
+    <div id="usda-status" style="font-size:13px;color:var(--text3);margin-bottom:10px;min-height:20px;display:flex;align-items:center;gap:8px;"></div>
+    <div class="tbl-wrap" id="usda-wrap" style="display:none;"><div id="usda-res"></div></div>
+    <div id="usda-empty" style="display:none;padding:40px;text-align:center;color:var(--text3);font-size:14px;">Ничего не найдено. Попробуй другой запрос.</div>
+  </div>
+
+  <!-- TDEE PAGE -->
+  <div id="page-tdee" class="page">
+    <div class="page-title">Калькулятор TDEE / BMR</div>
+    <div class="page-sub">Три формулы расчёта базального метаболизма. Переключай и сравнивай.</div>
+
+    <div class="tdee-wrap">
+      <!-- LEFT: params -->
+      <div class="tdee-params">
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;">Параметры</div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">Пол</div>
+          <div class="seg"><button class="on" id="tdee-m" onclick="tdeeSetSex('m')">Мужской</button><button id="tdee-f" onclick="tdeeSetSex('f')">Женский</button></div>
+        </div>
+        <div class="sl-row">
+          <div class="sl-top"><span>Возраст</span><strong><span id="lbl-age">28</span> лет</strong></div>
+          <input type="range" id="sl-age" min="14" max="75" value="28" step="1" oninput="tdeeCalc()">
+        </div>
+        <div class="sl-row">
+          <div class="sl-top"><span>Рост</span><strong><span id="lbl-ht">178</span> см</strong></div>
+          <input type="range" id="sl-ht" min="150" max="210" value="178" step="1" oninput="tdeeCalc()">
+        </div>
+        <div class="sl-row">
+          <div class="sl-top"><span>Вес</span><strong><span id="lbl-wt">80</span> кг</strong></div>
+          <input type="range" id="sl-wt" min="45" max="160" value="80" step="1" oninput="tdeeCalc()">
+        </div>
+        <div class="sl-row">
+          <div class="sl-top"><span>% жира (Katch)</span><strong><span id="lbl-bf">18</span>%</strong></div>
+          <input type="range" id="sl-bf" min="5" max="50" value="18" step="1" oninput="tdeeCalc()">
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">Активность</div>
+          <select id="sl-act" onchange="tdeeCalc()">
+            <option value="1.2">Сидячий (без спорта)</option>
+            <option value="1.375">Лёгкий (1–2 тренировки)</option>
+            <option value="1.55" selected>Умеренный (3–5 тренировок)</option>
+            <option value="1.725">Высокий (6–7 тренировок)</option>
+            <option value="1.9">Очень высокий (2× в день)</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">Цель</div>
+          <select id="sl-goal" onchange="tdeeCalc()">
+            <option value="-500">Похудение (−500 ккал)</option>
+            <option value="-300">Мягкое похудение (−300 ккал)</option>
+            <option value="0" selected>Поддержание</option>
+            <option value="200">Набор (+200 ккал)</option>
+            <option value="400">Активный набор (+400 ккал)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- RIGHT: results -->
+      <div class="tdee-right">
+        <div class="tdee-nums">
+          <div class="tnc">
+            <div class="tnc-dot" style="background:var(--text3);"></div>
+            <div class="tnc-val" id="r-bmr">—</div>
+            <div class="tnc-lbl">BMR</div>
+            <div class="tnc-sub">в состоянии покоя</div>
+          </div>
+          <div class="tnc">
+            <div class="tnc-dot" style="background:var(--blue);"></div>
+            <div class="tnc-val" id="r-tdee">—</div>
+            <div class="tnc-lbl">TDEE</div>
+            <div class="tnc-sub">с учётом активности</div>
+          </div>
+          <div class="tnc hl">
+            <div class="tnc-dot" style="background:var(--accent);"></div>
+            <div class="tnc-val" id="r-target">—</div>
+            <div class="tnc-lbl">Цель</div>
+            <div class="tnc-sub" id="r-sub">—</div>
+          </div>
+        </div>
+
+        <div class="macros-grid" id="tdee-macros"></div>
+
+        <!-- QUICK STATS -->
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:10px;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:2px;">Быстрые итоги</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div style="background:var(--bg4);border-radius:var(--r2);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:var(--text2);">Белок в день</span>
+              <span id="qs-prot" style="font-size:13px;font-weight:700;color:var(--blue);">—г</span>
+            </div>
+            <div style="background:var(--bg4);border-radius:var(--r2);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:var(--text2);">Кг в неделю</span>
+              <span id="qs-week" style="font-size:13px;font-weight:700;color:var(--accent);">—</span>
+            </div>
+            <div style="background:var(--bg4);border-radius:var(--r2);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:var(--text2);">Белок за приём</span>
+              <span id="qs-pmeal" style="font-size:13px;font-weight:700;color:var(--green);">—г</span>
+            </div>
+            <div style="background:var(--bg4);border-radius:var(--r2);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:var(--text2);">Ккал за приём (5×)</span>
+              <span id="qs-kmeal" style="font-size:13px;font-weight:700;color:var(--text);">—</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- EXTRA PANELS: water + schedule on left, hr zones on right -->
+    <div class="extra-grid">
+
+      <!-- WATER -->
+      <div class="ep">
+        <div class="ep-title">Вода в день</div>
+        <div class="water-main">
+          <span class="water-val" id="r-water">—</span>
+          <span class="water-unit">литров</span>
+        </div>
+        <div class="water-rows">
+          <div class="wr"><div class="wr-lbl">Базовая норма</div><div class="wr-val" id="w-base">—</div></div>
+          <div class="wr"><div class="wr-lbl">+Активность</div><div class="wr-val" id="w-act">—</div></div>
+          <div class="wr"><div class="wr-lbl">+Жара (лето)</div><div class="wr-val" id="w-heat">+0.5 л</div></div>
+          <div class="wr"><div class="wr-lbl">На тренировку</div><div class="wr-val">+0.5 л/час</div></div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text3);line-height:1.6;" id="w-tip"></div>
+      </div>
+
+      <!-- SCHEDULE -->
+      <div class="ep">
+        <div class="ep-title">Расписание питания</div>
+        <div class="sched-inputs">
+          <div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Подъём</div>
+            <input type="time" id="sc-wake" value="11:00" onchange="buildSchedule()">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Отбой</div>
+            <input type="time" id="sc-sleep" value="03:00" onchange="buildSchedule()">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Тренировка</div>
+            <input type="time" id="sc-gym" value="20:00" onchange="buildSchedule()">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Приёмов пищи</div>
+            <select id="sc-meals" onchange="buildSchedule()">
+              <option value="4">4 приёма</option>
+              <option value="5" selected>5 приёмов</option>
+              <option value="6">6 приёмов</option>
+            </select>
+          </div>
+        </div>
+        <div class="meal-sched" id="sched-list"></div>
+      </div>
+    </div>
+
+    <!-- HR ZONES FULL WIDTH -->
+    <div class="ep" style="margin-bottom:12px;">
+      <div class="ep-title">Зоны ЧСС — пульс для тренировок</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:13px;color:var(--text2);">Макс. ЧСС: <span id="hr-max" style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text);">—</span> уд/мин</div>
+        <div style="font-size:11px;color:var(--text3);">Формула: 220 − возраст</div>
+      </div>
+      <div class="hr-zones" id="hr-zones"></div>
+    </div>
+
+    <!-- FORMULA PANEL -->
+    <div class="formula-panel" style="max-width:1100px;">
+      <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;">Формула BMR</div>
+      <div class="ftabs">
+        <button class="ftab on" onclick="setFtab('mifflin',this)">Mifflin-St Jeor</button>
+        <button class="ftab" onclick="setFtab('harris',this)">Harris-Benedict</button>
+        <button class="ftab" onclick="setFtab('katch',this)">Katch-McArdle</button>
+      </div>
+      <div id="ftab-note" class="info-box"></div>
+      <div id="tdee-formula" class="formula-box"></div>
+      <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin:14px 0 8px;">Сравнение формул — клик для выбора</div>
+      <div class="cmp-row" id="formula-compare"></div>
+    </div>
+  </div>
+
+  <!-- DIARY PAGE -->
+  <div id="page-plan" class="page">
+    <div class="page-title">Дневник питания</div>
+    <div class="page-sub">Составляй дневной рацион из базы. Данные сохраняются в браузере.</div>
+    <div class="grid2" style="margin-bottom:16px;">
+      <div class="card">
+        <div style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;">Добавить приём</div>
+        <div class="form-row">
+          <label>Продукт</label>
+          <input type="text" id="diary-s" placeholder="Начни вводить..." oninput="diarySuggest()" autocomplete="off">
+          <div style="position:relative;"><div id="diary-sug"></div></div>
+        </div>
+        <div class="form-row"><label>Количество (г)</label><input type="number" id="diary-g" value="100" min="1" max="2000" oninput="updateDiaryPrev()"></div>
+        <div class="form-row"><label>Приём пищи</label>
+          <select id="diary-meal">
+            <option>Завтрак</option><option>Перекус 1</option><option>Обед</option><option>Перекус 2</option><option>Ужин</option>
+          </select>
+        </div>
+        <div id="diary-prev" style="display:none;margin-bottom:12px;" class="card-sm"></div>
+        <button class="btn btn-accent" onclick="diaryAdd()">Добавить</button>
+      </div>
+      <div>
+        <div class="grid4" style="margin-bottom:12px;">
+          <div class="metric" style="padding:12px;"><div class="metric-num" style="font-size:22px;" id="d-k">0</div><div class="metric-lbl">ккал</div></div>
+          <div class="metric" style="padding:12px;"><div class="metric-num" style="font-size:22px;color:var(--blue);" id="d-p">0г</div><div class="metric-lbl">белок</div></div>
+          <div class="metric" style="padding:12px;"><div class="metric-num" style="font-size:22px;color:var(--green);" id="d-f">0г</div><div class="metric-lbl">жиры</div></div>
+          <div class="metric" style="padding:12px;"><div class="metric-num" style="font-size:22px;color:var(--accent);" id="d-c">0г</div><div class="metric-lbl">углеводы</div></div>
+        </div>
+        <div id="d-prog"></div>
+      </div>
+    </div>
+    <div id="diary-list"></div>
+    <button class="btn btn-sm btn-danger" style="margin-top:10px;" onclick="clearDiary()">Очистить день</button>
+  </div>
+
+  <!-- PICKER PAGE -->
+  <div id="page-picker" class="page">
+    <div class="page-title">Подбор рациона</div>
+    <div class="page-sub">Подтяни макросы из калькулятора или введи вручную — получишь готовый день питания с правильными продуктами по времени суток.</div>
+
+    <div class="picker-wrap">
+      <!-- LEFT: params -->
+      <div class="picker-params">
+        <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;">Целевые макросы</div>
+
+        <button class="btn btn-accent" onclick="pullFromTDEE()" style="width:100%;margin-bottom:10px;">↙ Подтянуть из калькулятора TDEE</button>
+
+        <div class="form-row">
+          <label>Калории (ккал)</label>
+          <input type="number" id="pk-kcal" value="2800" min="1000" max="6000">
+        </div>
+        <div class="form-row">
+          <label>Белок (г)</label>
+          <input type="number" id="pk-p" value="200" min="50" max="500">
+        </div>
+        <div class="form-row">
+          <label>Жиры (г)</label>
+          <input type="number" id="pk-f" value="85" min="30" max="300">
+        </div>
+        <div class="form-row">
+          <label>Углеводы (г)</label>
+          <input type="number" id="pk-c" value="250" min="50" max="600">
+        </div>
+        <div class="form-row">
+          <label>Приёмов пищи</label>
+          <select id="pk-meals">
+            <option value="4">4 приёма</option>
+            <option value="5" selected>5 приёмов</option>
+            <option value="6">6 приёмов</option>
+          </select>
+        </div>
+
+        <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin:12px 0 8px;">Тип подбора</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+            <input type="radio" name="pk-mode" value="day" checked style="accent-color:var(--accent);width:15px;height:15px;">
+            📅 Готовый день по приёмам
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+            <input type="radio" name="pk-mode" value="list" style="accent-color:var(--accent);width:15px;height:15px;">
+            📋 Список продуктов с граммовкой
+          </label>
+        </div>
+
+        <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Исключить</div>
+        <div id="pk-exclude" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;"></div>
+
+        <button class="btn btn-accent" onclick="runPicker()" style="width:100%;font-size:14px;padding:10px;">Подобрать рацион</button>
+        <button class="btn" onclick="shufflePicker()" style="width:100%;margin-top:6px;font-size:12px;">🔀 Другой вариант</button>
+      </div>
+
+      <!-- RIGHT: result -->
+      <div id="picker-result" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:40px;text-align:center;color:var(--text3);font-size:13px;line-height:1.7;">
+          Заполни макросы и нажми <strong style="color:var(--accent);">«Подобрать рацион»</strong><br>
+          Или нажми <strong style="color:var(--accent);">«Подтянуть из TDEE»</strong> чтобы использовать данные из калькулятора
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- main -->
+</div><!-- shell -->
+
+<!-- EDIT MODAL -->
+<div class="modal-bg" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">Редактировать продукт</div>
+    <div class="form-row"><label>Название</label><input type="text" id="edit-name"></div>
+    <div class="form-row"><label>Категория</label><select id="edit-cat"></select></div>
+    <div class="form-grid2">
+      <div><label>Калории</label><input type="number" id="edit-k"></div>
+      <div><label>Белки</label><input type="number" id="edit-p" step="0.1"></div>
+      <div><label>Жиры</label><input type="number" id="edit-f" step="0.1"></div>
+      <div><label>Углеводы</label><input type="number" id="edit-c" step="0.1"></div>
+    </div>
+    <div class="form-row"><label>Заметка</label><input type="text" id="edit-note"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-accent" onclick="saveEdit()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const CATS={dairy:'Молочка',meat:'Мясо/птица',fish:'Рыба/морепр.',egg:'Яйца',grain:'Крупы/злаки',legume:'Бобовые',veg:'Овощи',fruit:'Фрукты/ягоды',nut:'Орехи/семена',fat:'Масла/жиры',sweet:'Сладкое',sauce:'Соусы/специи',snack:'Снеки/спортпит',fast:'Фастфуд',drink:'Напитки',other:'Разное'};
+
+const SEED=[
+  {id:1,n:'Творог 5%',cat:'dairy',k:121,p:17,f:5,c:1.8,note:'Лучший казеин',custom:false},
+  {id:2,n:'Творог 0%',cat:'dairy',k:68,p:18,f:0,c:1.8,note:'Максимум белка',custom:false},
+  {id:3,n:'Курт (сухой)',cat:'dairy',k:260,p:25,f:14,c:6,note:'★ Местный, дёшево',custom:false},
+  {id:4,n:'Курт (мягкий)',cat:'dairy',k:140,p:12,f:8,c:5,note:'★ Базар',custom:false},
+  {id:5,n:'Кефир 1%',cat:'dairy',k:40,p:3,f:1,c:4,note:'Пробиотики',custom:false},
+  {id:6,n:'Айран',cat:'dairy',k:38,p:1.5,f:1.5,c:4,note:'★ Местный напиток',custom:false},
+  {id:7,n:'Греческий йогурт',cat:'dairy',k:97,p:9,f:5,c:3.5,note:'Magnum, дороже',custom:false},
+  {id:8,n:'Молоко 2.5%',cat:'dairy',k:52,p:2.8,f:2.5,c:4.7,note:'Базовый',custom:false},
+  {id:9,n:'Сыр российский',cat:'dairy',k:360,p:23,f:29,c:0,note:'Жирный',custom:false},
+  {id:10,n:'Сыр адыгейский',cat:'dairy',k:240,p:19,f:18,c:0,note:'Менее жирный',custom:false},
+  {id:11,n:'Сметана 10%',cat:'dairy',k:115,p:2.9,f:10,c:3.4,note:'Умеренно',custom:false},
+  {id:12,n:'Казы',cat:'meat',k:404,p:18,f:36,c:0,note:'★ Местный деликатес',custom:false},
+  {id:13,n:'Конина варёная',cat:'meat',k:214,p:25,f:13,c:0,note:'★ Местное мясо',custom:false},
+  {id:14,n:'Говядина варёная',cat:'meat',k:254,p:27,f:16,c:0,note:'Классика',custom:false},
+  {id:15,n:'Курица грудка',cat:'meat',k:113,p:23,f:2,c:0,note:'Основной белок',custom:false},
+  {id:16,n:'Курица бедро б/к',cat:'meat',k:185,p:20,f:12,c:0,note:'Вкуснее, жирнее',custom:false},
+  {id:17,n:'Индейка грудка',cat:'meat',k:104,p:20,f:2,c:0,note:'Аналог курицы',custom:false},
+  {id:18,n:'Баранина',cat:'meat',k:291,p:17,f:25,c:0,note:'★ Популярна в KZ',custom:false},
+  {id:19,n:'Печень говяжья',cat:'meat',k:127,p:20,f:3.7,c:4,note:'Железо, B12',custom:false},
+  {id:20,n:'Куриная печень',cat:'meat',k:136,p:20,f:5.9,c:0.7,note:'Микронутриенты',custom:false},
+  {id:21,n:'Тунец консерв.',cat:'fish',k:96,p:22,f:1,c:0,note:'Удобно, дёшево',custom:false},
+  {id:22,n:'Скумбрия',cat:'fish',k:262,p:18,f:21,c:0,note:'★ Омега-3 как лосось',custom:false},
+  {id:23,n:'Горбуша',cat:'fish',k:142,p:21,f:7,c:0,note:'Доступная, Metro',custom:false},
+  {id:24,n:'Сельдь',cat:'fish',k:248,p:17,f:20,c:0,note:'Дёшево, Омега-3',custom:false},
+  {id:25,n:'Форель',cat:'fish',k:148,p:20,f:7,c:0,note:'Есть в Metro',custom:false},
+  {id:26,n:'Минтай',cat:'fish',k:72,p:16,f:1,c:0,note:'Дёшево, нежирный',custom:false},
+  {id:27,n:'Кальмар свежий',cat:'fish',k:92,p:18,f:1.4,c:2,note:'Белок + таурин',custom:false},
+  {id:28,n:'Кальмар копчёный',cat:'fish',k:242,p:21,f:16,c:0,note:'★ Снек, высокий белок',custom:false},
+  {id:29,n:'Креветки варёные',cat:'fish',k:99,p:21,f:1,c:0,note:'Чистый белок',custom:false},
+  {id:30,n:'Яйцо куриное',cat:'egg',k:157,p:13,f:11,c:0.7,note:'Полный протеин',custom:false},
+  {id:31,n:'Яичный белок',cat:'egg',k:44,p:11,f:0.2,c:0.7,note:'Чистый белок',custom:false},
+  {id:32,n:'Яичный желток',cat:'egg',k:352,p:16,f:31,c:0.6,note:'Витамин D, холин',custom:false},
+  {id:33,n:'Гречка варёная',cat:'grain',k:132,p:4.5,f:1.6,c:25,note:'★ Лучшая крупа',custom:false},
+  {id:34,n:'Рис белый варёный',cat:'grain',k:130,p:2.7,f:0.3,c:28,note:'Классика',custom:false},
+  {id:35,n:'Рис бурый варёный',cat:'grain',k:111,p:2.6,f:0.9,c:23,note:'Клетчатка',custom:false},
+  {id:36,n:'Овсянка варёная',cat:'grain',k:88,p:3,f:1.7,c:15,note:'Завтрак',custom:false},
+  {id:37,n:'Картофель варёный',cat:'grain',k:80,p:2,f:0.1,c:17,note:'Насыщает',custom:false},
+  {id:38,n:'Макароны варёные',cat:'grain',k:158,p:5.5,f:0.9,c:31,note:'Удобно',custom:false},
+  {id:39,n:'Булгур варёный',cat:'grain',k:83,p:3,f:0.2,c:18,note:'Клетчатка',custom:false},
+  {id:40,n:'Чечевица варёная',cat:'legume',k:116,p:9,f:0.4,c:20,note:'★ Дёшево',custom:false},
+  {id:41,n:'Нут варёный',cat:'legume',k:164,p:9,f:2.6,c:27,note:'★ Базар',custom:false},
+  {id:42,n:'Маш варёный',cat:'legume',k:105,p:7,f:0.4,c:19,note:'★ Местный продукт',custom:false},
+  {id:43,n:'Фасоль варёная',cat:'legume',k:127,p:8.7,f:0.5,c:22,note:'Железо',custom:false},
+  {id:44,n:'Брокколи',cat:'veg',k:34,p:2.8,f:0.4,c:6.6,note:'Витамин C, K',custom:false},
+  {id:45,n:'Огурец',cat:'veg',k:15,p:0.7,f:0.1,c:3,note:'★ Дёшево',custom:false},
+  {id:46,n:'Помидор',cat:'veg',k:20,p:0.9,f:0.2,c:3.9,note:'★ Доступен',custom:false},
+  {id:47,n:'Перец болгарский',cat:'veg',k:27,p:1,f:0.3,c:5.4,note:'Витамин C',custom:false},
+  {id:48,n:'Морковь',cat:'veg',k:41,p:0.9,f:0.2,c:9.6,note:'★ Бета-каротин',custom:false},
+  {id:49,n:'Капуста белокочанная',cat:'veg',k:25,p:1.8,f:0.1,c:4.7,note:'★ Дёшево',custom:false},
+  {id:50,n:'Тыква',cat:'veg',k:26,p:1,f:0.1,c:6.5,note:'★ Осень, базар',custom:false},
+  {id:51,n:'Шпинат',cat:'veg',k:23,p:2.9,f:0.4,c:3.6,note:'Железо',custom:false},
+  {id:52,n:'Джусай',cat:'veg',k:34,p:2.4,f:0.4,c:6,note:'★ Казахстан, базар',custom:false},
+  {id:53,n:'Зелень (укроп/петр.)',cat:'veg',k:38,p:3,f:0.6,c:6,note:'Витамины',custom:false},
+  {id:54,n:'Яблоко',cat:'fruit',k:52,p:0.3,f:0.2,c:13,note:'★ Доступно',custom:false},
+  {id:55,n:'Банан',cat:'fruit',k:89,p:1.1,f:0.3,c:23,note:'Перед тренировкой',custom:false},
+  {id:56,n:'Арбуз',cat:'fruit',k:30,p:0.6,f:0.2,c:7.6,note:'★ Лето KZ',custom:false},
+  {id:57,n:'Дыня',cat:'fruit',k:35,p:0.6,f:0.3,c:8,note:'★ Лето KZ',custom:false},
+  {id:58,n:'Урюк/абрикос',cat:'fruit',k:44,p:0.9,f:0.1,c:10,note:'★ Июль-авг, базар',custom:false},
+  {id:59,n:'Курага',cat:'fruit',k:215,p:3.4,f:0.5,c:51,note:'Базар, дёшево',custom:false},
+  {id:60,n:'Изюм',cat:'fruit',k:299,p:2.5,f:0.5,c:72,note:'Быстрые углеводы',custom:false},
+  {id:61,n:'Финики',cat:'fruit',k:282,p:2.5,f:0.4,c:68,note:'Энергия',custom:false},
+  {id:62,n:'Грецкий орех',cat:'nut',k:654,p:15,f:65,c:14,note:'★ Дёшево, Омега-3',custom:false},
+  {id:63,n:'Миндаль',cat:'nut',k:579,p:21,f:50,c:22,note:'Витамин E',custom:false},
+  {id:64,n:'Арахис',cat:'nut',k:567,p:26,f:46,c:16,note:'Дёшево, белок',custom:false},
+  {id:65,n:'Арахисовая паста',cat:'nut',k:588,p:25,f:50,c:20,note:'Metro',custom:false},
+  {id:66,n:'Семена тыквы',cat:'nut',k:559,p:30,f:49,c:10,note:'★ Базар, цинк',custom:false},
+  {id:67,n:'Семена подсолнуха',cat:'nut',k:584,p:21,f:53,c:10,note:'★ Дёшево',custom:false},
+  {id:68,n:'Семена льна',cat:'nut',k:534,p:18,f:42,c:29,note:'Омега-3',custom:false},
+  {id:69,n:'Масло оливковое',cat:'fat',k:884,p:0,f:100,c:0,note:'Мононенасыщенные',custom:false},
+  {id:70,n:'Масло подсолнечное',cat:'fat',k:884,p:0,f:100,c:0,note:'★ Дёшево',custom:false},
+  {id:71,n:'Масло льняное',cat:'fat',k:884,p:0,f:100,c:0,note:'Омега-3, не жарить',custom:false},
+  {id:72,n:'Масло сливочное',cat:'fat',k:748,p:0.8,f:83,c:0.7,note:'Витамин A',custom:false},
+  {id:73,n:'Зефир',cat:'sweet',k:299,p:0.8,f:0,c:73,note:'Нет жира, быстрые У',custom:false},
+  {id:74,n:'Мармелад',cat:'sweet',k:321,p:1,f:0.1,c:79,note:'Чистые углеводы',custom:false},
+  {id:75,n:'Пастила',cat:'sweet',k:324,p:0.5,f:0,c:80,note:'Без жира',custom:false},
+  {id:76,n:'Халва подсолнечная',cat:'sweet',k:516,p:11,f:29,c:54,note:'★ Дёшево',custom:false},
+  {id:77,n:'Козинаки',cat:'sweet',k:494,p:10,f:24,c:63,note:'★ Местное',custom:false},
+  {id:78,n:'Чак-чак',cat:'sweet',k:469,p:6.4,f:21,c:62,note:'★ Местная выпечка',custom:false},
+  {id:79,n:'Шоколад тёмный 80%',cat:'sweet',k:598,p:8,f:42,c:46,note:'Магний, умеренно',custom:false},
+  {id:80,n:'Шоколад молочный',cat:'sweet',k:535,p:7,f:30,c:58,note:'Ограничить',custom:false},
+  {id:81,n:'Мёд',cat:'sweet',k:304,p:0.3,f:0,c:82,note:'★ Местный',custom:false},
+  {id:82,n:'Варенье',cat:'sweet',k:260,p:0.4,f:0.2,c:65,note:'Быстрые углеводы',custom:false},
+  {id:83,n:'Конфеты карамель',cat:'sweet',k:396,p:0.3,f:2.8,c:91,note:'Только иногда',custom:false},
+  {id:84,n:'Печенье сахарное',cat:'sweet',k:436,p:6,f:14,c:70,note:'Контролировать',custom:false},
+  {id:85,n:'Пряник',cat:'sweet',k:336,p:5,f:3,c:74,note:'Глазированный выше',custom:false},
+  {id:86,n:'Протеин сывороточный',cat:'snack',k:380,p:75,f:5,c:10,note:'Metro, Kaspi',custom:false},
+  {id:87,n:'Протеиновый батончик',cat:'snack',k:350,p:20,f:10,c:40,note:'Смотри состав',custom:false},
+  {id:88,n:'Хлебцы рисовые',cat:'snack',k:341,p:6,f:1,c:77,note:'Замена хлебу',custom:false},
+  {id:89,n:'Соевый соус',cat:'sauce',k:53,p:8,f:0.1,c:5,note:'Натрий! 1–2 ст.л.',custom:false},
+  {id:90,n:'Томатная паста',cat:'sauce',k:82,p:4.8,f:0.5,c:17,note:'Ликопин',custom:false},
+  {id:91,n:'Горчица',cat:'sauce',k:67,p:4,f:4,c:5,note:'Мало калорий',custom:false},
+  {id:92,n:'Кетчуп',cat:'sauce',k:100,p:1.8,f:0.1,c:25,note:'Сахар, умеренно',custom:false},
+  {id:93,n:'Майонез',cat:'sauce',k:624,p:2.8,f:67,c:2.6,note:'Много жира',custom:false},
+  {id:94,n:'Имбирь свежий',cat:'sauce',k:80,p:1.8,f:0.8,c:18,note:'Противовоспалит.',custom:false},
+  {id:95,n:'Вода',cat:'drink',k:0,p:0,f:0,c:0,note:'2–3 л/день',custom:false},
+  {id:96,n:'Чай зелёный',cat:'drink',k:1,p:0,f:0,c:0.2,note:'Антиоксиданты',custom:false},
+  {id:97,n:'Кофе чёрный',cat:'drink',k:2,p:0.3,f:0,c:0,note:'Без сахара',custom:false},
+  {id:98,n:'Кумыс',cat:'drink',k:50,p:2,f:1.9,c:5,note:'★ Местный, пробиотик',custom:false},
+  {id:99,n:'Шубат',cat:'drink',k:58,p:3,f:3,c:4,note:'★ Верблюжье молоко',custom:false},
+];
+
+let DB=[],editId=null,dbSortCol=null,dbSortDir=-1,activeCat='all',activeMF='all';
+let tdSex='m',activeFtab='mifflin';
+let diary=[],diarySel=null;
+let profiles={},activeProfile=null;
+let pickerMode='day',pickerSeed=Math.random(),excludedCats=new Set(),slotSeeds={},slotClicks={};
+
+function loadDB(){const s=localStorage.getItem('nkz_db');DB=s?JSON.parse(s):JSON.parse(JSON.stringify(SEED));}
+function saveDB(){localStorage.setItem('nkz_db',JSON.stringify(DB));}
+function nextId(){return DB.length?Math.max(...DB.map(d=>d.id))+1:1;}
+function loadDiary(){const s=localStorage.getItem('nkz_diary');diary=s?JSON.parse(s):[];}
+function saveDiary(){localStorage.setItem('nkz_diary',JSON.stringify(diary));}
+
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className='show '+type;setTimeout(()=>{t.className='';},2600);}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  const titles={db:'База продуктов',add:'Добавить продукт',search:'Поиск USDA API',tdee:'Калькулятор TDEE',plan:'Дневник питания',picker:'Подбор рациона'};
+  document.getElementById('topbar-title').textContent=titles[id]||'';
+  if(id==='db')renderDB();
+  if(id==='tdee')tdeeCalc();
+  if(id==='plan')renderDiary();
+}
+
+function buildCatFilters(){
+  const el=document.getElementById('cf');
+  el.innerHTML='';
+  const a=document.createElement('button');a.textContent='Все';a.className='on';
+  a.onclick=function(){activeCat='all';setOn(el,this);renderDB();};el.appendChild(a);
+  Object.entries(CATS).forEach(([k,v])=>{
+    const b=document.createElement('button');b.textContent=v;
+    b.onclick=function(){activeCat=k;setOn(el,this);renderDB();};el.appendChild(b);
+  });
+}
+function buildCatSelects(){
+  ['add-cat','edit-cat'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML=Object.entries(CATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  });
+}
+function setOn(parent,btn){parent.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function setMF(m,btn){activeMF=m;setOn(document.getElementById('mf'),btn);renderDB();}
+
+function renderDB(){
+  const q=document.getElementById('db-search').value.toLowerCase();
+  let data=DB.filter(d=>{
+    if(activeCat!=='all'&&d.cat!==activeCat)return false;
+    if(q&&!d.n.toLowerCase().includes(q))return false;
+    return true;
+  });
+  if(activeMF==='p')data=[...data].sort((a,b)=>b.p-a.p).slice(0,40);
+  else if(activeMF==='c')data=[...data].sort((a,b)=>b.c-a.c).slice(0,40);
+  else if(activeMF==='f')data=[...data].sort((a,b)=>b.f-a.f).slice(0,40);
+  if(dbSortCol)data=[...data].sort((a,b)=>{
+    const v=typeof a[dbSortCol]==='string'?a[dbSortCol].localeCompare(b[dbSortCol]):a[dbSortCol]-b[dbSortCol];
+    return v*dbSortDir;
+  });
+  document.getElementById('db-count').textContent=`Продуктов: ${data.length} из ${DB.length}`;
+  document.getElementById('topbar-count').textContent=`${DB.length} продуктов в базе`;
+  document.getElementById('dbt').innerHTML=data.map(d=>`
+    <tr>
+      <td style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.n}${d.custom?'<span style="color:var(--accent);font-size:10px;margin-left:4px;">●</span>':''}</td>
+      <td><span class="chip chip-cat">${CATS[d.cat]||d.cat}</span></td>
+      <td class="r macro-k">${d.k}</td>
+      <td class="r macro-p">${d.p}</td>
+      <td class="r macro-f">${d.f}</td>
+      <td class="r macro-c">${d.c}</td>
+      <td style="font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${d.note||''}">${d.note||'—'}</td>
+      <td style="text-align:center;white-space:nowrap;">
+        <button class="btn btn-sm" onclick="openEdit(${d.id})" style="padding:3px 8px;margin-right:3px;">✎</button>
+        <button class="btn btn-sm btn-danger" onclick="delProduct(${d.id})" style="padding:3px 8px;">✕</button>
+      </td>
+    </tr>`).join('');
+}
+function dbSort(col){if(dbSortCol===col)dbSortDir*=-1;else{dbSortCol=col;dbSortDir=-1;}renderDB();}
+
+function addProduct(){
+  const n=document.getElementById('add-name').value.trim();
+  if(!n){toast('Введи название','err');return;}
+  const cat=document.getElementById('add-cat').value;
+  const k=parseFloat(document.getElementById('add-k').value)||0;
+  const p=parseFloat(document.getElementById('add-p').value)||0;
+  const f=parseFloat(document.getElementById('add-f').value)||0;
+  const c=parseFloat(document.getElementById('add-c').value)||0;
+  const note=document.getElementById('add-note').value.trim();
+  DB.push({id:nextId(),n,cat,k,p,f,c,note,custom:true});
+  saveDB();clearAdd();toast(`"${n}" добавлен`);
+}
+function clearAdd(){['add-name','add-k','add-p','add-f','add-c','add-note'].forEach(id=>document.getElementById(id).value='');}
+
+function openEdit(id){
+  const d=DB.find(x=>x.id===id);if(!d)return;
+  editId=id;
+  document.getElementById('edit-name').value=d.n;
+  document.getElementById('edit-cat').value=d.cat;
+  document.getElementById('edit-k').value=d.k;
+  document.getElementById('edit-p').value=d.p;
+  document.getElementById('edit-f').value=d.f;
+  document.getElementById('edit-c').value=d.c;
+  document.getElementById('edit-note').value=d.note||'';
+  document.getElementById('edit-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('edit-modal').classList.remove('open');editId=null;}
+function saveEdit(){
+  const d=DB.find(x=>x.id===editId);if(!d)return;
+  d.n=document.getElementById('edit-name').value.trim()||d.n;
+  d.cat=document.getElementById('edit-cat').value;
+  d.k=parseFloat(document.getElementById('edit-k').value)||0;
+  d.p=parseFloat(document.getElementById('edit-p').value)||0;
+  d.f=parseFloat(document.getElementById('edit-f').value)||0;
+  d.c=parseFloat(document.getElementById('edit-c').value)||0;
+  d.note=document.getElementById('edit-note').value.trim();
+  d.custom=true;
+  saveDB();closeModal();renderDB();toast('Обновлено');
+}
+function delProduct(id){
+  if(!confirm('Удалить продукт?'))return;
+  DB=DB.filter(x=>x.id!==id);saveDB();renderDB();toast('Удалено');
+}
+function exportDB(){
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='nutribase_kz.json';a.click();
+  toast('База экспортирована');
+}
+function importDB(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{const data=JSON.parse(e.target.result);if(!Array.isArray(data))throw 0;DB=data;saveDB();renderDB();toast(`Импортировано: ${data.length}`);}
+    catch{toast('Ошибка JSON','err');}
+  };
+  r.readAsText(file);input.value='';
+}
+
+/* USDA */
+async function usdaSearch(){
+  const q=document.getElementById('usda-q').value.trim();if(!q)return;
+  const type=document.getElementById('usda-type').value;
+  const st=document.getElementById('usda-status');
+  const wrap=document.getElementById('usda-wrap');
+  const empty=document.getElementById('usda-empty');
+  st.innerHTML='<span class="spin"></span> Поиск...';
+  wrap.style.display='none';empty.style.display='none';
+  try{
+    const url=`https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(q)}&dataType=${encodeURIComponent(type)}&pageSize=20&api_key=DEMO_KEY`;
+    const res=await fetch(url);const data=await res.json();
+    const foods=data.foods||[];
+    st.innerHTML=foods.length?`Найдено: <strong style="color:var(--text)">${foods.length}</strong> результатов`:'';
+    if(!foods.length){empty.style.display='block';return;}
+    wrap.style.display='block';
+    document.getElementById('usda-res').innerHTML=foods.map(f=>{
+      const nut=f.foodNutrients||[];
+      const get=id=>{const n=nut.find(x=>x.nutrientId===id||x.nutrientNumber==id);return n?Math.round(n.value*10)/10:0;};
+      const kcal=get(1008)||get(208);const prot=get(1003)||get(203);const fat=get(1004)||get(204);const carb=get(1005)||get(205);
+      return `<div class="ext-result">
+        <div>
+          <div class="ext-name">${f.description}</div>
+          <div class="ext-brand">${f.brandOwner||f.foodCategory||''}</div>
+          <div class="ext-macros"><span class="macro-k">${kcal} ккал</span><span class="macro-p">Б: ${prot}г</span><span class="macro-f">Ж: ${fat}г</span><span class="macro-c">У: ${carb}г</span></div>
+        </div>
+        <button class="btn btn-sm btn-accent" onclick="usdaAdd('${f.description.replace(/'/g,"\\'")}','${f.foodCategory||'other'}',${kcal},${prot},${fat},${carb})">+ В базу</button>
+      </div>`;
+    }).join('');
+  }catch(e){st.innerHTML='<span style="color:var(--red)">Ошибка запроса. Нужен интернет.</span>';}
+}
+const catMap={'Poultry Products':'meat','Beef Products':'meat','Pork Products':'meat','Finfish and Shellfish Products':'fish','Dairy and Egg Products':'dairy','Vegetables and Vegetable Products':'veg','Fruits and Fruit Juices':'fruit','Legumes and Legume Products':'legume','Nut and Seed Products':'nut','Fats and Oils':'fat','Sweets':'sweet','Beverages':'drink','Cereal Grains and Pasta':'grain','Snacks':'snack'};
+function usdaAdd(name,catRaw,k,p,f,c){
+  const cat=catMap[catRaw]||'other';
+  const n=prompt('Название в базе (можно переименовать):',name);if(!n)return;
+  DB.push({id:nextId(),n,cat,k,p,f,c,note:'USDA',custom:true});saveDB();toast(`"${n}" добавлен`);
+}
+
+/* TDEE */
+function tdeeSetSex(s){
+  tdSex=s;
+  document.getElementById('tdee-m').className=s==='m'?'on':'';
+  document.getElementById('tdee-f').className=s==='f'?'on':'';
+  tdeeCalc();
+}
+function setFtabById(f){
+  activeFtab=f;
+  document.querySelectorAll('.ftab').forEach((b,i)=>{
+    const fms=['mifflin','harris','katch'];
+    b.classList.toggle('on',fms[i]===f);
+  });
+  tdeeCalc();
+}
+function setFtab(f,btn){
+  activeFtab=f;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  tdeeCalc();
+}
+
+function calcBMR(wt,ht,age,bf,s,formula){
+  if(formula==='mifflin')return s==='m'?10*wt+6.25*ht-5*age+5:10*wt+6.25*ht-5*age-161;
+  if(formula==='harris')return s==='m'?88.36+13.4*wt+4.8*ht-5.7*age:447.6+9.25*wt+3.1*ht-4.3*age;
+  if(formula==='katch'){const lbm=wt*(1-bf/100);return 370+21.6*lbm;}
+  return 0;
+}
+
+function tdeeCalc(){
+  const wt=+document.getElementById('sl-wt').value;
+  const ht=+document.getElementById('sl-ht').value;
+  const age=+document.getElementById('sl-age').value;
+  const bf=+document.getElementById('sl-bf').value;
+  const act=+document.getElementById('sl-act').value;
+  const goal=+document.getElementById('sl-goal').value;
+  document.getElementById('lbl-wt').textContent=wt;
+  document.getElementById('lbl-ht').textContent=ht;
+  document.getElementById('lbl-age').textContent=age;
+  document.getElementById('lbl-bf').textContent=bf;
+
+  const bmr=Math.round(calcBMR(wt,ht,age,bf,tdSex,activeFtab));
+  const tdee=Math.round(bmr*act);
+  const target=tdee+goal;
+
+  document.getElementById('r-bmr').textContent=bmr.toLocaleString();
+  document.getElementById('r-tdee').textContent=tdee.toLocaleString();
+  document.getElementById('r-target').textContent=target.toLocaleString();
+  const subs={'-500':'Дефицит → ~−0.5 кг/нед','-300':'Дефицит → ~−0.3 кг/нед','0':'Поддержание веса','200':'Профицит → ~+0.2 кг/нед','400':'Профицит → ~+0.4 кг/нед'};
+  document.getElementById('r-sub').textContent=subs[goal]||'';
+
+  // Макросы: белок приоритет, минимум углеводов 1.5г/кг (но ≥120г), жиры — остаток
+  const protPerKg = goal < 0 ? 2.2 : 2.0;
+  let prot = Math.round(wt * protPerKg);
+  const carbMinG = Math.max(120, Math.round(wt * 1.5));
+  const fatMinG = Math.max(40, Math.round(wt * 0.6));
+  // Если белок + мин.углеводы + мин.жиры > цели — постепенно режем белок
+  while (prot * 4 + carbMinG * 4 + fatMinG * 9 > target && prot > Math.round(wt * 1.6)) {
+    prot -= 5;
+  }
+  const protKcal = prot * 4;
+  const carbMinKcal = carbMinG * 4;
+  const remainForFat = target - protKcal - carbMinKcal;
+  const fat = Math.min(Math.max(Math.round(remainForFat / 9), fatMinG), Math.round(wt * 1.2));
+  const fatKcal = fat * 9;
+  const carbKcal2 = Math.max(target - protKcal - fatKcal, carbMinKcal);
+  const carb = Math.round(carbKcal2 / 4);
+  const bars=[
+    {name:'Белок',g:prot,kcal:protKcal,pct:Math.round(protKcal/target*100),color:'var(--blue)'},
+    {name:'Углеводы',g:carb,kcal:carbKcal2,pct:Math.round(carbKcal2/target*100),color:'var(--accent)'},
+    {name:'Жиры',g:fat,kcal:fatKcal,pct:Math.round(fatKcal/target*100),color:'var(--green)'},
+  ];
+  document.getElementById('tdee-macros').innerHTML=bars.map(b=>`
+    <div class="mc">
+      <div class="mc-name">${b.name}</div>
+      <div class="mc-g" style="color:${b.color};">${b.g}<span style="font-size:12px;font-weight:400;color:var(--text2);margin-left:2px;">г</span></div>
+      <div class="mc-info">${b.kcal} ккал · ${b.pct}%</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min(b.pct,100)}%;background:${b.color};"></div></div>
+    </div>`).join('');
+  // water calc
+  const actCoef=+document.getElementById('sl-act').value;
+  const waterBase=Math.round(wt*30)/1000;
+  const waterActAdd=actCoef>=1.725?0.7:actCoef>=1.55?0.5:actCoef>=1.375?0.3:0.1;
+  const waterTotal=(waterBase+waterActAdd).toFixed(1);
+  document.getElementById('r-water').textContent=waterTotal;
+  document.getElementById('w-base').textContent=(waterBase).toFixed(1)+' л';
+  document.getElementById('w-act').textContent='+'+waterActAdd.toFixed(1)+' л';
+  const tips=['Пей равномерно, стакан каждые 1.5–2 часа','Первый стакан сразу после подъёма','Не пей много за раз — по 200–250мл'];
+  document.getElementById('w-tip').textContent=tips[Math.floor(Math.random()*tips.length)];
+  // hr zones
+  buildHRZones(age);
+  // quick stats
+  const protG=prot; // use corrected prot from macro calc above
+  const weekKg=goal!==0?(Math.abs(goal)*7/7700).toFixed(2):0;
+  const weekStr=goal<0?'-'+weekKg:goal>0?'+'+weekKg:'0';
+  document.getElementById('qs-prot').textContent=protG+'г';
+  document.getElementById('qs-week').textContent=weekStr+' кг';
+  document.getElementById('qs-pmeal').textContent=Math.round(protG/5)+'г';
+  document.getElementById('qs-kmeal').textContent=Math.round(target/5)+' ккал';
+  buildSchedule();
+
+  const notes={
+    mifflin:'<strong>Рекомендуется по умолчанию.</strong> Наиболее точная для большинства людей (погрешность ±10%). Разработана в 1990г. на основе современных исследований метаболизма.',
+    harris:'<strong>Классическая формула (1919, пересмотрена в 1984).</strong> Чуть завышает BMR на 5–10% по сравнению с Mifflin. Подходит как контрольный расчёт.',
+    katch:'<strong>Лучшая для спортсменов.</strong> Работает от сухой мышечной массы (LBM), не делит по полу. Точнее при высоком % мышц. Укажи реальный % жира для точного результата.'
+  };
+  document.getElementById('ftab-note').innerHTML=notes[activeFtab];
+
+  let fHtml='';
+  const lbm=Math.round(wt*(1-bf/100)*10)/10;
+  if(activeFtab==='mifflin'){
+    fHtml=tdSex==='m'
+      ?`BMR = 10 × <span class="hl">${wt}</span> + 6.25 × <span class="hl">${ht}</span> − 5 × <span class="hl">${age}</span> + 5 = <span class="hl">${bmr} ккал</span>`
+      :`BMR = 10 × <span class="hl">${wt}</span> + 6.25 × <span class="hl">${ht}</span> − 5 × <span class="hl">${age}</span> − 161 = <span class="hl">${bmr} ккал</span>`;
+  }else if(activeFtab==='harris'){
+    fHtml=tdSex==='m'
+      ?`BMR = 88.36 + 13.4 × <span class="hl">${wt}</span> + 4.8 × <span class="hl">${ht}</span> − 5.7 × <span class="hl">${age}</span> = <span class="hl">${bmr} ккал</span>`
+      :`BMR = 447.6 + 9.25 × <span class="hl">${wt}</span> + 3.1 × <span class="hl">${ht}</span> − 4.3 × <span class="hl">${age}</span> = <span class="hl">${bmr} ккал</span>`;
+  }else{
+    fHtml=`LBM (сухая масса) = ${wt} × (1 − ${bf}/100) = <span class="hl">${lbm} кг</span><br>BMR = 370 + 21.6 × <span class="hl">${lbm}</span> = <span class="hl">${bmr} ккал</span>`;
+  }
+  fHtml+=`<br>TDEE = <span class="hl">${bmr}</span> × <span class="hl">${act}</span> = <span class="hl">${tdee} ккал</span>`;
+  fHtml+=`<br>Цель = <span class="hl">${tdee}</span> + (<span class="hl">${goal}</span>) = <span class="hl">${target} ккал</span>`;
+  document.getElementById('tdee-formula').innerHTML=fHtml;
+
+  const fms=['mifflin','harris','katch'];
+  const fNames={'mifflin':'Mifflin','harris':'Harris-B.','katch':'Katch'};
+  document.getElementById('formula-compare').innerHTML=fms.map(fm=>{
+    const b=Math.round(calcBMR(wt,ht,age,bf,tdSex,fm));
+    const t=Math.round(b*act);
+    const isActive=fm===activeFtab;
+    return `<div class="cmp${isActive?' active':''}" onclick="setFtabById('${fm}')">
+      <div class="cmp-name">${fNames[fm]}</div>
+      <div class="cmp-bmr">${b}</div>
+      <div class="cmp-tdee">TDEE: ${t} ккал</div>
+    </div>`;
+  }).join('');
+}
+
+/* DIARY */
+function diarySuggest(){
+  const q=document.getElementById('diary-s').value.toLowerCase();
+  const box=document.getElementById('diary-sug');
+  diarySel=null;
+  document.getElementById('diary-prev').style.display='none';
+  if(q.length<2){box.innerHTML='';return;}
+  const matches=DB.filter(d=>d.n.toLowerCase().includes(q)).slice(0,8);
+  if(!matches.length){box.innerHTML='';return;}
+  box.innerHTML=`<div style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);margin-top:2px;max-height:220px;overflow-y:auto;z-index:50;position:relative;">
+    ${matches.map(d=>`<div onclick="diarySelect(${d.id})" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border);"
+      onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background=''">
+      ${d.n} <span style="color:var(--text3);font-size:11px;">${d.k}ккал · Б${d.p} Ж${d.f} У${d.c}</span>
+    </div>`).join('')}
+  </div>`;
+}
+function diarySelect(id){
+  diarySel=DB.find(d=>d.id===id);if(!diarySel)return;
+  document.getElementById('diary-s').value=diarySel.n;
+  document.getElementById('diary-sug').innerHTML='';
+  updateDiaryPrev();
+}
+function updateDiaryPrev(){
+  if(!diarySel)return;
+  const g=parseFloat(document.getElementById('diary-g').value)||100;
+  const m=g/100;
+  const prev=document.getElementById('diary-prev');
+  prev.style.display='block';
+  prev.innerHTML=`<div style="font-size:11px;color:var(--text3);margin-bottom:5px;">На ${g}г:</div>
+    <div style="display:flex;gap:14px;font-size:13px;">
+      <span class="macro-k">${Math.round(diarySel.k*m)} ккал</span>
+      <span class="macro-p">Б: ${Math.round(diarySel.p*m*10)/10}г</span>
+      <span class="macro-f">Ж: ${Math.round(diarySel.f*m*10)/10}г</span>
+      <span class="macro-c">У: ${Math.round(diarySel.c*m*10)/10}г</span>
+    </div>`;
+}
+function diaryAdd(){
+  if(!diarySel){toast('Выбери продукт','err');return;}
+  const g=parseFloat(document.getElementById('diary-g').value)||100;
+  const meal=document.getElementById('diary-meal').value;
+  const m=g/100;
+  diary.push({id:Date.now(),productId:diarySel.id,name:diarySel.n,grams:g,meal,
+    k:Math.round(diarySel.k*m),p:Math.round(diarySel.p*m*10)/10,
+    f:Math.round(diarySel.f*m*10)/10,c:Math.round(diarySel.c*m*10)/10});
+  saveDiary();renderDiary();
+  document.getElementById('diary-s').value='';
+  document.getElementById('diary-prev').style.display='none';
+  diarySel=null;toast('Добавлено');
+}
+function diaryRemove(id){diary=diary.filter(x=>x.id!==id);saveDiary();renderDiary();}
+function clearDiary(){if(confirm('Очистить день?')){diary=[];saveDiary();renderDiary();}}
+function renderDiary(){
+  const totK=diary.reduce((s,x)=>s+x.k,0);
+  const totP=Math.round(diary.reduce((s,x)=>s+x.p,0)*10)/10;
+  const totF=Math.round(diary.reduce((s,x)=>s+x.f,0)*10)/10;
+  const totC=Math.round(diary.reduce((s,x)=>s+x.c,0)*10)/10;
+  document.getElementById('d-k').textContent=totK;
+  document.getElementById('d-p').textContent=totP+'г';
+  document.getElementById('d-f').textContent=totF+'г';
+  document.getElementById('d-c').textContent=totC+'г';
+  const meals=['Завтрак','Перекус 1','Обед','Перекус 2','Ужин'];
+  document.getElementById('diary-list').innerHTML=meals.map(meal=>{
+    const items=diary.filter(x=>x.meal===meal);if(!items.length)return '';
+    const mK=items.reduce((s,x)=>s+x.k,0);
+    return `<div class="card" style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:13px;font-weight:600;">${meal}</div>
+        <div style="font-size:12px;color:var(--text3);">${mK} ккал</div>
+      </div>
+      ${items.map(x=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border);">
+        <div>
+          <div style="font-size:13px;">${x.name} <span style="color:var(--text3);font-size:11px;">${x.grams}г</span></div>
+          <div style="font-size:12px;margin-top:2px;display:flex;gap:10px;">
+            <span class="macro-k">${x.k}ккал</span><span class="macro-p">Б${x.p}</span><span class="macro-f">Ж${x.f}</span><span class="macro-c">У${x.c}</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="diaryRemove(${x.id})" style="padding:3px 8px;">✕</button>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('diary-g').addEventListener('input',updateDiaryPrev);
+
+
+
+/* ===== WATER buildHRZones ===== */
+function buildHRZones(age) {
+  if(!age) age=+document.getElementById('sl-age').value||28;
+  const maxHR=220-age;
+  document.getElementById('hr-max').textContent=maxHR;
+  const zones=[
+    {name:'Разминка',pct:[50,60],color:'#4a8cff',bg:'rgba(74,140,255,.08)',desc:'Разминка, восстановление. Комфортный темп, можно говорить.'},
+    {name:'Жиросжигание',pct:[60,70],color:'#4ed68a',bg:'rgba(78,214,138,.08)',desc:'Активное жиросжигание. Основная зона для похудения — 60% энергии из жира.'},
+    {name:'Аэробная',pct:[70,80],color:'#e8b84b',bg:'rgba(232,184,75,.08)',desc:'Кардио-выносливость. Улучшает работу сердца, 40% жир / 60% глюкоза.'},
+    {name:'Анаэробная',pct:[80,90],color:'#ff8c42',bg:'rgba(255,140,66,.08)',desc:'Силовая выносливость. Лактатный порог, в основном глюкоза.'},
+    {name:'МПК / Макс.',pct:[90,100],color:'#ff6b6b',bg:'rgba(255,107,107,.08)',desc:'Максимальная нагрузка. Только для подготовленных спортсменов, короткие интервалы.'},
+  ];
+  const el=document.getElementById('hr-zones');
+  el.innerHTML=zones.map(z=>{
+    const lo=Math.round(maxHR*z.pct[0]/100);
+    const hi=Math.round(maxHR*z.pct[1]/100);
+    return `<div class="hrz" style="background:${z.bg};border-color:${z.color}22;">
+      <div class="hrz-dot" style="background:${z.color};"></div>
+      <div class="hrz-name">${z.name}</div>
+      <div class="hrz-range" style="color:${z.color};">${lo}–${hi}</div>
+      <div class="hrz-pct">${z.pct[0]}–${z.pct[1]}% от макс.</div>
+      <div class="hrz-desc">${z.desc}</div>
+      <div class="hrz-bar-wrap"><div class="hrz-bar" style="width:${z.pct[1]}%;background:${z.color};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== SCHEDULE ===== */
+function buildSchedule() {
+  const wake=document.getElementById('sc-wake').value||'11:00';
+  const sleep=document.getElementById('sc-sleep').value||'03:00';
+  const gym=document.getElementById('sc-gym').value||'20:00';
+  const mealCount=+document.getElementById('sc-meals').value||5;
+
+  function toMin(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
+  function toStr(min){min=((min%1440)+1440)%1440;const h=Math.floor(min/60)%24;const m=min%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;}
+
+  const wakeMin=toMin(wake);
+  const sleepMin=toMin(sleep);
+  const gymMin=toMin(gym);
+  const awakeSpan=((sleepMin-wakeMin)+1440)%1440;
+
+  // Build meal times spread across awake window
+  const targetKcal=+document.getElementById('r-target').textContent.replace(/[\s,]/g,'')||2500;
+
+  const meals5=[
+    {name:'Завтрак',type:'main',offset:0.05,pct:0.25,tip:'Белок + сложные углеводы + жиры'},
+    {name:'Перекус 1',type:'snack',offset:0.28,pct:0.12,tip:'Фрукт + творог или орехи'},
+    {name:'Обед',type:'main',offset:0.48,pct:0.30,tip:'Белок + углеводы + овощи'},
+    {name:'Перекус 2',type:'snack',offset:0.68,pct:0.10,tip:'Перед тренировкой: банан + протеин'},
+    {name:'Ужин',type:'main',offset:0.88,pct:0.23,tip:'Белок + овощи, меньше углеводов'},
+  ];
+  const meals4=[
+    {name:'Завтрак',type:'main',offset:0.05,pct:0.30,tip:'Белок + сложные углеводы'},
+    {name:'Обед',type:'main',offset:0.35,pct:0.30,tip:'Главный приём — полное КБЖУ'},
+    {name:'Перекус',type:'snack',offset:0.65,pct:0.15,tip:'Лёгкий, перед тренировкой'},
+    {name:'Ужин',type:'main',offset:0.88,pct:0.25,tip:'Белок + овощи'},
+  ];
+  const meals6=[
+    {name:'Завтрак',type:'main',offset:0.03,pct:0.22,tip:'Белок + углеводы'},
+    {name:'Перекус 1',type:'snack',offset:0.20,pct:0.10,tip:'Фрукт или кисломолочное'},
+    {name:'Обед',type:'main',offset:0.38,pct:0.25,tip:'Полное КБЖУ'},
+    {name:'Перекус 2',type:'snack',offset:0.57,pct:0.10,tip:'До тренировки: быстрые углеводы'},
+    {name:'Ужин',type:'main',offset:0.75,pct:0.23,tip:'Белок + овощи'},
+    {name:'Поздний перекус',type:'snack',offset:0.92,pct:0.10,tip:'Творог 0% или казеин'},
+  ];
+  const template=mealCount===4?meals4:mealCount===6?meals6:meals5;
+
+  // Shift pre-workout meal near gym time if possible
+  const list=document.getElementById('sched-list');
+  list.innerHTML=template.map(m=>{
+    let mealMin=wakeMin+Math.round(awakeSpan*m.offset);
+    // snap pre-gym snack to 90min before gym
+    if(m.tip.includes('тренировк')&&gymMin){
+      mealMin=((gymMin-90)+1440)%1440;
+    }
+    const kcal=Math.round(targetKcal*m.pct);
+    return `<div class="ms-item ms-${m.type}">
+      <span class="ms-time">${toStr(mealMin)}</span>
+      <div>
+        <div class="ms-name">${m.name}</div>
+        <div class="ms-tip">${m.tip}</div>
+      </div>
+      <span class="ms-kcal">${kcal} ккал</span>
+    </div>`;
+  }).join('');
+}
+
+
+/* ════════════════════════════════════════════
+   ПРОФИЛИ ПОЛЬЗОВАТЕЛЕЙ
+════════════════════════════════════════════ */
+
+function loadProfiles() {
+  const s = localStorage.getItem('nkz_profiles');
+  profiles = s ? JSON.parse(s) : {};
+  const ap = localStorage.getItem('nkz_active_profile');
+  if (ap && profiles[ap]) { activeProfile = ap; applyProfile(profiles[ap]); }
+  renderProfileChips();
+}
+
+function saveProfiles() { localStorage.setItem('nkz_profiles', JSON.stringify(profiles)); }
+
+function gatherCurrentState() {
+  return {
+    sex: tdSex,
+    age: document.getElementById('sl-age').value,
+    ht:  document.getElementById('sl-ht').value,
+    wt:  document.getElementById('sl-wt').value,
+    bf:  document.getElementById('sl-bf').value,
+    act: document.getElementById('sl-act').value,
+    goal: document.getElementById('sl-goal').value,
+    wake: document.getElementById('sc-wake').value,
+    sleep: document.getElementById('sc-sleep').value,
+    gym:  document.getElementById('sc-gym').value,
+    mealCount: document.getElementById('sc-meals').value,
+    formula: activeFtab,
+    diary: diary,
+    savedAt: new Date().toLocaleDateString('ru'),
+  };
+}
+
+function applyProfile(p) {
+  if (!p) return;
+  tdSex = p.sex || 'm';
+  document.getElementById('tdee-m').className = tdSex==='m'?'on':'';
+  document.getElementById('tdee-f').className = tdSex==='f'?'on':'';
+  if (p.age)  document.getElementById('sl-age').value = p.age;
+  if (p.ht)   document.getElementById('sl-ht').value  = p.ht;
+  if (p.wt)   document.getElementById('sl-wt').value  = p.wt;
+  if (p.bf)   document.getElementById('sl-bf').value  = p.bf;
+  if (p.act)  document.getElementById('sl-act').value = p.act;
+  if (p.goal) document.getElementById('sl-goal').value = p.goal;
+  if (p.wake) document.getElementById('sc-wake').value = p.wake;
+  if (p.sleep) document.getElementById('sc-sleep').value = p.sleep;
+  if (p.gym)  document.getElementById('sc-gym').value = p.gym;
+  if (p.mealCount) document.getElementById('sc-meals').value = p.mealCount;
+  if (p.formula) { activeFtab = p.formula; document.querySelectorAll('.ftab').forEach((b,i)=>{ b.classList.toggle('on',['mifflin','harris','katch'][i]===activeFtab); }); }
+  if (p.diary) { diary = p.diary; saveDiary(); renderDiary(); }
+  tdeeCalc();
+  toast('Профиль загружен: ' + Object.keys(profiles).find(k=>profiles[k]===p));
+}
+
+function saveCurrentProfile() {
+  if (!activeProfile) { createProfile(); return; }
+  profiles[activeProfile] = gatherCurrentState();
+  saveProfiles();
+  localStorage.setItem('nkz_active_profile', activeProfile);
+  toast('Профиль сохранён: ' + activeProfile);
+}
+
+function createProfile() {
+  const name = prompt('Имя профиля (например: Макс, Клиент 1):');
+  if (!name || !name.trim()) return;
+  const n = name.trim();
+  profiles[n] = gatherCurrentState();
+  activeProfile = n;
+  saveProfiles();
+  localStorage.setItem('nkz_active_profile', n);
+  renderProfileChips();
+  toast('Профиль создан: ' + n);
+}
+
+function switchProfile(name) {
+  activeProfile = name;
+  localStorage.setItem('nkz_active_profile', name);
+  applyProfile(profiles[name]);
+  renderProfileChips();
+}
+
+function deleteProfile(name) {
+  if (!confirm('Удалить профиль «' + name + '»?')) return;
+  delete profiles[name];
+  if (activeProfile === name) activeProfile = Object.keys(profiles)[0] || null;
+  saveProfiles();
+  if (activeProfile) localStorage.setItem('nkz_active_profile', activeProfile);
+  renderProfileChips();
+  toast('Профиль удалён');
+}
+
+function renderProfileChips() {
+  const el = document.getElementById('profile-chips');
+  if (!el) return;
+  el.innerHTML = Object.keys(profiles).map(name => {
+    const p = profiles[name];
+    const isActive = name === activeProfile;
+    return `<div class="profile-chip ${isActive?'active':''}" onclick="switchProfile('${name.replace(/'/g,"\'")}')">
+      ${name}
+      ${p.savedAt ? `<span style="font-size:10px;opacity:.6;margin-left:2px;">${p.savedAt}</span>` : ''}
+      <span class="pc-del" onclick="event.stopPropagation();deleteProfile('${name.replace(/'/g,"\'")}')">×</span>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════════
+   ПОДБОР РАЦИОНА
+════════════════════════════════════════════ */
+
+function setPickerMode(m, btn) {
+  pickerMode = m;
+}
+
+function pullFromTDEE() {
+  const t = document.getElementById('r-target').textContent.replace(/[^0-9]/g,'');
+  if (!t) { toast('Сначала рассчитай TDEE', 'err'); return; }
+  // read macro values from the bars
+  const bars = document.querySelectorAll('#tdee-macros .mc');
+  if (bars.length >= 3) {
+    const pg = bars[0].querySelector('.mc-g').textContent.replace(/[^0-9]/g,'');
+    const cg = bars[1].querySelector('.mc-g').textContent.replace(/[^0-9]/g,'');
+    const fg = bars[2].querySelector('.mc-g').textContent.replace(/[^0-9]/g,'');
+    document.getElementById('pk-kcal').value = t;
+    document.getElementById('pk-p').value = pg;
+    document.getElementById('pk-c').value = cg;
+    document.getElementById('pk-f').value = fg;
+  } else {
+    document.getElementById('pk-kcal').value = t;
+  }
+  runPicker();
+  toast('Макросы подтянуты из TDEE');
+}
+
+function buildExcludeButtons() {
+  const el = document.getElementById('pk-exclude');
+  if (!el) return;
+  const cats = ['dairy','meat','fish','sweet','fast'];
+  const labels = {dairy:'Молочка',meat:'Мясо',fish:'Рыба',sweet:'Сладкое',fast:'Фастфуд'};
+  el.innerHTML = cats.map(c => `<button onclick="toggleExclude('${c}',this)" style="padding:3px 9px;border-radius:12px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:11px;cursor:pointer;transition:all .15s;" id="exc-${c}">${labels[c]}</button>`).join('');
+}
+
+function toggleExclude(cat, btn) {
+  if (excludedCats.has(cat)) { excludedCats.delete(cat); btn.style.background='transparent'; btn.style.color='var(--text2)'; }
+  else { excludedCats.add(cat); btn.style.background='rgba(255,107,107,.15)'; btn.style.color='var(--red)'; btn.style.borderColor='rgba(255,107,107,.4)'; }
+  runPicker();
+}
+
+function shufflePicker() { pickerSeed = Math.random(); slotSeeds = {}; slotClicks = {}; runPicker(); }
+
+// Seeded random using pickerSeed for reproducible shuffles
+function seededRand(seed) { let x=Math.sin(seed)*10000; return x-Math.floor(x); }
+
+function runPicker() {
+  slotSeeds = {}; slotClicks = {}; // full reset on new run
+  runPickerDayKeepState();
+}
+
+function runPickerDayKeepState() {
+  const kcal = +document.getElementById('pk-kcal').value || 2500;
+  const tp   = +document.getElementById('pk-p').value || 180;
+  const tf   = +document.getElementById('pk-f').value || 80;
+  const tc   = +document.getElementById('pk-c').value || 250;
+  const meals = +document.getElementById('pk-meals').value || 5;
+  const modeEl = document.querySelector('input[name="pk-mode"]:checked');
+  pickerMode = modeEl ? modeEl.value : 'day';
+
+  if (pickerMode === 'day') runPickerDay(kcal, tp, tf, tc, meals);
+  else runPickerList(kcal, tp, tf, tc);
+}
+
+// ── Пулы продуктов по времени суток ──────────────────────────────────────────
+// Каждый приём имеет whitelist ID из базы + fallback по категориям
+// Логика: завтрак = яйца/творог/овсянка/гречка, не мясо и не рыба на завтрак
+// Перекус = лёгкое: фрукт, кефир, творог, орехи — не крупы, не мясо
+// Обед = главный: мясо/рыба + крупа + овощи
+// Ужин = белок + овощи, минимум углеводов, не тяжёлые крупы
+// Поздний = только казеин/творог
+
+const MEAL_RULES = {
+  breakfast: {
+    label: 'Завтрак',
+    icon: '🌅',
+    pPct: .25, fPct: .25, cPct: .30,
+    // белок: яйца и молочка (не мясо!)
+    protIds: [30,31,32,1,2,7,3,4],          // яйца, творог, йогурт, курт
+    protCats: ['egg','dairy'],
+    // углеводы: каши — овсянка, гречка, не рис, не макароны
+    carbIds: [36,33,39],                     // овсянка, гречка, булгур
+    carbCats: ['grain'],
+    carbFilter: d => d.cat==='grain' && ['овсянка','гречка','булгур','перловка'].some(n=>d.n.toLowerCase().includes(n)),
+    // жиры: орехи, масло (немного), авокадо
+    fatIds: [62,63,64,65,66,67,68,69,70,71,72],  // все орехи, семена, масла
+    fatCats: ['nut','fat'],
+    fatFilter: d => (d.cat==='nut' && d.f>20) || d.cat==='fat',
+    vegs: [],
+    note: 'Белок + медленные углеводы + полезные жиры',
+  },
+  snack1: {
+    label: 'Перекус 1',
+    icon: '🍎',
+    pPct: .10, fPct: .08, cPct: .12,
+    protIds: [1,2,5,6,7],                    // творог, кефир, айран, йогурт
+    protCats: ['dairy'],
+    carbIds: [54,55,56,57,58],               // яблоко, банан, арбуз, дыня, абрикос
+    carbCats: ['fruit'],
+    carbFilter: d => d.cat==='fruit' && d.k < 100,
+    fatIds: [63,64,66],                      // миндаль, арахис, семена тыквы
+    fatCats: ['nut'],
+    fatFilter: d => d.cat==='nut',
+    vegs: [],
+    note: 'Лёгкий перекус — молочка + фрукт',
+  },
+  lunch: {
+    label: 'Обед',
+    icon: '🍽️',
+    pPct: .33, fPct: .30, cPct: .33,
+    // белок: мясо или рыба — главный приём
+    protIds: [14,15,16,17,18,13,21,22,23,24,25],
+    protCats: ['meat','fish'],
+    protFilter: d => (d.cat==='meat'||d.cat==='fish') && d.p >= 15,
+    // углеводы: рис, гречка, картофель, макароны, нут
+    carbIds: [33,34,35,37,38,41,42],
+    carbCats: ['grain','legume'],
+    carbFilter: d => (d.cat==='grain'||d.cat==='legume') && d.c >= 15,
+    // овощи обязательно
+    fatIds: [69,70],
+    fatCats: ['fat'],
+    fatFilter: d => d.cat==='fat',
+    vegs: [44,45,46,47,48,49,51,52,53], // брокколи, огурец, помидор, перец, морковь
+    vegFilter: d => d.cat==='veg',
+    note: 'Мясо/рыба + крупа + свежие овощи',
+  },
+  snack2: {
+    label: 'Перекус 2',
+    icon: '⚡',
+    pPct: .10, fPct: .07, cPct: .12,
+    // предтренировочный: быстрые углеводы + немного белка
+    protIds: [86,30,15],                     // батончик, яйцо, курица
+    protCats: ['snack','egg'],
+    carbIds: [55,54,81,59],                  // банан, яблоко, мёд, курага
+    carbCats: ['fruit'],
+    carbFilter: d => d.cat==='fruit' || d.id===81, // мёд как исключение
+    fatIds: [],
+    fatCats: [],
+    fatFilter: d => false, // жиры до тренировки минимум
+    vegs: [],
+    note: 'Перед тренировкой: быстрые углеводы + белок',
+  },
+  dinner: {
+    label: 'Ужин',
+    icon: '🌙',
+    pPct: .27, fPct: .30, cPct: .18,
+    // белок: рыба приоритет вечером, или куриная грудка
+    protIds: [15,17,21,22,23,24,25,26,27,28,29],
+    protCats: ['fish','meat'],
+    protFilter: d => (d.cat==='fish'||(d.cat==='meat'&&d.f<10)) && d.p >= 15,
+    // углеводы: немного — только овощные или лёгкий гарнир
+    carbIds: [40,42,37],                     // чечевица, маш, картофель (немного)
+    carbCats: ['legume'],
+    carbFilter: d => d.cat==='legume' || (d.cat==='grain'&&d.c<20),
+    // овощи — обязательно и много
+    fatIds: [69,70],
+    fatCats: ['fat'],
+    fatFilter: d => d.cat==='fat',
+    vegs: [44,46,47,48,49,50,51,52,53],
+    vegFilter: d => d.cat==='veg',
+    note: 'Рыба/птица + овощи — минимум углеводов',
+  },
+  late: {
+    label: 'Поздний перекус',
+    icon: '🌛',
+    pPct: .05, fPct: .08, cPct: .05,
+    // только казеин-содержащие продукты
+    protIds: [2,1,5,6,3],                    // творог 0%, творог 5%, кефир, айран
+    protCats: ['dairy'],
+    protFilter: d => d.cat==='dairy' && d.p >= 3,
+    carbIds: [],
+    carbCats: [],
+    carbFilter: d => false,
+    fatIds: [],
+    fatCats: ['dairy'],
+    fatFilter: d => false,
+    vegs: [],
+    note: 'Казеин — медленный белок на ночь',
+  },
+};
+
+const MEAL_SEQUENCES = {
+  4: ['breakfast','lunch','snack1','dinner'],
+  5: ['breakfast','snack1','lunch','snack2','dinner'],
+  6: ['breakfast','snack1','lunch','snack2','dinner','late'],
+};
+
+const catColors = {meat:'#ff8c42',fish:'#4ed68a',dairy:'#5aabff',egg:'#e8b84b',grain:'#c99a36',legume:'#7ec44a',veg:'#52d68a',fruit:'#ff6b9d',nut:'#a86e3a',snack:'#9b59b6',fat:'#e8d44b',other:'#888'};
+
+function pickFromRule(rule, slot, targetG, seed, mealKey, rowIdx) {
+  let pool = [];
+  const excluded = excludedCats;
+
+  if (slot === 'prot') {
+    // Category filter first (includes custom products), then ID whitelist as fallback
+    if (rule.protFilter) {
+      pool = DB.filter(d => rule.protFilter(d) && !excluded.has(d.cat));
+    } else if (rule.protCats) {
+      pool = DB.filter(d => rule.protCats.includes(d.cat) && !excluded.has(d.cat));
+    }
+    // If still empty, try ID whitelist
+    if (!pool.length && rule.protIds) {
+      pool = DB.filter(d => rule.protIds.includes(d.id) && !excluded.has(d.cat));
+    }
+  } else if (slot === 'carb') {
+    if (rule.carbFilter) {
+      pool = DB.filter(d => rule.carbFilter(d) && !excluded.has(d.cat));
+    } else if (rule.carbCats && rule.carbCats.length) {
+      pool = DB.filter(d => rule.carbCats.includes(d.cat) && !excluded.has(d.cat));
+    }
+    if (!pool.length && rule.carbIds && rule.carbIds.length) {
+      pool = DB.filter(d => rule.carbIds.includes(d.id));
+    }
+  } else if (slot === 'fat') {
+    if (rule.fatFilter) {
+      pool = DB.filter(d => rule.fatFilter(d) && !excluded.has(d.cat));
+    } else if (rule.fatCats && rule.fatCats.length) {
+      pool = DB.filter(d => rule.fatCats.includes(d.cat) && !excluded.has(d.cat));
+    }
+    // Always fallback to full nut+fat category for variety
+    if (!pool.length) {
+      pool = DB.filter(d => (d.cat==='nut' || d.cat==='fat') && !excluded.has(d.cat));
+    }
+  } else if (slot === 'veg') {
+    if (rule.vegFilter) {
+      pool = DB.filter(d => rule.vegFilter(d) && !excluded.has(d.cat));
+    } else {
+      pool = DB.filter(d => d.cat==='veg' && !excluded.has(d.cat));
+    }
+  }
+
+  if (!pool.length) return null;
+
+  const slotKey = mealKey + '_' + rowIdx;
+  const clicks = slotClicks[slotKey] || 0;
+  const baseIdx = Math.floor(Math.abs(Math.sin(seed * 9301 + 49297)) * pool.length);
+  const idx = (baseIdx + clicks) % pool.length;
+  return pool[idx];
+}
+
+function gramsForMacro(food, macroG, macroKey) {
+  // how many grams of food to get macroG grams of that macro
+  const per100 = food[macroKey] || 0;
+  if (per100 <= 0) return 100;
+  const g = Math.round(macroG / per100 * 100);
+  return Math.max(50, Math.min(g, 500));
+}
+
+function buildMealBlock(mealKey, mealDef, tp, tf, tc, mealIdx) {
+  const mP = Math.round(tp * mealDef.pPct);
+  const mF = Math.round(tf * mealDef.fPct);
+  const mC = Math.round(tc * mealDef.cPct);
+  const baseSeed = pickerSeed + mealIdx * 17;
+  const slotSeed = (slot) => slotSeeds[mealKey + '_' + slot] || (baseSeed + slot * 3);
+
+  const rows = [];
+  const usedIds = new Set();
+
+  // 1. Protein source
+  const protFood = pickFromRule(mealDef, 'prot', mP, slotSeed(0), mealKey, 0);
+  if (protFood && !usedIds.has(protFood.id)) {
+    usedIds.add(protFood.id);
+    const g = gramsForMacro(protFood, mP, 'p');
+    const m = g/100;
+    rows.push({food:protFood, g, role:'prot', p:protFood.p*m, fat:protFood.f*m, c:protFood.c*m, k:protFood.k*m});
+  }
+
+  // 2. Carb source (only if there are carbs for this meal)
+  if (mC > 10 && mealDef.carbCats && mealDef.carbCats.length > 0) {
+    const carbFood = pickFromRule(mealDef, 'carb', mC, slotSeed(1), mealKey, 1);
+    if (carbFood && !usedIds.has(carbFood.id)) {
+      usedIds.add(carbFood.id);
+      const g = gramsForMacro(carbFood, mC, 'c');
+      const m = g/100;
+      rows.push({food:carbFood, g, role:'carb', p:carbFood.p*m, fat:carbFood.f*m, c:carbFood.c*m, k:carbFood.k*m});
+    }
+  }
+
+  // 3. Vegetables (if this meal has vegs)
+  if (mealDef.vegs && mealDef.vegs.length > 0 || mealDef.vegFilter) {
+    const vegFood = pickFromRule(mealDef, 'veg', 0, slotSeed(2), mealKey, 2);
+    if (vegFood && !usedIds.has(vegFood.id)) {
+      usedIds.add(vegFood.id);
+      const g = 150; // fixed portion for veg
+      const m = g/100;
+      rows.push({food:vegFood, g, role:'veg', p:vegFood.p*m, fat:vegFood.f*m, c:vegFood.c*m, k:vegFood.k*m});
+    }
+    // Second veg for lunch/dinner
+    if (mealKey==='lunch'||mealKey==='dinner') {
+      const vegFood2 = pickFromRule(mealDef, 'veg', 0, slotSeed(3), mealKey, 3);
+      if (vegFood2 && !usedIds.has(vegFood2.id)) {
+        usedIds.add(vegFood2.id);
+        const g = 100; const m = g/100;
+        rows.push({food:vegFood2, g, role:'veg', p:vegFood2.p*m, fat:vegFood2.f*m, c:vegFood2.c*m, k:vegFood2.k*m});
+      }
+    }
+  }
+
+  // 4. Fat source (small addition)
+  if (mF > 5 && mealDef.fatIds && mealDef.fatIds.length > 0) {
+    const fatFood = pickFromRule(mealDef, 'fat', mF, slotSeed(4), mealKey, 4);
+    if (fatFood && !usedIds.has(fatFood.id)) {
+      usedIds.add(fatFood.id);
+      // fat is always small portion — 10-15g for oils, 20-30g for nuts
+      const g = fatFood.cat==='fat' ? 15 : 25;
+      const m = g/100;
+      rows.push({food:fatFood, g, role:'fat', p:fatFood.p*m, fat:fatFood.f*m, c:fatFood.c*m, k:fatFood.k*m});
+    }
+  }
+
+  const sumK  = rows.reduce((s,r)=>s+r.k,0);
+  const sumP  = rows.reduce((s,r)=>s+r.p,0);
+  const sumF2 = rows.reduce((s,r)=>s+r.fat,0);
+  const sumC  = rows.reduce((s,r)=>s+r.c,0);
+
+  return {
+    html: `<div class="meal-block">
+      <div class="mb-head">
+        <span class="mb-title">${mealDef.icon} ${mealDef.label}</span>
+        <span style="display:flex;gap:10px;font-size:11px;align-items:center;">
+          <span class="macro-p">${Math.round(sumP)}г Б</span>
+          <span class="macro-f">${Math.round(sumF2)}г Ж</span>
+          <span class="macro-c">${Math.round(sumC)}г У</span>
+          <span class="mb-kcal">${Math.round(sumK)} ккал</span>
+        </span>
+      </div>
+      <div style="padding:6px 14px 4px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border);">${mealDef.note}</div>
+      ${rows.map((r,ri)=>`<div class="food-row">
+        <div class="food-cat-dot" style="background:${catColors[r.food.cat]||'#888'};"></div>
+        <span class="food-name">${r.food.n}</span>
+        <span class="food-g">${Math.round(r.g)} г</span>
+        <span class="food-macros">
+          <span class="macro-p">${Math.round(r.p)}г</span>
+          <span class="macro-f">${Math.round(r.fat)}г</span>
+          <span class="macro-c">${Math.round(r.c)}г</span>
+          <span class="macro-k">${Math.round(r.k)}</span>
+        </span>
+        <button class="food-repl" onclick="replaceSlot('${mealKey}',${ri},${mealIdx})">↻</button>
+      </div>`).join('')}
+    </div>`,
+    sumK, sumP, sumF2, sumC
+  };
+}
+
+function replaceSlot(mealKey, rowIdx, mealIdx) {
+  const slotKey = mealKey + '_' + rowIdx;
+  slotClicks[slotKey] = (slotClicks[slotKey] || 0) + 1;
+  // Also shift seed so sin() lands on different value
+  slotSeeds[slotKey] = pickerSeed + mealIdx * 17 + slotClicks[slotKey] * 137.508; // golden angle step
+  runPickerDayKeepState();
+}
+
+function runPickerDay(kcal, tp, tf, tc, meals) {
+  const el = document.getElementById('picker-result');
+  const seq = MEAL_SEQUENCES[meals] || MEAL_SEQUENCES[5];
+
+  let totalP=0,totalF=0,totalC=0,totalK=0;
+  const blocks = seq.map((mealKey, idx) => {
+    const def = MEAL_RULES[mealKey];
+    const result = buildMealBlock(mealKey, def, tp, tf, tc, idx);
+    totalP+=result.sumP; totalF+=result.sumF2; totalC+=result.sumC; totalK+=result.sumK;
+    return result.html;
+  });
+
+  const kPct = Math.min(Math.round(totalK/kcal*100),150);
+  const pPct = Math.min(Math.round(totalP/tp*100),150);
+  const fPct = Math.min(Math.round(totalF/tf*100),150);
+  const cPct = Math.min(Math.round(totalC/tc*100),150);
+  const pColor = pPct>=90&&pPct<=110?'var(--green)':pPct<90?'var(--red)':'var(--accent)';
+  const cColor = cPct>=90&&cPct<=110?'var(--green)':cPct<90?'var(--red)':'var(--accent)';
+
+  el.innerHTML = `
+    <div class="totals-bar">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;">Итого за день</div>
+      ${[
+        {lbl:'Ккал',val:Math.round(totalK),target:document.getElementById('pk-kcal').value,pct:kPct,color:'var(--text)'},
+        {lbl:'Белок',val:Math.round(totalP)+'г',target:tp+'г',pct:pPct,color:'var(--blue)'},
+        {lbl:'Жиры',val:Math.round(totalF)+'г',target:tf+'г',pct:fPct,color:'var(--green)'},
+        {lbl:'Углеводы',val:Math.round(totalC)+'г',target:tc+'г',pct:cPct,color:'var(--accent)'},
+      ].map(x=>`<div class="tb-item">
+        <div class="tb-val" style="color:${x.color}">${x.val}</div>
+        <div class="tb-lbl">${x.lbl} из ${x.target} (${x.pct}%)</div>
+      </div>`).join('')}
+      <button class="btn btn-sm" onclick="shufflePicker()" style="margin-left:auto;font-size:12px;">🔀 Другой вариант</button>
+    </div>
+    ${blocks.join('')}`;
+}
+
+function runPickerList(kcal, tp, tf, tc) {
+  const el = document.getElementById('picker-result');
+
+  // Pick 2 protein sources (meat/fish + dairy/egg), 2 carb sources, 1 fat, 2-3 vegs
+  const seededPick = (pool, n, offset) => {
+    const shuffled = [...pool].sort((a,b) => seededRand(pickerSeed+offset+a.id) - seededRand(pickerSeed+offset+b.id));
+    return shuffled.slice(0,n);
+  };
+
+  // Pools include ALL DB entries (including custom) that match category + basic criteria
+  const protPool = DB.filter(d => d.p>=12 && ['meat','fish'].includes(d.cat) && !excludedCats.has(d.cat));
+  const dairyPool = DB.filter(d => d.p>=8 && d.cat==='dairy' && !excludedCats.has(d.cat));
+  const carbPool  = DB.filter(d => d.c>=12 && d.f<10 && ['grain','legume'].includes(d.cat) && !excludedCats.has(d.cat));
+  const vegPool   = DB.filter(d => d.cat==='veg' && d.k<80);
+  const fatPool   = DB.filter(d => (d.cat==='fat'||d.cat==='nut') && !excludedCats.has(d.cat));
+
+  const protFoods  = seededPick(protPool, 1, 0);
+  const dairyFoods = seededPick(dairyPool, 1, 5);
+  const carbFoods  = seededPick(carbPool, 2, 10);
+  const vegFoods   = seededPick(vegPool, 3, 20);
+  const fatFoods   = seededPick(fatPool, 1, 30);
+
+  const groups = [
+    {label:'Белок (мясо/рыба)', foods: protFoods, targetMacro: tp*0.6, key:'p'},
+    {label:'Белок (молочка)',   foods: dairyFoods, targetMacro: tp*0.4, key:'p'},
+    {label:'Углеводы',         foods: carbFoods,  targetMacro: tc, key:'c'},
+    {label:'Овощи',            foods: vegFoods,   targetMacro: 0, key:null, fixedG:150},
+    {label:'Жиры',             foods: fatFoods,   targetMacro: 0, key:null, fixedG:15},
+  ];
+
+  const rows = [];
+  groups.forEach(gr => {
+    if (!gr.foods.length) return;
+    const perFood = gr.targetMacro / gr.foods.length;
+    gr.foods.forEach(food => {
+      let g;
+      if (gr.fixedG) {
+        g = gr.fixedG;
+      } else {
+        const per100 = food[gr.key] || 0;
+        g = per100 > 0 ? Math.round(perFood / per100 * 100) : 100;
+        g = Math.max(50, Math.min(g, 500));
+      }
+      const m = g/100;
+      rows.push({food, g, groupLabel: gr.label, p:food.p*m, fat:food.f*m, c:food.c*m, k:food.k*m});
+    });
+  });
+
+  const totK=rows.reduce((s,r)=>s+r.k,0);
+  const totP=rows.reduce((s,r)=>s+r.p,0);
+  const totF=rows.reduce((s,r)=>s+r.fat,0);
+  const totC=rows.reduce((s,r)=>s+r.c,0);
+
+  const pOk = Math.abs(totP-tp)/tp < 0.2;
+  const cOk = Math.abs(totC-tc)/tc < 0.25;
+
+  el.innerHTML = `
+    <div class="totals-bar">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-right:8px;">Итого на день</div>
+      <div class="tb-item"><div class="tb-val">${Math.round(totK)}</div><div class="tb-lbl">ккал из ${kcal}</div></div>
+      <div class="tb-item"><div class="tb-val" style="color:${pOk?'var(--green)':'var(--accent)'}">${Math.round(totP)}г</div><div class="tb-lbl">белок из ${tp}г</div></div>
+      <div class="tb-item"><div class="tb-val" style="color:var(--green)">${Math.round(totF)}г</div><div class="tb-lbl">жиры из ${tf}г</div></div>
+      <div class="tb-item"><div class="tb-val" style="color:${cOk?'var(--green)':'var(--accent)'}">${Math.round(totC)}г</div><div class="tb-lbl">углеводы из ${tc}г</div></div>
+      <button class="btn btn-sm" onclick="shufflePicker()" style="margin-left:auto;">🔀 Другой</button>
+    </div>
+    <div class="meal-block">
+      <div class="mb-head">
+        <span class="mb-title">📋 Список продуктов с граммовкой на день</span>
+        <span style="font-size:11px;color:var(--text3);">распредели по приёмам сам</span>
+      </div>
+      ${rows.map(r=>`<div class="food-row">
+        <div class="food-cat-dot" style="background:${catColors[r.food.cat]||'#888'};"></div>
+        <div style="flex:1;min-width:0;">
+          <div class="food-name">${r.food.n}</div>
+          <div style="font-size:10px;color:var(--text3);">${r.groupLabel}</div>
+        </div>
+        <span class="food-g" style="font-weight:800;color:var(--accent);font-size:14px;">${Math.round(r.g)} г</span>
+        <span class="food-macros">
+          <span class="macro-p">${Math.round(r.p)}Б</span>
+          <span class="macro-f">${Math.round(r.fat)}Ж</span>
+          <span class="macro-c">${Math.round(r.c)}У</span>
+          <span class="macro-k">${Math.round(r.k)}к</span>
+        </span>
+      </div>`).join('')}
+    </div>`;
+}
+
+// replaceFood replaced by replaceSlot above
+
+
+loadDB();loadDiary();buildCatFilters();buildCatSelects();renderDB();tdeeCalc();renderDiary();
+buildSchedule();loadProfiles();buildExcludeButtons();
+</script>
+</body>
+</html>
