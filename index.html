@@ -857,30 +857,22 @@
 <script src="auth.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/nutribase_kz/sw.js', { scope: '/nutribase_kz/' })
-      .then(reg => {
-        reg.addEventListener('updatefound', () => {
-          const nw = reg.installing;
-          nw.addEventListener('statechange', () => {
-            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-              showUpdateBanner();
-            }
-          });
-        });
-      });
-  });
-}
+  // Capture before first SW installs (null = first visit, not an update)
+  const _hadSW = !!navigator.serviceWorker.controller;
 
-function showUpdateBanner() {
-  if (document.getElementById('update-banner')) return;
-  const d = document.createElement('div');
-  d.id = 'update-banner';
-  d.innerHTML = `<span style="font-size:13px;color:var(--text)">Доступна новая версия</span>
-    <button onclick="window.location.reload(true)" style="background:var(--accent);border:none;border-radius:8px;padding:6px 16px;font-weight:700;font-size:12px;cursor:pointer;color:#111;margin-left:12px;">Обновить</button>
-    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;margin-left:8px;font-size:16px;line-height:1;">✕</button>`;
-  d.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--accent);border-radius:12px;padding:12px 18px;z-index:9999;display:flex;align-items:center;box-shadow:0 8px 32px rgba(0,0,0,.6);white-space:nowrap;';
-  document.body.appendChild(d);
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/nutribase_kz/sw.js', { scope: '/nutribase_kz/' });
+  });
+
+  // Auto-reload when a new SW takes control (= new version deployed)
+  let _reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!_hadSW) return;      // First install — skip, not an update
+    if (_reloading) return;
+    _reloading = true;
+    if (typeof toast === 'function') toast('Загружено обновление ✓');
+    setTimeout(() => window.location.reload(), 1400);
+  });
 }
 </script>
 </body>
