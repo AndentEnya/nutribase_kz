@@ -14,17 +14,6 @@ function initFirebase() {
     fbAuth = firebase.auth();
     fbDb   = firebase.firestore();
 
-    fbAuth.getRedirectResult().then(result => {
-      if (result && result.user) {
-        toast('Вход выполнен ✓', 'ok');
-      }
-    }).catch(err => {
-      console.error('Redirect result error:', err);
-      if (err.code && err.code !== 'auth/no-auth-event') {
-        toast('Ошибка входа: ' + err.code, 'err');
-      }
-    });
-
     fbAuth.onAuthStateChanged(user => {
       fbUser = user;
       updateAuthUI(user);
@@ -90,7 +79,7 @@ function isInAppBrowser() {
 
 function signIn() {
   if (!fbAuth) {
-    toast('Синхронизация недоступна — Firebase не подключён', 'err');
+    toast('Firebase не подключён', 'err');
     return;
   }
   if (isInAppBrowser()) {
@@ -98,7 +87,16 @@ function signIn() {
     return;
   }
   const provider = new firebase.auth.GoogleAuthProvider();
-  fbAuth.signInWithRedirect(provider);
+  fbAuth.signInWithPopup(provider)
+    .then(() => toast('Вход выполнен ✓', 'ok'))
+    .catch(err => {
+      console.error('Sign-in error:', err);
+      if (err.code === 'auth/popup-blocked') {
+        toast('Браузер заблокировал попап — разреши всплывающие окна для сайта', 'err');
+      } else if (err.code !== 'auth/popup-closed-by-user') {
+        toast('Ошибка: ' + err.code, 'err');
+      }
+    });
 }
 
 function showOpenInBrowserBanner() {
