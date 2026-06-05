@@ -1769,9 +1769,17 @@ function openScanner() {
 
   try {
     scanner = new Html5Qrcode('scan-viewport');
+    const barcodeFormats = [
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.UPC_E,
+      Html5QrcodeSupportedFormats.CODE_128,
+      Html5QrcodeSupportedFormats.CODE_39,
+    ];
     scanner.start(
       { facingMode: 'environment' },
-      { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 },
+      { fps: 20, qrbox: { width: 300, height: 110 }, aspectRatio: 1.3, formatsToSupport: barcodeFormats },
       onBarcodeScan,
       () => {}
     ).then(() => { scannerRunning = true; })
