@@ -124,7 +124,7 @@ function showPage(id,btn){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if(btn) btn.classList.add('active');
-  const titles={db:'База продуктов',add:'Добавить продукт',search:'Поиск продуктов',tdee:'Калькулятор TDEE',plan:'Дневник питания',picker:'Подбор рациона',progress:'Прогресс веса'};
+  const titles={dash:'Главная',db:'База продуктов',add:'Добавить продукт',search:'Поиск продуктов',tdee:'Калькулятор TDEE',plan:'Дневник питания',picker:'Подбор рациона',progress:'Прогресс веса'};
   document.getElementById('topbar-title').textContent=titles[id]||'';
   // sync bottom nav
   document.querySelectorAll('.bnav-btn[data-page]').forEach(b=>b.classList.toggle('active', b.dataset.page===id));
@@ -1630,3 +1630,190 @@ function closeSidebar(){
 document.querySelectorAll('.nav-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{if(window.innerWidth<=640)closeSidebar();});
 });
+
+// ── BARCODE SCANNER ──────────────────────────────────────────────────────────
+let scanner = null;
+let scannerRunning = false;
+
+function openScanner() {
+  const overlay = document.getElementById('scan-overlay');
+  overlay.classList.add('open');
+  document.getElementById('scan-result').style.display = 'none';
+  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+  if (scannerRunning) return;
+  try {
+    scanner = new Html5Qrcode('scan-viewport');
+    const cfg = { fps: 10, qrbox: { width: 260, height: 120 }, aspectRatio: 1.5 };
+    scanner.start(
+      { facingMode: 'environment' },
+      cfg,
+      (barcode) => onBarcodeScan(barcode),
+      () => {}
+    ).then(() => { scannerRunning = true; })
+     .catch(err => {
+       console.warn('Scanner start err:', err);
+       document.getElementById('scan-hint').textContent = 'Нет доступа к камере';
+     });
+  } catch(e) {
+    console.error('Html5Qrcode init error:', e);
+    document.getElementById('scan-hint').textContent = 'Камера недоступна';
+  }
+}
+
+function closeScanner() {
+  document.getElementById('scan-overlay').classList.remove('open');
+  if (scanner && scannerRunning) {
+    scanner.stop().catch(() => {}).finally(() => {
+      scanner = null;
+      scannerRunning = false;
+    });
+  } else {
+    scanner = null;
+    scannerRunning = false;
+  }
+}
+
+function onBarcodeScan(barcode) {
+  if (!scannerRunning) return;
+  // Pause scanner while fetching
+  scannerRunning = false;
+  if (scanner) scanner.pause(true);
+  document.getElementById('scan-hint').textContent = '🔍 Ищу продукт…';
+  document.getElementById('scan-result').style.display = 'none';
+
+  fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === 1 && data.product) {
+        showScanResult(data.product, barcode);
+      } else {
+        document.getElementById('scan-hint').textContent = '❌ Продукт не найден в базе';
+        resumeScanner();
+      }
+    })
+    .catch(() => {
+      document.getElementById('scan-hint').textContent = '⚠ Ошибка сети, попробуй ещё раз';
+      resumeScanner();
+    });
+}
+
+function resumeScanner() {
+  if (scanner) {
+    scanner.resume();
+    scannerRunning = true;
+  }
+}
+
+function showScanResult(p, barcode) {
+  const name  = p.product_name || p.product_name_ru || p.generic_name || 'Неизвестный продукт';
+  const brand = p.brands || '';
+  const img   = p.image_front_small_url || p.image_url || '';
+  const n100  = p.nutriments || {};
+  const k = Math.round(n100['energy-kcal_100g'] || n100['energy-kcal'] || (n100['energy_100g'] || 0) / 4.184 || 0);
+  const pr= +(n100['proteins_100g'] || n100['protein_100g'] || 0).toFixed(1);
+  const f = +(n100['fat_100g'] || 0).toFixed(1);
+  const c = +(n100['carbohydrates_100g'] || n100['carbs_100g'] || 0).toFixed(1);
+
+  // Map OFF category to our CATS key
+  const offCat = (p.categories_tags || []).join(' ').toLowerCase();
+  let cat = 'other';
+  if (/dairy|milk|cheese|yogurt|kefir/.test(offCat)) cat = 'dairy';
+  else if (/meat|chicken|beef|pork|lamb/.test(offCat)) cat = 'meat';
+  else if (/fish|seafood|tuna|salmon/.test(offCat)) cat = 'fish';
+  else if (/egg/.test(offCat)) cat = 'egg';
+  else if (/cereal|grain|rice|pasta|bread|oat|wheat/.test(offCat)) cat = 'grain';
+  else if (/legume|bean|lentil|chickpea/.test(offCat)) cat = 'legume';
+  else if (/vegetable|veg/.test(offCat)) cat = 'veg';
+  else if (/fruit|berry/.test(offCat)) cat = 'fruit';
+  else if (/nut|seed/.test(offCat)) cat = 'nut';
+  else if (/fat|oil|butter/.test(offCat)) cat = 'fat';
+  else if (/sweet|candy|chocolate|sugar/.test(offCat)) cat = 'sweet';
+  else if (/sauce|spice|condiment/.test(offCat)) cat = 'sauce';
+  else if (/snack|chip|cracker|sport/.test(offCat)) cat = 'snack';
+  else if (/fast.food|burger|pizza/.test(offCat)) cat = 'fast';
+  else if (/beverage|drink|juice|water|cola/.test(offCat)) cat = 'drink';
+
+  const imgHtml = img
+    ? `<img class="scan-img" src="${img}" alt="" onerror="this.style.display='none'">`
+    : `<div class="scan-img" style="display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:22px;">🏷</div>`;
+
+  const macroHtml = `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+    <span style="font-size:12px;color:var(--text2)">🔥 <b style="color:var(--accent)">${k}</b> ккал</span>
+    <span style="font-size:12px;color:var(--text2)">Б <b>${pr}г</b></span>
+    <span style="font-size:12px;color:var(--text2)">Ж <b>${f}г</b></span>
+    <span style="font-size:12px;color:var(--text2)">У <b>${c}г</b></span>
+    <span style="font-size:11px;color:var(--text3)">на 100г</span>
+  </div>`;
+
+  const result = document.getElementById('scan-result');
+  result.innerHTML = `
+    <div class="scan-product">
+      ${imgHtml}
+      <div style="flex:1;min-width:0;">
+        <div class="scan-pname">${escHtml(name)}</div>
+        ${brand ? `<div class="scan-brand">${escHtml(brand)}</div>` : ''}
+        ${macroHtml}
+      </div>
+    </div>
+    <div class="scan-actions">
+      <button class="btn-primary" style="flex:1;padding:9px 6px;font-size:13px;"
+        onclick="scanAddToDB('${escAttr(name)}','${cat}',${k},${pr},${f},${c})">
+        + В базу
+      </button>
+      <button class="btn-outline" style="flex:1;padding:9px 6px;font-size:13px;"
+        onclick="scanAddToDiary('${escAttr(name)}',${k},${pr},${f},${c})">
+        + В дневник
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <button onclick="resumeScannerUI()" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;">Сканировать ещё</button>
+    </div>`;
+  result.style.display = 'block';
+  document.getElementById('scan-hint').textContent = '✓ Продукт найден';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+  return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');
+}
+
+function resumeScannerUI() {
+  document.getElementById('scan-result').style.display = 'none';
+  document.getElementById('scan-hint').textContent = 'Наведи камеру на штрихкод продукта';
+  resumeScanner();
+}
+
+function scanAddToDB(name, cat, k, p, f, c) {
+  const existing = DB.find(d => d.n.toLowerCase() === name.toLowerCase());
+  if (existing) { toast('Уже есть в базе: ' + existing.n); return; }
+  const item = { id: nextId(), n: name, cat, k, p, f, c, note: 'Штрихкод', custom: true };
+  DB.push(item);
+  saveDB();
+  toast('Добавлено в базу: ' + name, 'ok');
+  if (typeof scheduleSync === 'function') scheduleSync();
+  closeScanner();
+}
+
+function scanAddToDiary(name, k, p, f, c) {
+  const g = parseInt(prompt(`Граммы для "${name}":`, '100') || '0');
+  if (!g || g <= 0) return;
+  const factor = g / 100;
+  const entry = {
+    id: Date.now(),
+    n: name,
+    g,
+    k: Math.round(k * factor),
+    p: +(p * factor).toFixed(1),
+    f: +(f * factor).toFixed(1),
+    c: +(c * factor).toFixed(1),
+    ts: new Date().toISOString()
+  };
+  diary.push(entry);
+  saveDiary();
+  toast(`${name} ${g}г → дневник`, 'ok');
+  if (typeof scheduleSync === 'function') scheduleSync();
+  closeScanner();
+  showPage('plan', document.querySelector('.nav-btn[onclick*="plan"]'));
+}
