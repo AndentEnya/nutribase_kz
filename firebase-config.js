@@ -15,7 +15,7 @@
 // ──────────────────────────────────────────────────────────────────────────────
 
 var FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyCY1tiQ6ScyOySYolVbjvwctxl9MppoMI",
+  apiKey:            "AIzaSyCY1tiQ6ScyOySYolVbjvwctxl9MpppoMI",
   authDomain:        "nutribase-f6a19.firebaseapp.com",
   projectId:         "nutribase-f6a19",
   storageBucket:     "nutribase-f6a19.firebasestorage.app",
