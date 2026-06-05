@@ -38,48 +38,43 @@ function initFirebase() {
 // ── UI ────────────────────────────────────────────────────────────────────────
 
 function updateAuthUI(user) {
-  const btn   = document.getElementById('auth-btn');
-  const label = document.getElementById('auth-label');
-  const dot   = document.getElementById('sync-dot');
-  if (!btn) return;
+  const guest  = document.getElementById('sp-guest');
+  const spUser = document.getElementById('sp-user');
+  const dot    = document.getElementById('sync-dot');
+  const tbUser = document.getElementById('topbar-user');
+  if (!guest) return;
 
   if (user) {
-    btn.classList.add('signed');
-    label.textContent = user.displayName ? user.displayName.split(' ')[0] : 'Аккаунт';
+    guest.style.display = 'none';
+    spUser.style.display = 'block';
+    document.getElementById('sp-name').textContent  = user.displayName || 'Аккаунт';
+    document.getElementById('sp-email').textContent = user.email || '';
+    const avatar   = document.getElementById('sp-avatar');
+    const fallback = document.getElementById('sp-avatar-fallback');
+    const tbAvatar = document.getElementById('topbar-avatar');
     if (user.photoURL) {
-      btn.innerHTML = `<img src="${user.photoURL}" class="auth-avatar" referrerpolicy="no-referrer"> <span>${label.textContent}</span>`;
+      avatar.src = user.photoURL;
+      avatar.style.display = 'block';
+      fallback.style.display = 'none';
+      if (tbAvatar) { tbAvatar.src = user.photoURL; }
+    } else {
+      avatar.style.display = 'none';
+      fallback.style.display = 'flex';
+      fallback.textContent = (user.displayName || 'U')[0].toUpperCase();
     }
-    dot.style.display = 'inline-block';
-    // Update auth panel
-    const n = document.getElementById('auth-panel-name');
-    const e = document.getElementById('auth-panel-email');
-    const a = document.getElementById('auth-avatar-big');
-    if (n) n.textContent = user.displayName || '';
-    if (e) e.textContent = user.email || '';
-    if (a && user.photoURL) { a.src = user.photoURL; a.style.display = 'block'; }
+    if (tbUser) tbUser.style.display = 'flex';
+    if (dot) dot.style.display = 'inline-block';
   } else {
-    btn.classList.remove('signed');
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span id="auth-label">Войти</span>`;
-    dot.style.display = 'none';
+    guest.style.display = 'block';
+    spUser.style.display = 'none';
+    if (tbUser) tbUser.style.display = 'none';
+    if (dot) dot.style.display = 'none';
   }
 }
 
 function toggleAuthPanel() {
-  if (!fbAuth) { signIn(); return; }
-  if (!fbUser) { signIn(); return; }
-  const p = document.getElementById('auth-panel');
-  if (!p) return;
-  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  if (!fbUser) signIn();
 }
-
-// Close panel on outside click
-document.addEventListener('click', e => {
-  const panel = document.getElementById('auth-panel');
-  const btn   = document.getElementById('auth-btn');
-  if (panel && panel.style.display !== 'none' && !panel.contains(e.target) && !btn.contains(e.target)) {
-    panel.style.display = 'none';
-  }
-});
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
 
@@ -124,10 +119,7 @@ function showOpenInBrowserBanner() {
 
 function signOut() {
   if (!fbAuth) return;
-  fbAuth.signOut().then(() => {
-    document.getElementById('auth-panel').style.display = 'none';
-    toast('Вы вышли из аккаунта');
-  });
+  fbAuth.signOut().then(() => toast('Вы вышли из аккаунта'));
 }
 
 // ── SYNC ──────────────────────────────────────────────────────────────────────
@@ -235,7 +227,6 @@ async function loadFromCloud() {
 }
 
 async function syncNow() {
-  document.getElementById('auth-panel').style.display = 'none';
   await syncToCloud();
   toast('Синхронизация завершена ☁');
 }
